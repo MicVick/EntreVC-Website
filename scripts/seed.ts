@@ -87,7 +87,8 @@ async function main() {
   // ── Media ─────────────────────────────────────────────────────────────────
   // Uploaded from the generated placeholders, so seeded content has real image
   // records with real dimensions rather than nulls everywhere.
-  const upload = async (file: string, alt: string): Promise<number | string> => {
+  // SQLite gives collections numeric ids, which is what the relationship fields expect.
+  const upload = async (file: string, alt: string): Promise<number> => {
     const doc = await payload.create({
       collection: 'media',
       data: { alt },
