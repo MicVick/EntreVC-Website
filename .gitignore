@@ -9,9 +9,11 @@ out/
 build/
 next-env.d.ts
 
-# payload — generated, do not hand-edit
-/app/(payload)/admin/importMap.js
-payload-types.ts
+# payload — generated but COMMITTED on purpose: CI and the other agent must be
+# able to typecheck without running a database. Regenerate with
+# `npm run generate:types` / `npm run generate:importmap`; never hand-edit.
+#   app/(payload)/admin/importMap.js
+#   payload-types.ts
 
 # database (SQLite lives on the VM; never commit it)
 *.db

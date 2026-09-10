@@ -24,7 +24,7 @@ Read `CLAUDE.md` and `CONTRACT.md` before your first task and again at every han
 
 You lead; Agent B reviews and does not commit until H0 is signed.
 
-### ☐ A0.1 — Scaffold `3h`
+### ☑ A0.1 — Scaffold `3h`
 - `create-next-app` — App Router, TypeScript, Tailwind 4, `@/` alias, no `src/`.
 - Install Payload 3 into the same app: `payload`, `@payloadcms/next`,
   `@payloadcms/db-sqlite`, `@payloadcms/richtext-lexical`,
@@ -35,13 +35,13 @@ You lead; Agent B reviews and does not commit until H0 is signed.
 
 **Done when:** `npm run dev` serves the site *and* a working Payload admin at `/admin`.
 
-### ☐ A0.2 — Tooling and environment `1h`
+### ☑ A0.2 — Tooling and environment `1h`
 - TS `strict`, `noUncheckedIndexedAccess`. ESLint + Prettier. Scripts: `dev`, `build`,
   `typecheck`, `lint`, `test`, `seed`, `seed:reset`, `e2e`, `deploy`.
 - `.env.example` with every var, commented. `PAYLOAD_SECRET`, SMTP credentials and the
   database path are server-only — never `NEXT_PUBLIC_*`.
 
-### ☐ A0.3 — Confirm the VM `1h`
+### ☑ A0.3 — Confirm the VM `1h`
 Ask IT, and record answers in `DECISIONS.md`:
 - RAM and vCPU · **storage type — if it is NFS-mounted, we use Postgres, not SQLite** ·
   Node version available · ports 80/443 open · outbound SMTP permitted · who patches the

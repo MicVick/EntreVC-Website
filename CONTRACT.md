@@ -151,8 +151,11 @@ this system to notice. Publish must reflect within 10 seconds.
 
 ## 5. Runtime API (owner: Agent A)
 
-Payload provides its own REST/GraphQL layer for the admin. These are the only routes the
-public site calls:
+Payload's own REST/GraphQL layer is mounted at **`/api/cms`**, not the default `/api`
+(`payload.config.ts` → `routes.api`), so its catch-all cannot shadow the public write
+endpoints below. Do not call `/api/cms/*` from public pages — it is the admin's transport.
+
+These are the only routes the public site calls:
 
 ```
 POST /api/register                    → ActionResult<RegisterResult>
@@ -203,7 +206,7 @@ Editing a file you do not own is a protocol violation. Request it in `DECISIONS.
 | `app/(payload)/**` (admin + Payload API), `app/api/**` | **A** |
 | `app/(public)/events/**`, `components/public/registration-form.tsx` | **A** |
 | `scripts/**`, `deploy/**`, `.github/workflows/**`, `Caddyfile`, `*.service` | **A** |
-| `app/layout.tsx`, `app/globals.css`, `app/(public)/page.tsx` | **B** |
+| `app/(public)/layout.tsx`, `app/globals.css`, `app/(public)/page.tsx` | **B** |
 | `app/(public)/**` *except* `events/` | **B** |
 | `components/ui/**`, `components/public/**` *except the registration form* | **B** |
 | `lib/format.ts`, `lib/seo.ts`, `lib/analytics.ts`, `lib/revalidation.ts` | **B** |
@@ -216,22 +219,62 @@ Editing a file you do not own is a protocol violation. Request it in `DECISIONS.
 Agent A owns `app/(public)/events/**` and the registration form because it owns that flow
 end to end. It is the only place A touches public routes.
 
+**There is no `app/layout.tsx`, and there must never be one.** Payload's admin requires its
+own root layout, so `app/(payload)/` and `app/(public)/` are sibling route groups, each
+with its own root layout. A layout at `app/layout.tsx` would wrap both and inject the
+site's fonts and `globals.css` into the admin, breaking its styling. Agent B's root layout
+is `app/(public)/layout.tsx`.
+
+`app/globals.css` stays at `app/globals.css` (route groups do not affect non-route files)
+and is imported from `app/(public)/layout.tsx` as `../globals.css`.
+
 ---
 
 ## 7. Dependencies — frozen, installed once in Sprint 0
 
+**Installed and verified at H0** — see `package.json` for exact ranges.
+
 ```
-next@15  react@19  react-dom@19  typescript  tailwindcss@4
-payload@3  @payloadcms/next  @payloadcms/db-sqlite  @payloadcms/richtext-lexical
-@payloadcms/email-nodemailer  @payloadcms/ui
-better-sqlite3  sharp
-zod  react-hook-form  @hookform/resolvers
-react-email  @react-email/components
-ics@3  papaparse  @types/papaparse
-date-fns@4  date-fns-tz
-lucide-react  class-variance-authority  clsx  tailwind-merge  sonner
-vitest  @testing-library/react  @playwright/test  (dev)
+next 16.3.4   react 19.2.8   react-dom 19.2.8   typescript 5   tailwindcss 4
+payload 3.88.0  @payloadcms/{next,db-sqlite,richtext-lexical,email-nodemailer,ui} 3.88.0
+@libsql/client 0.14   graphql 16   sharp 0.35
+zod 4   react-hook-form 7   @hookform/resolvers 5
+nodemailer 10   ics 3   papaparse 5
+date-fns 4   date-fns-tz 3
+lucide-react   class-variance-authority   clsx   tailwind-merge   sonner
+vitest 5   @testing-library/react   @playwright/test   tsx   dotenv   (dev)
 ```
+
+**Four corrections to the frozen list, made at H0 after checking the registry:**
+
+1. **`next@15` → `next 16.3.4`.** Payload 3.88's peer range is
+   `>=16.2.6 <17.0.0` (among others), so Next 16 is supported and current. Staying on 15
+   would have meant deliberately installing an older minor.
+2. **`better-sqlite3` → `@libsql/client`.** `@payloadcms/db-sqlite` uses libSQL via
+   Drizzle; `better-sqlite3` was never its driver. Transactions are unaffected.
+3. **`react-email` / `@react-email/components` dropped.** Deprecated at every published
+   version ("no longer supported"). The six transactional templates are hand-written
+   table-based HTML with inline styles instead — which is what mail clients need anyway,
+   and removes a dead dependency from a system that must run untouched for years.
+4. **`@types/node` pinned to `^22`**, required by vitest 5's peer range.
+
+**`"type": "module"` is set in `package.json`** — required, since Payload's lexical editor
+is async ESM and the CLI otherwise fails with `ERR_REQUIRE_ASYNC_MODULE`.
+
+**Next 16 differences that affect both agents** (from
+`node_modules/next/dist/docs/01-app/02-guides/upgrading/version-16.md` — read it, it does
+not match either agent's training data):
+
+- `params`, `searchParams`, `cookies()`, `headers()` are **fully async**; the Next 15
+  synchronous fallback is gone.
+- Use the generated helpers `PageProps<'/route'>`, `LayoutProps<'/route'>` and
+  `RouteContext<'/api/route'>`; run `npx next typegen` (or any build) to generate them.
+- `revalidateTag(tag)` now requires a second `cacheLife` argument. **`revalidatePath` is
+  unchanged**, which is what §4's publish flow uses.
+- The `middleware` convention is renamed to **`proxy`**. This project needs neither —
+  Payload gates the admin itself.
+- Turbopack is the default for both `dev` and `build`; `next lint` is gone, and the
+  `eslint` key in `next.config.ts` is rejected.
 
 Payload supplies from configuration what earlier drafts budgeted 39h to build: admin UI,
 auth, roles, media library with image resizing, rich text, drafts and version history.
