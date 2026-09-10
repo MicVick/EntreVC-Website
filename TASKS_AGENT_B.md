@@ -23,12 +23,12 @@ Read `CLAUDE.md` and `CONTRACT.md` before your first task and again at every han
 
 Agent A leads the scaffold. You review and do not commit until H0 is signed.
 
-### ☐ B0.1 — Review the scaffold `1h`
+### ☒ B0.1 — Review the scaffold `1h`
 - Confirm the dependency list covers what the public pages need. Request additions **now**,
   while dependencies are still installed once.
 - Note that the Payload admin keeps its own default styling — **do not plan to theme it.**
 
-### ☐ B0.2 — Agree the token plan `1h`
+### ☒ B0.2 — Agree the token plan `1h`
 - Confirm token names in `CONTRACT.md` §8 with Agent A, who styles the registration form
   from them. Adding a token later is cheap; renaming one is not.
 
@@ -38,7 +38,7 @@ Agent A leads the scaffold. You review and do not commit until H0 is signed.
 
 ## Sprint 1 — Design system and shell (Days 1–2 · 19h)
 
-### ☐ B1.1 — Design tokens `4h` · `CONTRACT.md` §8
+### ☒ B1.1 — Design tokens `4h` · `CONTRACT.md` §8
 **Files:** `app/globals.css` (you are its only owner)
 - Full token set under Tailwind 4 `@theme`, seeded from `brand/colors.md`.
 - Brand red is `#BD282E` — **5.98:1 on white, white text only, never black on red.**
@@ -46,7 +46,7 @@ Agent A leads the scaffold. You review and do not commit until H0 is signed.
   token, that swap touches this one file. Do not wait for brand assets to start.
 - Every colour pair clears 4.5:1. Check as you choose, not in Sprint 4.
 
-### ☐ B1.2 — UI primitives `5h`
+### ☒ B1.2 — UI primitives `5h`
 **Files:** `components/ui/**`
 - Button, Input, Textarea, Select, Checkbox, Label, Card, Badge, Dialog, Sheet, Tabs,
   Skeleton, Toast, Tooltip — themed to the tokens, `cva` variants.
@@ -54,7 +54,7 @@ Agent A leads the scaffold. You review and do not commit until H0 is signed.
 - Agent A builds the registration form from these and never edits them. If a need appears,
   they request it in `DECISIONS.md` and you build it.
 
-### ☐ B1.3 — Root layout, header, footer `4h`
+### ☒ B1.3 — Root layout, header, footer `4h`
 **Files:** `app/layout.tsx`, `components/public/{header,footer}.tsx`
 - Self-hosted fonts via `next/font` — an external font round trip is a real cost against the
   LCP target with no CDN in front.
@@ -63,7 +63,7 @@ Agent A leads the scaffold. You review and do not commit until H0 is signed.
   requires as its alumni-consent mitigation.
 - Above-the-fold content renders **without client-side JS**. `'use client'` on leaves only.
 
-### ☐ B1.4 — Shared components `4h`
+### ☒ B1.4 — Shared components `4h`
 **Files:** `components/public/**`
 - `SectionHeader`, `EventCard`, `StartupCard`, `ResourceCard`, `PersonCard`, `FilterChips`,
   `EmptyState`, `Pagination`, `ShareButton`, `StatBlock`.
@@ -71,7 +71,7 @@ Agent A leads the scaffold. You review and do not commit until H0 is signed.
   data contains all three; a card that breaks on seed data will break on real content.
 - `EventCard` is used by Agent A's events pages — treat its API as shared.
 
-### ☐ B1.5 — Formatting, SEO and revalidation helpers `2h`
+### ☒ B1.5 — Formatting, SEO and revalidation helpers `2h`
 **Files:** `lib/format.ts`, `lib/seo.ts`, `lib/revalidation.ts`
 - IST formatting from UTC via `date-fns-tz`, in one helper used everywhere.
 - `buildMetadata()` for titles, descriptions, canonicals and OG tags.
@@ -86,7 +86,7 @@ Agent A leads the scaffold. You review and do not commit until H0 is signed.
 
 ## Sprint 2 — Directories (Days 3–4 · 19h)
 
-### ☐ B2.1 — Startup directory `6h` · *the credibility artifact for investors*
+### ☒ B2.1 — Startup directory `6h` · *the credibility artifact for investors*
 **Files:** `app/(public)/startups/page.tsx`
 - Alumni / Student toggle. Cards with logo, name, one-line description, founders with batch,
   sector, stage, website, LinkedIn.
@@ -99,23 +99,23 @@ Agent A leads the scaffold. You review and do not commit until H0 is signed.
 - **Never render founder contact detail unless `contactConsent === true`.** Gate at render;
   do not rely on the data being clean.
 
-### ☐ B2.2 — Startup detail `2h`
+### ☒ B2.2 — Startup detail `2h`
 - Longer description, founding story, team, stage, links. Same consent gate. Fire
   `startup_view`.
 
-### ☐ B2.3 — IIMA Ventures `2h` · an explicit ask in the club brief
+### ☒ B2.3 — IIMA Ventures `2h` · an explicit ask in the club brief
 **Files:** `app/(public)/iima-ventures/page.tsx`
 - Overview, contact, highlight block, and the schemes list: name, who it's for, what it
   offers, eligibility, application route, deadline. Deadlines in IST; past deadlines visibly
   de-emphasised rather than hidden.
 
-### ☐ B2.4 — Resources library `4h`
+### ☒ B2.4 — Resources library `4h`
 **Files:** `app/(public)/resources/page.tsx`
 - Grid with type filter and tag filter plus search, URL-reflected.
 - **Every resource is one click from list to source — no interstitial.** Gating is cut from
   V1, so nothing here asks for an email.
 
-### ☐ B2.5 — Playbook `3h`
+### ☒ B2.5 — Playbook `3h`
 **Files:** `app/(public)/resources/playbook/page.tsx`
 - Chaptered web version with in-page chapter navigation, plus a PDF download CTA
   `[ASSUMPTION: web chapters + uploaded PDF; no PDF generation]`. The web version is the SEO
@@ -131,7 +131,7 @@ Agent A leads the scaffold. You review and do not commit until H0 is signed.
 
 ## Sprint 3 — Homepage, people, contact, SEO (Days 5–6 · 20h)
 
-### ☐ B3.1 — Homepage `5h`
+### ☒ B3.1 — Homepage `5h`
 **Files:** `app/(public)/page.tsx`
 Seven blocks: positioning statement and intro · next three events with direct register
 links · featured startups · latest resource · key numbers · mailing-list signup · entry
@@ -141,7 +141,7 @@ points to every section.
 - Key numbers from `getKeyNumbers()` — live counts with the admin override applied.
 - Above the fold renders with zero client JS. **JS budget: < 150KB.**
 
-### ☐ B3.2 — Team and archive `4h`
+### ☒ B3.2 — Team and archive `4h`
 **Files:** `app/(public)/team/page.tsx`, `app/(public)/team/[year]/page.tsx`
 - Grouped by vertical, ordered by the admin-controlled `displayOrder`.
 - Club structure visual **built from data, not a hardcoded diagram**, or it goes stale at the
@@ -159,13 +159,13 @@ points to every section.
 - One component used on the homepage and in the footer. Email plus consent, inline success
   and duplicate states. Fire `newsletter_signup`.
 
-### ☐ B3.5 — Metadata and structured data `3h`
+### ☒ B3.5 — Metadata and structured data `3h`
 - `generateMetadata` on every route you own: title, description, canonical, OG, Twitter.
 - JSON-LD: `Organization` on the homepage, `BreadcrumbList` on detail routes. (Agent A
   handles `Event` on event pages.)
 - OG images are the entry's own uploaded image — dynamic generation is cut.
 
-### ☐ B3.6 — Sitemap and robots `1h`
+### ☒ B3.6 — Sitemap and robots `1h`
 - `app/sitemap.ts` from published content; `app/robots.ts` disallowing `/admin` and `/api`.
 
 ### ☐ B3.7 — Analytics `2h`

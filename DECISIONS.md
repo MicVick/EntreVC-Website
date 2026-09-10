@@ -356,3 +356,55 @@ Day 2 rather than Day 8. Then Sprint 2, the API routes.
 development. That is fine locally but must not be relied on in production — the VM
 needs `payload migrate` in the deploy script, or a schema change will fail mid-request.
 Recorded here so it is not discovered on launch day.
+
+---
+
+## Agent B frontend delivery - 11 Sep 2026
+
+### Requests
+
+| # | From | To | Request | Status |
+|---|---|---|---|---|
+| B-002 | B | A | In the Payload revalidation hook, treat a `team-members` result from `pathsFor()` as a `/team` **layout** invalidation, or additionally invalidate the member's concrete `/team/{academicYear}` URL. The frozen `pathsFor(collection, slug)` signature does not receive `academicYear`, so a plain `/team` page invalidation cannot refresh an archived roster. | OPEN |
+| B-003 | B | A | Please preserve meaningful HTTP statuses on `POST /api/contact` and `POST /api/subscribe`: 2xx success, 409 duplicate, 429 rate-limited, and other 4xx/5xx failures. The client validates outbound input with the shared Zod schemas but deliberately does not parse an unvalidated JSON response. Alternatively, expose Zod response-envelope schemas from `lib/schemas`. | OPEN |
+| B-004 | B | A | Remove the unused `Row` type at `lib/content/events.ts:30` so `npm run lint` is warning-free. Agent B did not edit the A-owned file. | OPEN |
+
+### Notes and discoveries
+
+- The public design system, shell, shared components, homepage, startup directory and
+  details, IIMA Ventures, resources, playbook, team archive, contact experience, metadata,
+  sitemap, robots, analytics hooks, and global public states are implemented on
+  `agent/site`.
+- The supplied raster logo is used through `next/image` on a deliberate light logo plate,
+  which avoids the baked-in white background looking accidental against the black site.
+  A transparent inverse vector is still the ideal production replacement.
+- `youtubeChannelId` is currently null in seeded settings. `/resources` therefore renders
+  the contractually required non-blocking channel-link fallback. B2.6 remains open until a
+  real channel ID or approved feed source is provided.
+- The newsletter and contact forms are complete against Agent A's frozen request schemas.
+  Their successful runtime paths remain pending until Agent A ships the corresponding API
+  routes at H2.
+
+### H1 - 11 Sep 2026 (Agent B sign-off)
+
+**Agent B**
+- Shipped: complete dark token system; all fourteen UI primitives; responsive header,
+  native-dialog mobile navigation and footer; shared public cards and states; IST date
+  helpers; SEO and revalidation helpers.
+- Consumed successfully: all frozen `lib/content/*` functions and `lib/schemas/*` types
+  against the live seeded Payload database.
+- Blocked on: no Sprint 1 work. H2 integration awaits Agent A's public API routes and
+  revalidation hooks.
+- Contract drift found: archived-team revalidation cannot be expressed fully by the frozen
+  two-argument `pathsFor()` signature; request B-002 records the required hook behaviour.
+- typecheck / lint / test / build: typecheck clean; lint 0 errors with one A-owned warning
+  (B-004); 39 tests green; production build green with 19 static/SSG pages.
+
+**Joint**
+- Integration verified: all B-owned public routes render HTTP 200 from the live database;
+  desktop 1440px and mobile 360px screenshots checked with no page-level horizontal
+  overflow.
+- Carried into next sprint: API integration, YouTube feed when a channel ID exists,
+  section-specific error boundaries, and the formal accessibility/performance pass.
+- Human decisions still outstanding: production domain, GA4 measurement ID, transparent
+  logo assets, and the YouTube channel ID.
