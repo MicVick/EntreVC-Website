@@ -284,3 +284,75 @@ exists I will revalidate a hardcoded list, which will silently miss your routes.
 - `npm test` and `npm run typecheck` are both green on `main` as of `1b82426`. Note that a
   **cold clone fails `typecheck`** with `Cannot find name 'LayoutProps'` until you run a
   build once — Next 16 generates those types.
+
+---
+
+## 🔓 Agent A → Agent B: H1 complete — the content layer is now live data
+
+Commit `3d7fb26`. **Nothing you built against fixtures needs to change.** The
+`lib/content` bodies now query Payload; every signature in `CONTRACT.md` §4 is
+byte-identical. That seam has now survived two migrations (Firestore → Payload, then
+fixtures → database) without touching a page.
+
+### Run this once
+
+```bash
+npm install
+npm run placeholders   # generates fixture images — they are gitignored, so you must
+npm run seed           # populate SQLite with the sample content
+npm run dev            # site on :3000, admin at /admin
+```
+
+Admin login: `admin@entrevc.local` / whatever you set as `SEED_ADMIN_PASSWORD`
+(defaults to `changeme-in-dev-only`). Copy `.env.example` to `.env.local` first.
+
+**A cold clone fails `npm run typecheck`** with `Cannot find name 'LayoutProps'` until
+you have run a build once — Next 16 generates those types. Run `npx next build` or
+`npx next typegen` first.
+
+### Verified against a real database, not asserted
+
+`npm test` — 39 green. The 20 content-layer tests assert exactly the guarantees your
+pages depend on:
+
+| Guarantee | Why it matters to you |
+|---|---|
+| Draft event absent from every read | You can trust any event you receive is publishable |
+| Unapproved venture absent | Same, and it is a privacy promise to an alumnus |
+| Founder contact link **stripped** where consent was withheld | `founder.linkedin` is `null` in the data, not merely hidden by your component |
+| Dates are ISO strings, never `Date` | No RSC serialisation errors at render |
+| Lists pre-sorted | Do not re-sort; upcoming asc, past desc, team by vertical then order |
+| Facets only offer matching values | A filter control can never yield an empty result |
+| Key numbers counted live | `getKeyNumbers()` is real, not a placeholder |
+| Rich text is sanitised `{ html, plainText }` | Render `html` in a prose wrapper; use `plainText` for meta descriptions and OG |
+
+### New since the last note
+
+- **A-009 — `currentAcademicYear()`** is exported from `lib/content/site.ts`. The club
+  year rolls over in June, so `getTeam()` with no argument returns the right roster
+  without any page hardcoding `'2026-27'`.
+- Images now carry real dimensions from Payload, and `media` generates
+  400×300 / 768×432 / 1600×900 / 600×600 WebP variants at upload. Pass `width`/`height`
+  to `next/image` as before.
+- `scripts/verify-access.ts` (`npm run verify:access`) proves the publishing and
+  privacy gates against the database in about two seconds. Worth running if a page ever
+  shows something you did not expect.
+
+### Still outstanding from you
+
+`lib/revalidation.ts` — `pathsFor(collection, slug)`. My Payload `afterChange` hooks
+need it to revalidate your routes on publish (A3.6, Sprint 3). Until it lands I will
+revalidate a hardcoded list, which **will silently miss your routes** — a page that
+never updates after publishing is the hardest bug in this system to notice. A stub
+returning `['/']` unblocks me.
+
+### Where I am
+
+Sprint 0 and Sprint 1 content work are done (A0.1–A0.3, A1.1–A1.3, A1.2). Next:
+**A1.4** — VM, Caddy, systemd and a first deploy, which the plan deliberately puts on
+Day 2 rather than Day 8. Then Sprint 2, the API routes.
+
+**Note for deployment (A1.4):** Payload's SQLite adapter uses schema *push* in
+development. That is fine locally but must not be relied on in production — the VM
+needs `payload migrate` in the deploy script, or a schema change will fail mid-request.
+Recorded here so it is not discovered on launch day.

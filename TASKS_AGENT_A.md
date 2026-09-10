@@ -53,7 +53,7 @@ Ask IT, and record answers in `DECISIONS.md`:
 
 ## Sprint 1 — Content model and the VM (Days 1–2 · 22h)
 
-### ☐ A1.1 — Payload collections `12h` · **H1 CRITICAL** · `CONTRACT.md` §3
+### ☑ A1.1 — Payload collections `12h` · **H1 CRITICAL** · `CONTRACT.md` §3
 **Files:** `payload.config.ts`, `collections/**`, `globals/SiteSettings.ts`
 - All eleven collections plus the settings global, per the contract table.
 - `events`: slug from title, drafts + versions on, venue group, format, hero image, gallery,
@@ -73,7 +73,7 @@ Ask IT, and record answers in `DECISIONS.md`:
 **Done when:** every collection round-trips in `/admin`, and access control is verified by
 attempting a public read of a draft.
 
-### ☐ A1.2 — Content access layer `5h` · **H1 CRITICAL** · `CONTRACT.md` §4
+### ☑ A1.2 — Content access layer `5h` · **H1 CRITICAL** · `CONTRACT.md` §4
 **Files:** `lib/schemas/**`, `lib/content/**`
 - Zod schemas mirroring the collections; these are the types Agent B imports.
 - **Within your first two hours on Day 1**, create every function in `CONTRACT.md` §4 with
@@ -81,7 +81,7 @@ attempting a public read of a draft.
   implement over Payload's Local API.
 - Published-only. ISO UTC strings out, never Date objects. `null` for missing.
 
-### ☐ A1.3 — Seed script `3h` · **H1 CRITICAL** · depends A1.1
+### ☑ A1.3 — Seed script `3h` · **H1 CRITICAL** · depends A1.1
 **Files:** `scripts/seed.ts`
 - Cover the awkward cases listed in `CONTRACT.md` §2, not just volume. Idempotent;
   `seed:reset` clears. Tell Agent B in `DECISIONS.md` the moment it lands.
