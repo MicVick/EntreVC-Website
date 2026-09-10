@@ -195,3 +195,92 @@ GitHub remote · brand vector assets · institute SMTP credentials + SPF/DKIM/DM
 - Carried into next sprint: A1.1 collections, A1.2 content layer, A1.3 seed, A1.4 first
   deploy to the VM.
 - Human decisions outstanding: see the list above; none block Sprint 1.
+
+---
+
+## 🔓 Agent A → Agent B: schemas and content layer are FROZEN and usable now
+
+Commit `1b82426`. **You are unblocked — start building pages.** No database, no admin
+panel, no seed step required: `lib/content` returns sample content today.
+
+```ts
+import { getUpcomingEvents, getStartups, getSiteSettings } from '@/lib/content'
+import type { Event, Startup, ImageRef, RichText } from '@/lib/schemas'
+
+export default async function Page() {
+  const events = await getUpcomingEvents({ limit: 3 })   // already sorted, published only
+}
+```
+
+**Import types from `@/lib/schemas`. Never redeclare a content shape** — if the model
+changes you want a typecheck failure, not a page that quietly renders wrong.
+
+Every signature in `CONTRACT.md` §4 exists and is frozen. The bodies currently return
+fixtures and will be swapped to Payload's Local API in A1.2 **without any signature
+changing**, so you will not notice the switch.
+
+### What you can rely on
+
+- Published content only; dates are **ISO UTC strings**, never `Date` objects.
+- Lists arrive **already sorted** — upcoming ascending, past descending, team by vertical
+  then `displayOrder`, schemes by `displayOrder`.
+- A missing entry returns `null`. An empty list is **normal, not an error**.
+- Images always carry `{ url, alt, width, height }` — pass `width`/`height` straight to
+  `next/image`; never guess an aspect ratio, never use `fill` with a made-up ratio.
+- Events carry three **computed** fields so no page re-derives time logic:
+  `isPast`, `isRegistrationClosed`, `hasRecap`.
+- `getStartupFacets()` and `getEventTypes()` return only values that actually match
+  something, so a filter control can never offer an option that yields nothing.
+
+### Two amendments you need to know about
+
+- **A-007 — rich text arrives as `{ html, plainText }`, not Lexical JSON.** `CONTRACT.md`
+  §9 said you would render Lexical through a component map. I convert server-side
+  instead, through a fixed converter set (`p, h2, h3, ul, ol, li, strong, em, a,
+  blockquote, hr, code`) and sanitise it. Render `html` inside a prose wrapper;
+  `plainText` is there for meta descriptions, OG tags and email. This keeps Lexical out
+  of the public bundle entirely.
+- **A-008 — `server-only` added as a dependency** (~1KB, React team). `lib/content` and
+  `lib/email` import it, so pulling them into a client component is a build error rather
+  than a silent bundle leak. Outside the frozen list in §7, hence logged.
+
+### The fixtures are adversarial on purpose
+
+They are picked for the states that break layouts, not for volume. If your component
+survives these it will survive real content:
+
+| Case | Where |
+|---|---|
+| Event **at capacity** → waitlist path | `vc-teardown-2026` |
+| **Deadline passed** → form must not render | `founder-fireside-march` |
+| **Uncapped** → no capacity indicator at all | `term-sheets-decoded-online` |
+| **No hero image**, **no venue** (online) | `term-sheets-decoded-online` |
+| Past **with** recap: gallery + recording | `entrefair-2025` |
+| Past **without** recap — the forgettable state | `alumni-founders-panel` |
+| Brutally long title | `build-weekend-2026` |
+| 3 custom questions (the max), one of each type | `build-weekend-2026` |
+| Founders with **no contact consent** → `linkedin` is `null` | `kisanquery` |
+| No logo · no website · founders across two batches | `notewell` · `stackroute` · `the-last-mile` |
+| Expired scheme — show de-emphasised, do not hide | `women-founders-cohort` |
+| Team member with no photo / no LinkedIn | `maya-pillai` · `rehan-siddiqui` |
+
+`npm test` (19 tests) asserts the fixtures satisfy the real schemas, so you can never be
+building against a shape that cannot occur in production.
+
+### One thing I need from you
+
+`lib/revalidation.ts` — `pathsFor(collection, slug)`, returning every public route
+affected by a content change. My Payload `afterChange` hooks call it on publish. Until it
+exists I will revalidate a hardcoded list, which will silently miss your routes. It is
+`CONTRACT.md` §4 and yours to own; a stub returning `['/']` is enough to start.
+
+### Also worth knowing
+
+- `app/(public)/layout.tsx` and `page.tsx` are still unmodified `create-next-app` output —
+  **yours, replace freely.** I only repointed the `globals.css` import to `../globals.css`.
+- The startup approval gate and the founder-contact-consent strip are enforced in
+  `lib/content`, not in components. Still null-check `founder.linkedin` when rendering,
+  but a mistake in a card cannot leak a contact detail.
+- `npm test` and `npm run typecheck` are both green on `main` as of `1b82426`. Note that a
+  **cold clone fails `typecheck`** with `Cannot find name 'LayoutProps'` until you run a
+  build once — Next 16 generates those types.

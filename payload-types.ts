@@ -67,6 +67,16 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    events: Event;
+    startups: Startup;
+    resources: Resource;
+    'playbook-chapters': PlaybookChapter;
+    schemes: Scheme;
+    'team-members': TeamMember;
+    media: Media;
+    registrations: Registration;
+    submissions: Submission;
+    subscribers: Subscriber;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -75,6 +85,16 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    events: EventsSelect<false> | EventsSelect<true>;
+    startups: StartupsSelect<false> | StartupsSelect<true>;
+    resources: ResourcesSelect<false> | ResourcesSelect<true>;
+    'playbook-chapters': PlaybookChaptersSelect<false> | PlaybookChaptersSelect<true>;
+    schemes: SchemesSelect<false> | SchemesSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    registrations: RegistrationsSelect<false> | RegistrationsSelect<true>;
+    submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
+    subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -85,8 +105,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -114,6 +138,619 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * Everything the club runs. Save as a draft while you work; nothing is public until you hit Publish. Past events move to the Past tab on the website automatically — you never have to tidy up.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  /**
+   * The name of the event, as it should appear everywhere.
+   */
+  title: string;
+  /**
+   * The web address for this page. Filled in from the title automatically. Once the page has been shared, changing this breaks every existing link — so avoid editing it after publishing.
+   */
+  slug?: string | null;
+  /**
+   * Highlight this event on the homepage.
+   */
+  featured?: boolean | null;
+  /**
+   * One line under the title. Optional.
+   */
+  subtitle?: string | null;
+  /**
+   * What the event is and who it is for.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Start, in India time.
+   */
+  startDateTime: string;
+  /**
+   * End, in India time. The event moves to Past on the website once this passes.
+   */
+  endDateTime: string;
+  format: 'in_person' | 'online' | 'hybrid';
+  /**
+   * Category, e.g. "Speaker series", "Workshop". Becomes a filter on the events page, so reuse the same wording.
+   */
+  eventType?: string | null;
+  /**
+   * Where it happens.
+   */
+  venue?: {
+    /**
+     * e.g. Ravi J. Matthai Auditorium
+     */
+    name?: string | null;
+    address?: string | null;
+    /**
+     * A Google Maps link, so people can navigate in one tap.
+     */
+    mapLink?: string | null;
+  };
+  /**
+   * Meeting link. Only sent to people who register — it is never shown publicly.
+   */
+  onlineJoinUrl?: string | null;
+  /**
+   * The poster. This is also the preview image when the link is shared on WhatsApp or LinkedIn, so use something readable at thumbnail size.
+   */
+  heroImage?: (number | null) | Media;
+  /**
+   * Leave empty if the event has no named speakers.
+   */
+  speakers?:
+    | {
+        name: string;
+        /**
+         * e.g. Partner
+         */
+        title?: string | null;
+        /**
+         * Company or fund.
+         */
+        org?: string | null;
+        linkedin?: string | null;
+        photo?: (number | null) | Media;
+        bio?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  agenda?:
+    | {
+        /**
+         * e.g. 18:30, or "Sat 09:00" for a multi-day event.
+         */
+        time: string;
+        title: string;
+        description?: string | null;
+        /**
+         * Names, matching the Speakers above exactly, to link the two.
+         */
+        speakerNames?: string[] | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Uncheck for events people cannot sign up for here — an external event we are only listing, for instance.
+   */
+  registrationEnabled?: boolean | null;
+  /**
+   * Leave empty for unlimited. Once this many people have confirmed, everyone after joins a waitlist automatically.
+   */
+  capacity?: number | null;
+  /**
+   * Leave empty to accept registrations until the event starts.
+   */
+  registrationDeadline?: string | null;
+  /**
+   * Only allow @iima.ac.in email addresses. Leave off for anything alumni or outside guests should be able to attend.
+   */
+  restrictToInstituteEmail?: boolean | null;
+  /**
+   * Up to three extra questions, on top of name, email, phone and batch. Every question you add costs you sign-ups — add them only when you will act on the answer.
+   */
+  registrationFields?:
+    | {
+        /**
+         * The question, as the student reads it.
+         */
+        label: string;
+        type: 'text' | 'textarea' | 'select' | 'checkbox';
+        /**
+         * The choices to pick from.
+         */
+        options?: string[] | null;
+        required?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  recap?: {
+    /**
+     * How it went. A short paragraph is plenty.
+     */
+    text?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * YouTube link to the recording, if there is one.
+     */
+    recordingUrl?: string | null;
+    /**
+     * Photographs from the day.
+     */
+    gallery?: (number | Media)[] | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Every image and file used on the site. Upload once here and reuse anywhere. Keep posters under about 300KB — this site is served from a single small server with no CDN, and heavy images are the fastest way to make it feel slow on a phone.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Describe what is in the image for someone who cannot see it — "Panellists on stage at the VC Teardown", not "image1.jpg". Required.
+   */
+  alt: string;
+  /**
+   * Photographer or source, if one needs crediting.
+   */
+  credit?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    hero?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    square?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * Ventures built by students and alumni. We list these on their behalf, so every listing needs the founder's written permission before it goes live.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "startups".
+ */
+export interface Startup {
+  id: number;
+  name: string;
+  /**
+   * The web address for this page. Filled in from the title automatically. Once the page has been shared, changing this breaks every existing link — so avoid editing it after publishing.
+   */
+  slug?: string | null;
+  type: 'alumni' | 'student';
+  /**
+   * Show on the homepage.
+   */
+  featured?: boolean | null;
+  /**
+   * One line, plain language. This is what appears on the directory card — "Reconciliation infrastructure for Indian SMB payments", not "revolutionising fintech".
+   */
+  tagline: string;
+  logo?: (number | null) | Media;
+  /**
+   * What they do, in a short paragraph.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * The founding story, for the venture's own page. Optional.
+   */
+  story?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * e.g. Fintech, B2B SaaS. These become filters, so reuse existing wording rather than inventing a new label.
+   */
+  sectors?: string[] | null;
+  stage?: ('idea' | 'pre_seed' | 'seed' | 'series_a' | 'series_b_plus' | 'bootstrapped' | 'acquired') | null;
+  foundedYear?: number | null;
+  website?: string | null;
+  /**
+   * Company page.
+   */
+  linkedin?: string | null;
+  founders?:
+    | {
+        name: string;
+        /**
+         * e.g. PGP 2018
+         */
+        batch?: string | null;
+        photo?: (number | null) | Media;
+        /**
+         * This founder has agreed we may show their contact link publicly.
+         */
+        contactConsent?: boolean | null;
+        /**
+         * Only published when consent above is ticked.
+         */
+        linkedin?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  listingApproval?: {
+    approved?: boolean | null;
+    /**
+     * Who gave permission — the founder's name.
+     */
+    approvedBy?: string | null;
+    /**
+     * When.
+     */
+    approvedAt?: string | null;
+    /**
+     * Link to the email or form response, so the next team can find it without asking.
+     */
+    evidenceUrl?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Articles, books, podcasts, reports, videos and templates worth keeping. Either link out to something, or upload a file.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources".
+ */
+export interface Resource {
+  id: number;
+  title: string;
+  /**
+   * The web address for this page. Filled in from the title automatically. Once the page has been shared, changing this breaks every existing link — so avoid editing it after publishing.
+   */
+  slug?: string | null;
+  type: 'article' | 'book' | 'podcast' | 'report' | 'video' | 'template';
+  featured?: boolean | null;
+  /**
+   * Used for ordering. Defaults to today.
+   */
+  publishedAt?: string | null;
+  /**
+   * One or two lines on why this is worth someone's time.
+   */
+  description?: string | null;
+  /**
+   * Who made it. Optional.
+   */
+  author?: string | null;
+  linkType?: ('external' | 'file') | null;
+  /**
+   * The full web address, including https://
+   */
+  url?: string | null;
+  file?: (number | null) | Media;
+  coverImage?: (number | null) | Media;
+  /**
+   * e.g. fundraising, metrics, getting started. Tags become filters — reuse existing ones rather than inventing near-duplicates.
+   */
+  tags?: string[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * The web version of the EntreVC Startup Playbook. The downloadable PDF is set separately, in Site Settings.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "playbook-chapters".
+ */
+export interface PlaybookChapter {
+  id: number;
+  title: string;
+  /**
+   * The web address for this page. Filled in from the title automatically. Once the page has been shared, changing this breaks every existing link — so avoid editing it after publishing.
+   */
+  slug?: string | null;
+  /**
+   * Reading order. Lower numbers come first.
+   */
+  order: number;
+  /**
+   * One line for the chapter index at the top of the page.
+   */
+  summary?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Programmes, grants and facilities IIMA students can apply to. Check these against the IIMA Ventures site at the start of each term — a student applying on out-of-date terms is worse than no listing.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schemes".
+ */
+export interface Scheme {
+  id: number;
+  name: string;
+  /**
+   * The web address for this page. Filled in from the title automatically. Once the page has been shared, changing this breaks every existing link — so avoid editing it after publishing.
+   */
+  slug?: string | null;
+  /**
+   * Lower numbers appear first.
+   */
+  displayOrder: number;
+  /**
+   * Leave empty if applications are rolling. Past deadlines stay visible but are shown greyed out, so nobody applies to something closed.
+   */
+  deadline?: string | null;
+  /**
+   * One or two lines — what this scheme is, in plain language.
+   */
+  summary: string;
+  /**
+   * Who should apply.
+   */
+  whoItIsFor?: string | null;
+  /**
+   * Money, space, mentorship, introductions — be specific.
+   */
+  whatYouGet?: string | null;
+  /**
+   * The conditions someone must meet.
+   */
+  eligibility?: string | null;
+  /**
+   * Where to apply. Leave empty if there is no online form.
+   */
+  applicationLink?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Who is on the team this year. To roll over at handover, duplicate last year's entries, change the year, and edit the names — the old roster stays online as an archive.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  name: string;
+  /**
+   * The web address for this page. Filled in from the title automatically. Once the page has been shared, changing this breaks every existing link — so avoid editing it after publishing.
+   */
+  slug?: string | null;
+  /**
+   * Format: 2026-27. This decides which year's team page they appear on.
+   */
+  academicYear: string;
+  /**
+   * Order within their vertical. Lower numbers appear first.
+   */
+  displayOrder: number;
+  /**
+   * e.g. Head of Events
+   */
+  role: string;
+  /**
+   * Which sub-team, e.g. Events. Must match a vertical in Site Settings to be grouped correctly.
+   */
+  vertical?: string | null;
+  /**
+   * e.g. PGP 2027
+   */
+  batch?: string | null;
+  linkedin?: string | null;
+  photo?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Everyone who has signed up for an event. Filter by event, then export to CSV — the export includes the answers to any extra questions you asked.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "registrations".
+ */
+export interface Registration {
+  id: number;
+  /**
+   * Which event this registration is for.
+   */
+  event: number | Event;
+  eventSlug: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  batchOrOrganisation?: string | null;
+  attendeeType: 'student' | 'alumni' | 'external';
+  /**
+   * Changing someone from Waitlisted to Confirmed sends them a promotion email.
+   */
+  status: 'confirmed' | 'waitlisted' | 'cancelled';
+  waitlistPosition?: number | null;
+  /**
+   * Tick on the day, for attendance records.
+   */
+  attended?: boolean | null;
+  /**
+   * Answers to the extra questions set on the event. Included in the CSV export.
+   */
+  customAnswers?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Whether their confirmation email went out. "Failed" means the registration is safely recorded but the email did not send — you can resend it.
+   */
+  emailStatus?: ('sent' | 'failed' | 'pending') | null;
+  /**
+   * The exact wording this person agreed to.
+   */
+  consentText?: string | null;
+  consentGiven?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Messages sent through the contact form. Mark each one resolved once it is dealt with, so the next person knows what still needs a reply.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions".
+ */
+export interface Submission {
+  id: number;
+  subjectLine?: string | null;
+  category: 'general' | 'event' | 'startup_listing' | 'sponsorship' | 'speaking' | 'mentorship';
+  status: 'new' | 'in_progress' | 'resolved';
+  /**
+   * Who is handling this.
+   */
+  assignedTo?: (number | null) | User;
+  name: string;
+  email: string;
+  batchOrOrganisation?: string | null;
+  message: string;
+  /**
+   * The mailbox this was forwarded to, based on the category routing in Site Settings.
+   */
+  routedTo?: string | null;
+  /**
+   * "Failed" means the message is safely stored here but the notification email did not go out — reply directly, and check the mail settings.
+   */
+  emailStatus?: ('sent' | 'failed' | 'pending') | null;
+  /**
+   * Notes for the team. Never shown to the sender.
+   */
+  internalNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * People who can sign in and edit the site. Adding and removing people here is how the club hands over each year — never share a password.
@@ -159,6 +796,31 @@ export interface User {
   collection: 'users';
 }
 /**
+ * People who asked to hear from the club. Export to CSV before a newsletter send. Anyone who unsubscribes stays here marked inactive — never email an inactive address.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers".
+ */
+export interface Subscriber {
+  id: number;
+  email: string;
+  /**
+   * Untick if they unsubscribe. Do not delete the record.
+   */
+  active?: boolean | null;
+  /**
+   * Where they signed up.
+   */
+  source: 'homepage' | 'footer' | 'event' | 'contact' | 'import';
+  /**
+   * The exact wording this person agreed to.
+   */
+  consentText?: string | null;
+  consentGiven?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -181,10 +843,51 @@ export interface PayloadKv {
  */
 export interface PayloadLockedDocument {
   id: number;
-  document?: {
-    relationTo: 'users';
-    value: number | User;
-  } | null;
+  document?:
+    | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'startups';
+        value: number | Startup;
+      } | null)
+    | ({
+        relationTo: 'resources';
+        value: number | Resource;
+      } | null)
+    | ({
+        relationTo: 'playbook-chapters';
+        value: number | PlaybookChapter;
+      } | null)
+    | ({
+        relationTo: 'schemes';
+        value: number | Scheme;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'registrations';
+        value: number | Registration;
+      } | null)
+    | ({
+        relationTo: 'submissions';
+        value: number | Submission;
+      } | null)
+    | ({
+        relationTo: 'subscribers';
+        value: number | Subscriber;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
@@ -226,6 +929,301 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  featured?: T;
+  subtitle?: T;
+  description?: T;
+  startDateTime?: T;
+  endDateTime?: T;
+  format?: T;
+  eventType?: T;
+  venue?:
+    | T
+    | {
+        name?: T;
+        address?: T;
+        mapLink?: T;
+      };
+  onlineJoinUrl?: T;
+  heroImage?: T;
+  speakers?:
+    | T
+    | {
+        name?: T;
+        title?: T;
+        org?: T;
+        linkedin?: T;
+        photo?: T;
+        bio?: T;
+        id?: T;
+      };
+  agenda?:
+    | T
+    | {
+        time?: T;
+        title?: T;
+        description?: T;
+        speakerNames?: T;
+        id?: T;
+      };
+  registrationEnabled?: T;
+  capacity?: T;
+  registrationDeadline?: T;
+  restrictToInstituteEmail?: T;
+  registrationFields?:
+    | T
+    | {
+        label?: T;
+        type?: T;
+        options?: T;
+        required?: T;
+        id?: T;
+      };
+  recap?:
+    | T
+    | {
+        text?: T;
+        recordingUrl?: T;
+        gallery?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "startups_select".
+ */
+export interface StartupsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  type?: T;
+  featured?: T;
+  tagline?: T;
+  logo?: T;
+  description?: T;
+  story?: T;
+  sectors?: T;
+  stage?: T;
+  foundedYear?: T;
+  website?: T;
+  linkedin?: T;
+  founders?:
+    | T
+    | {
+        name?: T;
+        batch?: T;
+        photo?: T;
+        contactConsent?: T;
+        linkedin?: T;
+        id?: T;
+      };
+  listingApproval?:
+    | T
+    | {
+        approved?: T;
+        approvedBy?: T;
+        approvedAt?: T;
+        evidenceUrl?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources_select".
+ */
+export interface ResourcesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  type?: T;
+  featured?: T;
+  publishedAt?: T;
+  description?: T;
+  author?: T;
+  linkType?: T;
+  url?: T;
+  file?: T;
+  coverImage?: T;
+  tags?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "playbook-chapters_select".
+ */
+export interface PlaybookChaptersSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  order?: T;
+  summary?: T;
+  body?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schemes_select".
+ */
+export interface SchemesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  displayOrder?: T;
+  deadline?: T;
+  summary?: T;
+  whoItIsFor?: T;
+  whatYouGet?: T;
+  eligibility?: T;
+  applicationLink?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  academicYear?: T;
+  displayOrder?: T;
+  role?: T;
+  vertical?: T;
+  batch?: T;
+  linkedin?: T;
+  photo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  credit?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        hero?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        square?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "registrations_select".
+ */
+export interface RegistrationsSelect<T extends boolean = true> {
+  event?: T;
+  eventSlug?: T;
+  name?: T;
+  email?: T;
+  phone?: T;
+  batchOrOrganisation?: T;
+  attendeeType?: T;
+  status?: T;
+  waitlistPosition?: T;
+  attended?: T;
+  customAnswers?: T;
+  emailStatus?: T;
+  consentText?: T;
+  consentGiven?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions_select".
+ */
+export interface SubmissionsSelect<T extends boolean = true> {
+  subjectLine?: T;
+  category?: T;
+  status?: T;
+  assignedTo?: T;
+  name?: T;
+  email?: T;
+  batchOrOrganisation?: T;
+  message?: T;
+  routedTo?: T;
+  emailStatus?: T;
+  internalNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers_select".
+ */
+export interface SubscribersSelect<T extends boolean = true> {
+  email?: T;
+  active?: T;
+  source?: T;
+  consentText?: T;
+  consentGiven?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -292,6 +1290,241 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * The club's details, contact routing and homepage numbers. Worth a look at handover — see the annual checklist.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * The first thing a visitor reads. One or two sentences on what EntreVC is.
+   */
+  positioningStatement: string;
+  /**
+   * A short paragraph under it.
+   */
+  intro?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Events held and ventures listed are counted automatically from the site. Fill in an override only if you need a different figure.
+   */
+  keyNumbers?: {
+    /**
+     * Leave empty to count automatically.
+     */
+    eventsHeldOverride?: number | null;
+    eventsHeldLabel?: string | null;
+    /**
+     * Leave empty to count automatically.
+     */
+    startupsListedOverride?: number | null;
+    startupsListedLabel?: string | null;
+    /**
+     * The site cannot count this one — set it by hand.
+     */
+    alumniNetwork?: number | null;
+    alumniNetworkLabel?: string | null;
+  };
+  /**
+   * The club's main address.
+   */
+  clubEmail: string;
+  campusAddress?: string | null;
+  /**
+   * Where someone writes to ask for their venture listing to be removed. This must be a working address — we publish listings on founders' behalf, so there has to be a route back.
+   */
+  takedownEmail?: string | null;
+  /**
+   * Each contact-form category forwards to one mailbox. Change these at handover and enquiries follow the new team immediately — no developer needed.
+   */
+  categoryRouting?:
+    | {
+        category: 'general' | 'event' | 'startup_listing' | 'sponsorship' | 'speaking' | 'mentorship';
+        email: string;
+        vertical?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shown on the contact page, so nobody has to guess who to email about sponsorship.
+   */
+  roleContacts?:
+    | {
+        role: string;
+        name?: string | null;
+        email: string;
+        /**
+         * When to use this contact.
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?:
+    | {
+        platform: 'linkedin' | 'instagram' | 'x' | 'youtube' | 'substack' | 'website';
+        url: string;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The club's sub-teams. These group the team page and draw the structure diagram, so it updates itself when you reorganise. The vertical name on a team member must match one of these exactly.
+   */
+  verticals?:
+    | {
+        name: string;
+        order: number;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  iimaVentures?: {
+    overview?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * One striking fact, e.g. "Over 1,600 ventures supported since 2002."
+     */
+    highlight?: string | null;
+    contactName?: string | null;
+    contactEmail?: string | null;
+    website?: string | null;
+    image?: (number | null) | Media;
+  };
+  playbook?: {
+    title?: string | null;
+    intro?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * The downloadable PDF. The chaptered web version is edited under Playbook chapters.
+     */
+    pdf?: (number | null) | Media;
+  };
+  youtubeChannelUrl?: string | null;
+  /**
+   * Needed to show the latest videos automatically.
+   */
+  youtubeChannelId?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  positioningStatement?: T;
+  intro?: T;
+  keyNumbers?:
+    | T
+    | {
+        eventsHeldOverride?: T;
+        eventsHeldLabel?: T;
+        startupsListedOverride?: T;
+        startupsListedLabel?: T;
+        alumniNetwork?: T;
+        alumniNetworkLabel?: T;
+      };
+  clubEmail?: T;
+  campusAddress?: T;
+  takedownEmail?: T;
+  categoryRouting?:
+    | T
+    | {
+        category?: T;
+        email?: T;
+        vertical?: T;
+        id?: T;
+      };
+  roleContacts?:
+    | T
+    | {
+        role?: T;
+        name?: T;
+        email?: T;
+        description?: T;
+        id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  verticals?:
+    | T
+    | {
+        name?: T;
+        order?: T;
+        description?: T;
+        id?: T;
+      };
+  iimaVentures?:
+    | T
+    | {
+        overview?: T;
+        highlight?: T;
+        contactName?: T;
+        contactEmail?: T;
+        website?: T;
+        image?: T;
+      };
+  playbook?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        pdf?: T;
+      };
+  youtubeChannelUrl?: T;
+  youtubeChannelId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
