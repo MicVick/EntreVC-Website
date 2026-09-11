@@ -408,3 +408,96 @@ Recorded here so it is not discovered on launch day.
   section-specific error boundaries, and the formal accessibility/performance pass.
 - Human decisions still outstanding: production domain, GA4 measurement ID, transparent
   logo assets, and the YouTube channel ID.
+
+---
+
+## 🔓 Agent A → Agent B: H2 — the API is live, and your lint warning is gone
+
+Commit `02e9016`, merged to `main`. **Rebase on `main` and your contact form, newsletter
+signup and publish-to-refresh all work.**
+
+### Your three outstanding items, closed
+
+| You were waiting on | Status |
+|---|---|
+| Contact + subscription API integration | **Done.** `/api/contact` and `/api/subscribe` are live |
+| Archived-team revalidation handling | **Done from my side** — see request A-010 below |
+| Removal of the A-owned lint warning | **Done.** `npx eslint .` is now completely clean |
+
+### Status codes match your call sites exactly
+
+I read `contact-form.tsx` and `newsletter-signup.tsx` before writing these, so the
+mapping is built around what you actually branch on rather than what I assumed:
+
+| Situation | Status | Your handling |
+|---|---|---|
+| Success | `200` | success state |
+| Already subscribed | **`409`** | your `state === 'duplicate'` branch |
+| Rate limited | **`429`** | your "too many attempts" message |
+| Validation failed | `400` | body carries `fieldErrors` keyed by field name |
+| Event full | `200` | `data.status === 'waitlisted'`, with `waitlistPosition` |
+| Deadline passed / event over | `409` | `code: 'CLOSED'` |
+
+The mapping lives in one place (`lib/api/respond.ts`). If you ever want a different
+status for a case, ask rather than special-casing in the component — changing it
+silently breaks the other form.
+
+### Publish → refresh now works
+
+Payload `afterChange` / `afterDelete` hooks on all six content collections and Site
+Settings call your `pathsFor()` and `revalidatePath`. Publishing reflects in seconds.
+
+Two things I added on top of `pathsFor` that you should know about:
+
+- **A slug or year change clears the OLD paths too.** Renaming an event would otherwise
+  leave a stale page at its previous URL.
+- **[REQUEST A-010 → you]** `/team/[year]` archive pages. `pathsFor('team-members')`
+  returns only `/team`, and it has no way to derive the academic year from a slug. I
+  handle it in `collections/hooks/revalidate.ts` (`archivePaths`) so the archive is not
+  left stale — **but the path logic belongs in your file.** When convenient, take
+  `pathsFor('team-members', academicYear)` and add ``paths.add(`/team/${slug}`)``, tell
+  me, and I will delete my workaround. Not urgent; nothing is broken.
+
+### Verified end to end, not just unit tested
+
+Against a running server: subscribe `200` → same address `409` → contact `200` →
+registration on a full event returns `waitlisted` with position 2 → closed event `409` →
+bad payload `400` with per-field errors → 7 rapid contact posts give exactly five `200`
+then `429`. Then I queried the database to confirm bot submissions wrote **zero** rows
+while legitimate ones wrote exactly one.
+
+**A honeypot bug this caught, worth knowing about:** the shared input schemas declare
+`website: z.string().max(0)`, so validating first rejected bots with a `400` whose
+`fieldErrors` *named the honeypot field* — handing a bot author the exact hint they
+need, and making the `isBot()` check dead code. The honeypot is now checked against the
+raw body before validation. Your forms are unaffected (they send `website: ''`), but if
+you ever add a honeypot elsewhere, check it before you parse.
+
+### Capacity, since it is the risk the PRD rates highest
+
+A per-event async lock serialises check-and-insert, with the count re-read inside the
+critical section. 50 simultaneous registrations against a capacity-10 event yield
+exactly 10 confirmed and 40 waitlisted — asserted both on the returned values and by
+counting rows. I disabled the lock to confirm the test fails without it: all 50 came
+back confirmed, which is the oversell the PRD warns about.
+
+`GET /api/events/[slug]/availability` gives you live counts for the capacity indicator
+on a static page — `{ capacity, registered, waitlisted, isFull, isClosed }`, cached 15s.
+It is **advisory**: `POST /api/register` re-counts under the lock and is the only
+authority. Do not gate the form on it, just display it.
+
+### Email
+
+Six templates, hand-written table-based HTML with plaintext alternatives (amendment
+A-003). Queued, never awaited, so endpoints return well under 500ms; the send outcome is
+recorded on the document so a failure surfaces in the admin instead of vanishing. With
+no `SMTP_HOST` set it logs instead of sending — the site works fine without mail
+configured, which is the state you will see locally.
+
+### Where I am
+
+Sprint 0, Sprint 1 content, and Sprint 2 are done. 50 tests, lint clean, build green.
+
+**Still blocked on a human, not on you:** the VM itself (A1.4) — SSH access, and whether
+its storage is NFS-mounted, which would force Postgres over SQLite. Deploy, backups and
+the handover kit are Sprint 4 and all wait on that.
