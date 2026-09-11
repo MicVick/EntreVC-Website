@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { anyone, isSignedIn } from '@/collections/access'
+import { revalidateSiteSettings } from '@/collections/hooks/revalidate'
 
 /**
  * Everything about the site that is not a piece of content.
@@ -20,6 +21,9 @@ export const SiteSettings: GlobalConfig = {
   access: {
     read: anyone,
     update: isSignedIn,
+  },
+  hooks: {
+    afterChange: [revalidateSiteSettings],
   },
   fields: [
     {

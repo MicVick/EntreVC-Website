@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { isSignedIn, publishedOnly } from './access'
 import { slugField } from './fields/slug'
+import { revalidateAfterChange, revalidateAfterDelete } from './hooks/revalidate'
 
 /**
  * The playbook, chapter by chapter.
@@ -29,6 +30,11 @@ export const PlaybookChapters: CollectionConfig = {
     delete: isSignedIn,
   },
   versions: { drafts: true, maxPerDoc: 20 },
+  hooks: {
+    afterChange: [revalidateAfterChange('playbook-chapters')],
+    afterDelete: [revalidateAfterDelete('playbook-chapters')],
+  },
+
   fields: [
     { name: 'title', type: 'text', required: true },
     slugField('title'),

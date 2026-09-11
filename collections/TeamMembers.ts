@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { isSignedIn, publishedOnly } from './access'
 import { slugField } from './fields/slug'
+import { revalidateAfterChange, revalidateAfterDelete } from './hooks/revalidate'
 
 /**
  * The club team, by academic year.
@@ -29,6 +30,11 @@ export const TeamMembers: CollectionConfig = {
     delete: isSignedIn,
   },
   versions: { drafts: true, maxPerDoc: 20 },
+  hooks: {
+    afterChange: [revalidateAfterChange('team-members')],
+    afterDelete: [revalidateAfterDelete('team-members')],
+  },
+
   fields: [
     { name: 'name', type: 'text', required: true },
     slugField('name'),

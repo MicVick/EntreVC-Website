@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { isSignedIn, publishedOnly } from './access'
 import { slugField } from './fields/slug'
+import { revalidateAfterChange, revalidateAfterDelete } from './hooks/revalidate'
 
 /**
  * Events — the highest-frequency job on the site, in both directions: a student
@@ -34,6 +35,11 @@ export const Events: CollectionConfig = {
     // Version history, free. PRD asked for "the last 20 changes per document".
     maxPerDoc: 20,
   },
+  hooks: {
+    afterChange: [revalidateAfterChange('events')],
+    afterDelete: [revalidateAfterDelete('events')],
+  },
+
   fields: [
     {
       name: 'title',

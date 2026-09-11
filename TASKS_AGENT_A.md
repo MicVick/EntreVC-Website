@@ -99,7 +99,7 @@ attempting a public read of a draft.
 
 ## Sprint 2 — API routes and email (Days 3–4 · 20h)
 
-### ☐ A2.1 — Registration endpoint `5h` — **the highest-risk task in the build**
+### ☑ A2.1 — Registration endpoint `5h` — **the highest-risk task in the build**
 **Files:** `app/api/register/route.ts`
 - Contract in `CONTRACT.md` §5. **Ship a stub returning realistic confirmed / waitlisted /
   duplicate / closed results by end of Day 1** so your own form UI work in Sprint 3 has
@@ -116,12 +116,12 @@ attempting a public read of a draft.
 **Done when:** 50 simultaneous registrations against a capacity-10 event yield exactly 10
 confirmed and 40 waitlisted.
 
-### ☐ A2.2 — Availability endpoint `2h`
+### ☑ A2.2 — Availability endpoint `2h`
 **Files:** `app/api/events/[slug]/availability/route.ts`
 - Live counts for the capacity indicator on a statically-generated page. Cheap, cacheable
   for a few seconds, and explicitly advisory — A2.1 is the authority.
 
-### ☐ A2.3 — Email `6h` · deliverability is a rated High risk
+### ☑ A2.3 — Email `6h` · deliverability is a rated High risk
 **Files:** `lib/email/**`
 - `@payloadcms/email-nodemailer` against the institute SMTP relay.
 - react-email templates: registration confirmation (with `.ics` attached), waitlist
@@ -131,18 +131,18 @@ confirmed and 40 waitlisted.
   must persist even when email fails.**
 - Flag the SPF/DKIM/DMARC dependency loudly on Day 5 — it blocks deliverability, not code.
 
-### ☐ A2.4 — Calendar file `2h`
+### ☑ A2.4 — Calendar file `2h`
 **Files:** `app/api/ics/[slug]/route.ts`
 - `.ics` with correct IST→UTC handling, venue, description, organiser. Also return a Google
   Calendar template URL for the inline success state.
 
-### ☐ A2.5 — Contact and subscribe `3h`
+### ☑ A2.5 — Contact and subscribe `3h`
 **Files:** `app/api/contact/route.ts`, `app/api/subscribe/route.ts`
 - Persist first, then send. Auto-acknowledge the sender; route to the vertical mailbox from
   the **admin-editable** `categoryRoutingMap` in settings — changing it must need no deploy.
 - Subscribe: lowercase and unique, `source` tag, consent text and timestamp stored.
 
-### ☐ A2.6 — Abuse controls `2h`
+### ☑ A2.6 — Abuse controls `2h`
 **Files:** `lib/rate-limit.ts`
 - Honeypot field `website` on every public endpoint; IP rate limiting via an in-process
   token bucket with a SQLite fallback `[ASSUMPTION: no Redis vendor in V1]`. No CAPTCHA
@@ -194,7 +194,7 @@ You own this end to end: the pages, the form, the endpoint behind it, and the em
 - Inline success with date and venue plus an add-to-calendar button, for the many users who
   never open the email. Fire `register_start` and `registration_complete`.
 
-### ☐ A3.6 — Revalidation hooks `3h`
+### ☑ A3.6 — Revalidation hooks `3h`
 **Files:** `collections/**` hooks
 - Payload `afterChange` / `afterDelete` call `pathsFor()` from Agent B's
   `lib/revalidation.ts` and `revalidatePath` each. **Must reflect within 10 seconds.**

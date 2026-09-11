@@ -27,7 +27,6 @@ import {
  * the whole point of the seam.
  */
 
-type Row = Record<string, unknown>
 type Unwrap<T> = T extends (infer U)[] ? U : never
 
 function mapSpeaker(row: Unwrap<NonNullable<PayloadEvent['speakers']>>): Speaker {

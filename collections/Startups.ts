@@ -3,6 +3,7 @@ import { APIError } from 'payload'
 
 import { isSignedIn, publishedOnly } from './access'
 import { slugField } from './fields/slug'
+import { revalidateAfterChange, revalidateAfterDelete } from './hooks/revalidate'
 
 /**
  * The venture directory — the credibility artifact for investors and mentors.
@@ -36,6 +37,8 @@ export const Startups: CollectionConfig = {
   },
   versions: { drafts: true, maxPerDoc: 20 },
   hooks: {
+    afterChange: [revalidateAfterChange('startups')],
+    afterDelete: [revalidateAfterDelete('startups')],
     beforeChange: [
       ({ data }) => {
         // The publish gate. Refusing here rather than warning in the UI means there is

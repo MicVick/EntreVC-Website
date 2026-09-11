@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { isSignedIn, publishedOnly } from './access'
 import { slugField } from './fields/slug'
+import { revalidateAfterChange, revalidateAfterDelete } from './hooks/revalidate'
 
 /**
  * IIMA Ventures schemes available to IIMA students — an explicit ask in the club brief.
@@ -28,6 +29,11 @@ export const Schemes: CollectionConfig = {
     delete: isSignedIn,
   },
   versions: { drafts: true, maxPerDoc: 20 },
+  hooks: {
+    afterChange: [revalidateAfterChange('schemes')],
+    afterDelete: [revalidateAfterDelete('schemes')],
+  },
+
   fields: [
     { name: 'name', type: 'text', required: true },
     slugField('name'),
