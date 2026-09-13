@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { actionErrorCodes } from './action-result'
 import {
   attendeeTypeSchema,
   eventFormatSchema,
@@ -131,6 +132,14 @@ export const registrationInputSchema = z.object({
 })
 export type RegistrationInput = z.infer<typeof registrationInputSchema>
 
+/**
+ * What the form actually holds, which is not the same as what the endpoint receives:
+ * `customAnswers` carries a `.default({})`, so it is optional on the way in and
+ * guaranteed on the way out. react-hook-form is generic over the INPUT side, so the
+ * form must be typed with this rather than `RegistrationInput`.
+ */
+export type RegistrationFormValues = z.input<typeof registrationInputSchema>
+
 export const registrationResultSchema = z.object({
   registrationId: z.string(),
   status: z.enum(['confirmed', 'waitlisted']),
@@ -139,6 +148,37 @@ export const registrationResultSchema = z.object({
   addToCalendarUrl: z.string(),
 })
 export type RegistrationResult = z.infer<typeof registrationResultSchema>
+
+/**
+ * The exact envelope POST /api/register returns.
+ *
+ * The form parses the response through this rather than trusting its shape, so a route
+ * that ever drifts from the contract fails loudly in one place instead of surfacing as
+ * `undefined` somewhere in the success state.
+ */
+export const registrationResponseSchema = z.discriminatedUnion('ok', [
+  z.object({ ok: z.literal(true), data: registrationResultSchema }),
+  z.object({
+    ok: z.literal(false),
+    error: z.string(),
+    code: z.enum(actionErrorCodes),
+    fieldErrors: z.record(z.string(), z.array(z.string())).optional(),
+  }),
+])
+export type RegistrationResponse = z.infer<typeof registrationResponseSchema>
+
+/**
+ * POST /api/register/resend — re-send a confirmation someone has lost.
+ *
+ * Deliberately minimal: it proves nothing about the caller, so it can only ever repeat
+ * an email to an address that already registered. See the route for why that is the
+ * whole design.
+ */
+export const resendInputSchema = z.object({
+  eventSlug: slugSchema,
+  email: z.string().min(1, 'Please enter your email').email('That does not look like an email'),
+})
+export type ResendInput = z.infer<typeof resendInputSchema>
 
 /** Shape of GET /api/events/[slug]/availability. Advisory only — the POST is authority. */
 export const availabilitySchema = z.object({

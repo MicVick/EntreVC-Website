@@ -85,6 +85,13 @@ export const LIMITS = {
   register: { limit: 10, windowMs: 60_000 },
   contact: { limit: 5, windowMs: 60_000 },
   subscribe: { limit: 5, windowMs: 60_000 },
+  /**
+   * Deliberately the tightest limit here. Resend sends mail to an address the caller
+   * supplies, so a generous limit turns it into a way to flood somebody's inbox. Two a
+   * minute covers a real person who mistyped and tried again; it does not cover anyone
+   * using this as a weapon.
+   */
+  resend: { limit: 2, windowMs: 60_000 },
 } as const
 
 export function checkLimit(

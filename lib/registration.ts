@@ -57,7 +57,8 @@ function withLock<T>(key: string, task: () => Promise<T>): Promise<T> {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function summarise(event: Event): EventSummary {
+/** Exported so the resend route describes an event exactly as the first email did. */
+export function summariseEvent(event: Event): EventSummary {
   return {
     slug: event.slug,
     title: event.title,
@@ -220,7 +221,7 @@ export async function registerForEvent(
       }
     }
 
-    const summary = summarise(event)
+    const summary = summariseEvent(event)
     if (status === 'confirmed') {
       queueEmail(
         registrationConfirmation({

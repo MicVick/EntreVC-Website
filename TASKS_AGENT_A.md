@@ -156,7 +156,7 @@ confirmed and 40 waitlisted.
 
 You own this end to end: the pages, the form, the endpoint behind it, and the email out.
 
-### ☐ A3.1 — Events list `3h`
+### ☑ A3.1 — Events list `3h`
 **Files:** `app/(public)/events/page.tsx`
 - Upcoming ascending, past descending, filter by event type reflected in the URL.
 - An event whose `endDateTime` has passed moves to Past **automatically at next
@@ -164,7 +164,7 @@ You own this end to end: the pages, the form, the endpoint behind it, and the em
 - Build from Agent B's `components/ui` and `components/public/event-card`. Do not write your
   own card.
 
-### ☐ A3.2 — Event detail `5h` · the highest-frequency job on the site
+### ☑ A3.2 — Event detail `5h` · the highest-frequency job on the site
 **Files:** `app/(public)/events/[slug]/page.tsx`
 - Hero image, title, date/time in IST, venue with map link, format badge, speakers with
   photo and bio, agenda blocks, registration deadline, capacity indicator, register CTA.
@@ -173,11 +173,11 @@ You own this end to end: the pages, the form, the endpoint behind it, and the em
 - `generateStaticParams` from `getAllEventSlugs()`. OG tags point at the event's hero
   poster — dynamic OG generation is cut.
 
-### ☐ A3.3 — Past-event recap mode `3h`
+### ☑ A3.3 — Past-event recap mode `3h`
 - Same route switches to recap: recap text, photo gallery (lightbox, keyboard navigable),
   embedded recording. No registration form.
 
-### ☐ A3.4 — Registration form `5h` · **the highest-value UI in the build**
+### ☑ A3.4 — Registration form `5h` · **the highest-value UI in the build**
 **Files:** `components/public/registration-form.tsx`
 - Expands **inline** on the event page: no route change, no modal that traps scroll.
 - `react-hook-form` + the zod schema from `lib/schemas`.
@@ -190,7 +190,7 @@ You own this end to end: the pages, the form, the endpoint behind it, and the em
   submission.
 - Errors announced to screen readers; focus moves to the first invalid field.
 
-### ☐ A3.5 — Success state and calendar `2h`
+### ☑ A3.5 — Success state and calendar `2h`
 - Inline success with date and venue plus an add-to-calendar button, for the many users who
   never open the email. Fire `register_start` and `registration_complete`.
 
