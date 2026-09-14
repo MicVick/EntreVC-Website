@@ -183,6 +183,7 @@ export function StartupDirectory({ startups, facets }: StartupDirectoryProps) {
       </div>
 
       <div id="startup-results" className="scroll-mt-28 pt-8">
+        <h2 className="sr-only">Startup results</h2>
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <p aria-live="polite" className="text-sm text-fg-muted">
             Showing <span className="font-bold text-fg">{filtered.length}</span> {filtered.length === 1 ? 'venture' : 'ventures'}

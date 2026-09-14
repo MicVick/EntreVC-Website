@@ -13,6 +13,7 @@ export function BrandLogo({ className, compact = false }: BrandLogoProps) {
   return (
     <Link
       href="/"
+      prefetch={false}
       aria-label="EntreVC home"
       className={cn(
         'inline-flex shrink-0 items-center overflow-hidden rounded-sm bg-fg shadow-sm transition hover:-translate-y-0.5 hover:shadow-md',

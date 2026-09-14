@@ -109,7 +109,7 @@ export default async function HomePage() {
 
       <section className="surface-grid relative overflow-hidden border-b border-border">
         <div className="site-shell grid min-h-[calc(100svh-var(--header-height))] gap-12 py-14 sm:py-20 lg:grid-cols-[minmax(0,1.22fr)_minmax(19rem,0.78fr)] lg:items-end lg:py-24">
-          <div className="animate-enter self-center">
+          <div className="self-center">
             <p className="eyebrow">Entrepreneurship × Venture Capital · IIM Ahmedabad</p>
             <h1 className="display-type mt-7 max-w-5xl text-[clamp(3.5rem,9vw,8.3rem)] font-semibold leading-[0.88]">
               Ideas deserve a place to become{' '}
@@ -119,11 +119,11 @@ export default async function HomePage() {
               {settings.positioningStatement}
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link href="/events" className={buttonVariants({ size: 'lg' })}>
+              <Link href="/events" prefetch={false} className={buttonVariants({ size: 'lg' })}>
                 Find your next room
                 <ArrowRight aria-hidden="true" className="size-4" />
               </Link>
-              <Link href="/startups" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+              <Link href="/startups" prefetch={false} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
                 Explore the ecosystem
               </Link>
             </div>
@@ -235,10 +235,10 @@ export default async function HomePage() {
 
       <section className="border-y border-border bg-brand text-brand-fg">
         <div className="site-shell grid gap-10 py-14 sm:grid-cols-3 sm:py-18">
-          <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} className="border-brand-fg/35" />
-          <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} className="border-brand-fg/35" />
+          <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} className="border-brand-fg/35 [&>p]:text-brand-fg" />
+          <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} className="border-brand-fg/35 [&>p]:text-brand-fg" />
           {numbers.alumniNetwork === null ? null : (
-            <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} className="border-brand-fg/35" />
+            <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} className="border-brand-fg/35 [&>p]:text-brand-fg" />
           )}
         </div>
       </section>

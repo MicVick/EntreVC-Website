@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useId, useRef, type ReactNode } from 'react'
-import { X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/components/ui/cn'
+import { XIcon } from '@/components/ui/icons'
 
 export type SheetProps = {
   open: boolean
@@ -72,7 +72,7 @@ export function Sheet({
             onClick={() => onOpenChange(false)}
             className="-mr-2 -mt-2"
           >
-            <X aria-hidden="true" className="size-5" />
+            <XIcon aria-hidden="true" className="size-5" />
           </Button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-5">{children}</div>

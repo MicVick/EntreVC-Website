@@ -693,3 +693,36 @@ The first reconciliation commit added local boundary files under
 Agent B removed those files immediately in the next commit. Events retain the shared
 public root error/loading/not-found boundary; B-owned startups, resources and team keep
 their local boundaries. No Agent A implementation was edited.
+
+### Requests from the Sprint 4 browser audit
+
+| # | From | To | Request | Status |
+|---|---|---|---|---|
+| B-005 | B | A | Fix the event-detail facts list so each `<dt>`/`<dd>` pair is validly grouped as a direct child of its `<dl>`. Axe reports `definition-list` and `dlitem` on `/events/build-weekend-2026`. | OPEN |
+| B-006 | B | A | Move initial focus inside the gallery dialog when it opens (the close button is the natural target). Native Escape, arrow navigation and focus return already pass. | OPEN |
+| B-007 | B | A | Confirm the production Caddy config serves Brotli/gzip compression and sensible immutable/static versus HTML cache headers for B4.2. | OPEN |
+| B-008 | B | A | The first simulated-4G Lighthouse run measured event-detail LCP at 3.38s, with the H1 spending 86% of that time in render delay. Agent B is reducing shared font contention; please recheck after integration before H4 sign-off. | OPEN |
+
+### Sprint 4 frontend audit — local results
+
+- Accessibility: home, startup directory and contact are axe-clean at WCAG 2.1 AA after
+  correcting red-surface contrast and the directory heading hierarchy. Twenty-four Tab
+  stops per representative journey were visible and focus-indicated; all audited images
+  expose alt semantics. The Agent A-owned event page is the only remaining axe failure
+  (B-005), and its lightbox needs initial-focus placement (B-006). Arrow navigation,
+  Escape close and focus return pass.
+- Performance: the final production Lighthouse run with DevTools-applied 150ms RTT / 1.6
+  Mbps mobile throttling measured home at 95 performance / 2.444s LCP and event detail at
+  91 / 2.472s. Both have zero CLS; home scored 100 for accessibility, best practices and
+  SEO. Event accessibility remains 93 until B-005/B-006 land. Homepage JS is 141KB Brotli
+  excluding Next's legacy polyfill chunk; app route and shell code is 19.2KB gzip.
+- Responsive: 240 route/viewport checks across 12 routes at 360, 390, 768, 1024 and 1440
+  passed in Chromium 153, Edge 153, Firefox 155 and WebKit 26.6. No HTTP failures,
+  page-level overflow or runtime errors; the keyboard-operated 390px drawer passed in all
+  four engines. Exact Safari and previous-version coverage remains a human-device check.
+- Newsletter regression after removing client-side Zod: empty, invalid-email, success and
+  duplicate states all pass against the live API. The server keeps the frozen Zod schema
+  as authority; the browser payload is unchanged.
+- Visual review: the 1440px home hero and the full 390px contact flow retain the intended
+  black/white/red editorial system, readable hierarchy and no clipping after the font and
+  contact-social changes.

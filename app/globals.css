@@ -37,7 +37,7 @@
   --shadow-md: 0 1px 0 #ffffff0d, 0 20px 55px #00000066;
   --shadow-lg: 0 1px 0 #ffffff12, 0 32px 90px #00000099;
 
-  --font-sans: var(--font-manrope);
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-space-grotesk);
 }
 

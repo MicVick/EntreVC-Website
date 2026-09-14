@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Manrope, Space_Grotesk } from 'next/font/google'
+import { Space_Grotesk } from 'next/font/google'
 
 import { Footer } from '@/components/public/footer'
 import { GoogleAnalytics } from '@/components/public/google-analytics'
@@ -10,16 +10,10 @@ import { getSiteUrl } from '@/lib/seo'
 
 import '../globals.css'
 
-const manrope = Manrope({
-  variable: '--font-manrope',
-  subsets: ['latin'],
-  display: 'swap',
-})
-
 const spaceGrotesk = Space_Grotesk({
   variable: '--font-space-grotesk',
   subsets: ['latin'],
-  display: 'swap',
+  display: 'optional',
 })
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -54,7 +48,7 @@ export default async function PublicLayout({ children }: LayoutProps<'/'>) {
   const settings = await getSiteSettings()
 
   return (
-    <html lang="en" className={`${manrope.variable} ${spaceGrotesk.variable} h-full antialiased`}>
+    <html lang="en" className={`${spaceGrotesk.variable} h-full antialiased`}>
       <body className="flex min-h-dvh flex-col bg-bg text-fg">
         <a
           href="#main-content"

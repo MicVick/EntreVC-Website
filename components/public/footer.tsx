@@ -43,12 +43,12 @@ export function Footer({ settings }: FooterProps) {
             <ul className="mt-5 space-y-3">
               {navigationItems.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-sm font-semibold text-fg-muted transition hover:text-accent">
+                  <Link href={item.href} prefetch={false} className="text-sm font-semibold text-fg-muted transition hover:text-accent">
                     {item.label}
                   </Link>
                 </li>
               ))}
-              <li><Link href="/contact" className="text-sm font-semibold text-fg-muted transition hover:text-accent">Contact</Link></li>
+              <li><Link href="/contact" prefetch={false} className="text-sm font-semibold text-fg-muted transition hover:text-accent">Contact</Link></li>
             </ul>
           </nav>
           <div>

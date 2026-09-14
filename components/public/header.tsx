@@ -24,6 +24,7 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={false}
               className="rounded-full px-3 py-2 text-sm font-semibold text-fg-muted transition hover:bg-surface hover:text-fg xl:px-4"
             >
               {item.label}

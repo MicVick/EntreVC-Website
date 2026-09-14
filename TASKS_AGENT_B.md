@@ -196,6 +196,9 @@ points to every section.
   management in the gallery lightbox, alt text everywhere.
 - axe clean on all five pages.
 
+> B-owned pages are axe-clean; keyboard focus, headings and alt semantics pass. Event
+> detail still has two Agent A-owned blockers recorded as B-005 and B-006.
+
 ### ☐ B4.2 — Performance `3h` · LCP < 2.5s on 4G, with no CDN
 - Throttled 4G Lighthouse on home and event detail.
 - `next/image` with correct `sizes`, priority on the LCP element only, WebP/AVIF.
@@ -203,10 +206,17 @@ points to every section.
 - Confirm Caddy is serving compression and sensible cache headers — ask Agent A, since the
   server config is theirs.
 
+> Local production audit passes: 2.444s home / 2.472s event LCP on DevTools-throttled 4G;
+> homepage initial JS is 141KB Brotli excluding the legacy polyfill. B-007 awaits Caddy.
+
 ### ☐ B4.3 — Responsive and browser QA `3h`
 - 360, 390, 768, 1024, 1440. Chrome, Safari, Firefox, Edge — last two versions.
 - No horizontal scroll at 360px anywhere; wide content scrolls inside its own container,
   never the page body.
+
+> 240 route/viewport checks pass in Chromium 153, Edge 153, Firefox 155 and WebKit 26.6,
+> including the 390px keyboard-operated mobile drawer. Native Safari and previous-version
+> coverage still need the human device/browser matrix.
 
 ### ☐ B4.4 — Content entry session `3h` · *a club activity you support*
 - Sit with the team while **they** enter real content in `/admin`. Watch where they
@@ -215,6 +225,9 @@ points to every section.
 
 ### ☐ B4.5 — Final QA `1h`
 - Walk the Definition of Done in `EXECUTION_PLAN.md` §7 line by line and tick it honestly.
+
+> Local frontend lines have been walked. Final sign-off remains gated by B4.1/B4.2,
+> deployment/backups, the two committed Playwright flows, real content and handover.
 
 > **🤝 H4 — Lighthouse target met, axe clean, OG previews checked in a real WhatsApp chat.**
 

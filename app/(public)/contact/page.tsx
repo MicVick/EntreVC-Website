@@ -91,7 +91,7 @@ export default async function ContactPage() {
             <div className="mt-10 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
               {contacts.map((contact) => (
                 <article key={`${contact.role}-${contact.email}`} className="min-h-64 border-b border-r border-border bg-bg p-6">
-                  <p className="text-xs font-bold uppercase tracking-[0.13em] text-brand">{contact.role}</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.13em] text-accent">{contact.role}</p>
                   {contact.name ? <h3 className="display-type mt-7 text-2xl font-semibold">{contact.name}</h3> : null}
                   {contact.description ? <p className="mt-3 text-sm leading-6 text-fg-muted">{contact.description}</p> : null}
                   <a href={`mailto:${contact.email}`} className="mt-6 inline-flex items-center gap-2 break-all text-sm font-semibold text-accent">

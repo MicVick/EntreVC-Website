@@ -1,13 +1,13 @@
 'use client'
 
 import { useId, useState, type FormEvent } from 'react'
-import { ArrowRight, Check } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ArrowRightIcon, CheckIcon } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { subscribeInputSchema, type SubscriberSource } from '@/lib/schemas'
+import type { SubscriberSource } from '@/lib/schemas'
 import { trackAnalytics } from '@/lib/analytics'
 
 type NewsletterSignupProps = {
@@ -28,16 +28,26 @@ export function NewsletterSignup({ source, compact = false }: NewsletterSignupPr
     event.preventDefault()
     const formElement = event.currentTarget
     const form = new FormData(formElement)
-    const parsed = subscribeInputSchema.safeParse({
-      email: form.get('email'),
-      source,
-      consentGiven: form.get('consentGiven') === 'on',
-      website: form.get('website') || undefined,
-    })
+    const emailInput = formElement.elements.namedItem('email')
+    const email = emailInput instanceof HTMLInputElement ? emailInput.value.trim() : ''
+    const consentGiven = form.get('consentGiven') === 'on'
+    const website = String(form.get('website') ?? '')
 
-    if (!parsed.success) {
+    if (!email) {
       setState('error')
-      setMessage(parsed.error.issues[0]?.message ?? 'Please check your details.')
+      setMessage('Please enter your email')
+      return
+    }
+
+    if (!(emailInput instanceof HTMLInputElement) || !emailInput.validity.valid) {
+      setState('error')
+      setMessage('That does not look like an email')
+      return
+    }
+
+    if (!consentGiven) {
+      setState('error')
+      setMessage('We need your consent to email you')
       return
     }
 
@@ -48,7 +58,7 @@ export function NewsletterSignup({ source, compact = false }: NewsletterSignupPr
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parsed.data),
+        body: JSON.stringify({ email, source, consentGiven, website: website || undefined }),
       })
 
       if (response.ok) {
@@ -76,7 +86,7 @@ export function NewsletterSignup({ source, compact = false }: NewsletterSignupPr
   if (state === 'success') {
     return (
       <div role="status" className="flex min-h-14 items-center gap-3 rounded-md border border-success bg-success-muted px-4 py-3 text-sm font-semibold text-success">
-        <Check aria-hidden="true" className="size-5 shrink-0" />
+        <CheckIcon aria-hidden="true" className="size-5 shrink-0" />
         {message}
       </div>
     )
@@ -100,7 +110,7 @@ export function NewsletterSignup({ source, compact = false }: NewsletterSignupPr
         </div>
         <Button type="submit" size={compact ? 'md' : 'lg'} disabled={state === 'submitting'}>
           {state === 'submitting' ? 'Joining…' : 'Join the list'}
-          <ArrowRight aria-hidden="true" className="size-4" />
+          <ArrowRightIcon aria-hidden="true" className="size-4" />
         </Button>
       </div>
       <div className="mt-3 flex items-start gap-3">
