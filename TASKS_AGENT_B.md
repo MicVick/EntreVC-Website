@@ -181,6 +181,9 @@ points to every section.
 - `not-found.tsx` and `error.tsx` at root and per section, `loading.tsx` skeletons, a
   defined empty state for every list.
 
+> The public root boundary covers the Agent A-owned event section; B-owned content
+> sections additionally have local boundaries.
+
 > **🤝 H3 — every page built and rendering real content.**
 
 ---

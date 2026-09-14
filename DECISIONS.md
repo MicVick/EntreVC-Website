@@ -685,3 +685,11 @@ storage is NFS-mounted.
   reset-seeded database; the production Webpack build generated all 31 public/static
   paths successfully. Turbopack itself was not used for this isolated build because it
   rejects a `node_modules` junction that points outside a temporary worktree.
+
+### Ownership correction
+
+The first reconciliation commit added local boundary files under
+`app/(public)/events/**`. That directory belongs to Agent A under `CONTRACT.md` §6, so
+Agent B removed those files immediately in the next commit. Events retain the shared
+public root error/loading/not-found boundary; B-owned startups, resources and team keep
+their local boundaries. No Agent A implementation was edited.
