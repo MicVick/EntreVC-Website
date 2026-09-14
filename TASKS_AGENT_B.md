@@ -148,14 +148,14 @@ points to every section.
   first reorganisation.
 - Year switcher rendering any past roster from the same collection.
 
-### ☐ B3.3 — Contact page `3h`
+### ☒ B3.3 — Contact page `3h`
 **Files:** `app/(public)/contact/page.tsx`
 - Club email, campus address, socials, role-specific contacts from settings.
 - Category selector (general / event / startup listing / sponsorship / speaking /
   mentorship), name, email, batch or organisation, message, honeypot.
 - Documented **takedown route** for listing removal. Fire `contact_submit`.
 
-### ☐ B3.4 — Mailing-list signup `1h`
+### ☒ B3.4 — Mailing-list signup `1h`
 - One component used on the homepage and in the footer. Email plus consent, inline success
   and duplicate states. Fire `newsletter_signup`.
 
@@ -168,13 +168,16 @@ points to every section.
 ### ☒ B3.6 — Sitemap and robots `1h`
 - `app/sitemap.ts` from published content; `app/robots.ts` disallowing `/admin` and `/api`.
 
-### ☐ B3.7 — Analytics `2h`
+### ☒ B3.7 — Analytics `2h`
 - GA4 with the five frozen events from `CONTRACT.md` §9: `register_start`,
   `registration_complete`, `newsletter_signup`, `startup_view`, `contact_submit`.
 - Verify the event-page-view → registration funnel actually resolves. The PRD sets a >25%
   target against it, and an unverified funnel measures nothing.
 
-### ☐ B3.8 — Error, empty and loading states `1h`
+> Event dispatch is verified in-browser. The live GA4 funnel report remains an operational
+> check once `NEXT_PUBLIC_GA_MEASUREMENT_ID` is supplied.
+
+### ☒ B3.8 — Error, empty and loading states `1h`
 - `not-found.tsx` and `error.tsx` at root and per section, `loading.tsx` skeletons, a
   defined empty state for every list.
 

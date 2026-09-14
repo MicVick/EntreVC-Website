@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import { ArrowUpRight, Mail, MapPin, MessageSquareText } from 'lucide-react'
+import { ArrowUpRight, Mail, MapPin, MessageSquareText, Share2 } from 'lucide-react'
 
 import { ContactForm } from '@/components/public/contact-form'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -43,6 +43,26 @@ export default async function ContactPage() {
                 <MapPin aria-hidden="true" className="size-5 text-accent" />
                 <p className="mt-5 text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">Campus</p>
                 <address className="mt-2 text-sm not-italic leading-6 text-fg-muted">{settings.campusAddress}</address>
+              </div>
+            ) : null}
+            {settings.socialLinks.length ? (
+              <div className="rounded-lg border border-border bg-surface p-6">
+                <Share2 aria-hidden="true" className="size-5 text-accent" />
+                <p className="mt-5 text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">Find EntreVC</p>
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-3">
+                  {settings.socialLinks.map((social) => (
+                    <a
+                      key={`${social.platform}-${social.url}`}
+                      href={social.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold capitalize text-fg transition hover:text-accent"
+                    >
+                      {social.label ?? social.platform}
+                      <ArrowUpRight aria-hidden="true" className="size-3.5" />
+                    </a>
+                  ))}
+                </div>
               </div>
             ) : null}
             <div className="rounded-lg border border-brand bg-brand-muted p-6">

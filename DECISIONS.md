@@ -659,3 +659,29 @@ A4.1 done. 66 tests, lint and typecheck clean, build green at 33 routes.
 A4.2–A4.8 are deploy, backups, monitoring, the Playwright suite, the 390px admin pass,
 retention and handover — and the VM is still the blocker. SSH access, and whether its
 storage is NFS-mounted.
+
+---
+
+## Agent B checklist reconciliation — 14 Sep 2026
+
+- Marked B3.3 complete after rechecking the live `/api/contact` integration, all six
+  categories, consent and honeypot fields, role routing, takedown path and
+  `contact_submit`. Social links from Site Settings now appear directly in the contact
+  page as well as the shared footer.
+- Marked B3.4 complete after rechecking that the same newsletter component appears on the
+  homepage and in the footer, handles success and duplicate responses from
+  `/api/subscribe`, and fires `newsletter_signup` only for a new subscription.
+- Marked B3.7 complete: GA4 loads from `NEXT_PUBLIC_GA_MEASUREMENT_ID`, all five frozen
+  events are wired, and both registration events were browser-verified during Sprint 2.
+  The live event-page-view → registration report cannot be observed until a real GA4
+  measurement ID is supplied; that is deployment configuration, not missing frontend
+  instrumentation.
+- Marked B3.8 complete after adding section-local error/loading boundaries for events,
+  startups, resources and team, plus local not-found states for the three dynamic
+  sections. Existing list-specific empty states remain in place.
+- B2.6 remains open. The UI already has the non-blocking YouTube fallback, but a live feed
+  cannot be implemented or verified until the club supplies its channel ID.
+- Verification: strict TypeScript and ESLint clean; 66/66 tests pass against an isolated
+  reset-seeded database; the production Webpack build generated all 31 public/static
+  paths successfully. Turbopack itself was not used for this isolated build because it
+  rejects a `node_modules` junction that points outside a temporary worktree.
