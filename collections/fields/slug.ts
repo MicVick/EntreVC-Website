@@ -5,13 +5,20 @@ import type { Field, FieldHook } from 'payload'
  * Must agree with `slugSchema` in lib/schemas/common.ts.
  */
 export function slugify(input: string): string {
-  return input
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '') // strip diacritics
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80)
+  return (
+    input
+      .normalize('NFKD')
+      .replace(/[̀-ͯ]/g, '') // strip diacritics
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      // Truncate BEFORE trimming hyphens, not after. Slicing an 80-character window out
+      // of a long title routinely lands on a separator, and a slug ending in "-" fails
+      // `slugSchema` — which is the shape `registrationInputSchema.eventSlug` validates
+      // against. Get this order wrong and an event with a long title is published fine,
+      // renders fine, and then rejects every registration with a 400.
+      .slice(0, 80)
+      .replace(/^-+|-+$/g, '')
+  )
 }
 
 /**

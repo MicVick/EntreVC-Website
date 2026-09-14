@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "EntreVC Website & Portal — Entrepreneurship and Venture Capital Club, IIM Ahmedabad",
+  "description": "EntreVC Website & Portal \u2014 Entrepreneurship and Venture Capital Club, IIM Ahmedabad",
   "engines": {
     "node": ">=20.9.0"
   },
@@ -22,7 +22,9 @@
     "seed": "tsx scripts/seed.ts",
     "seed:reset": "tsx scripts/seed.ts --reset",
     "placeholders": "tsx scripts/generate-placeholders.ts",
-    "verify:access": "tsx scripts/verify-access.ts"
+    "verify:access": "tsx scripts/verify-access.ts",
+    "retention": "tsx scripts/retention.ts",
+    "backup": "bash deploy/backup.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

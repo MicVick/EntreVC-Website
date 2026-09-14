@@ -726,3 +726,106 @@ their local boundaries. No Agent A implementation was edited.
 - Visual review: the 1440px home hero and the full 390px contact flow retain the intended
   black/white/red editorial system, readable hierarchy and no clipping after the font and
   contact-social changes.
+
+---
+
+## Agent A: everything not blocked by the VM is done
+
+A4.2–A4.7 complete. A1.4 and A4.8 remain, and both need the machine. 80 vitest tests,
+5 Playwright tests, lint and typecheck clean, build green at 34 routes.
+
+### A bug the slug tests found
+
+`slugify` trimmed leading and trailing hyphens **before** truncating to 80 characters, so
+a long title could produce a slug ending in `-`. That fails `slugSchema`, which is what
+`registrationInputSchema.eventSlug` validates against — an event with a long enough title
+would publish fine, render fine, and then reject every registration with a 400.
+
+Fixed by truncating first and trimming after. Being accurate about severity: it needs the
+80-character cut to land exactly on a word boundary, and none of four realistic long
+titles I tried triggered it. Latent rather than live — but free to fix and now pinned by a
+test.
+
+### [NOTE → Agent B] Two things for your Sprint 4
+
+**Not-found pages return HTTP 200, and that is correct.** I went looking for a bug here
+and found documented behaviour: `node_modules/next/dist/docs/.../file-conventions/not-found.md`
+says Next returns 200 for a not-found page on a **streamed** response and 404 otherwise.
+Our routes stream because of your `loading.tsx`. Next injects
+`<meta name="robots" content="noindex">`, which I verified is present on `/events/<missing>`,
+`/startups/<missing>` and the rest — so nothing gets indexed. Worth knowing before B4.1 or
+an SEO audit sends you chasing it. Don't "fix" it by removing `loading.tsx`.
+
+**An LCP hint from the Playwright run**, for B4.2: Next flagged
+`logo-full.08q_qf-78f3cb.png` as the Largest Contentful Paint element and suggests
+`loading="eager"`. That is your header component, so it is yours to judge.
+
+A-010 (`/team/[year]` in `pathsFor`) and A-011 (`Tabs` keyboard trap) are both still open.
+
+### The e2e suite, and what it deliberately does not assert
+
+`npm run e2e` covers the two journeys this project is measured on: a student registering
+from a cold arrival at phone size, and a committee member publishing an event at 390px.
+
+The publish spec asserts that the draft leaks no content, carries `noindex`, and appears
+in neither `/events` nor the sitemap — then that publishing makes it visible within ten
+seconds. It does **not** assert a status code, for the reason above.
+
+Setup creates its fixtures through the CMS API rather than `POST /api/register`, because
+the public endpoint is rate limited to 10/min and a suite that sets itself up through it
+starts failing the second time you run it inside a minute.
+
+### Backups are tested, not assumed
+
+`deploy/backup.sh` → `deploy/restore.sh`, run for real: 45 tables, 7 events, 4
+registrations, 3 submissions and 69 media files restored onto a clean directory and
+integrity-checked. Restore refuses a non-empty target (exit 1), a corrupt archive (exit 2)
+and a missing file (exit 1).
+
+Two details worth recording. The database is snapshotted with `VACUUM INTO`, never `cp` —
+copying a live SQLite file can capture it mid-write and produce something that looks like
+a backup until the day you need it. And `restore.sh` originally verified itself with an
+inline `node -e` whose SQL contained `type='table'`; the shell's single-quoted string
+ended at that quote, so verification failed with a syntax error. That would only ever have
+surfaced during a real recovery. The verification is now `deploy/verify-db.mjs`.
+
+### Retention, proven both ways
+
+`npm run retention` reports; `-- --confirm` acts. Tested by planting a 2021 registration
+and an unconsented founder link: the dry run found both and changed nothing, the confirm
+run exported the CSV **before** deleting, and the audit cleared the link. Exports are
+gitignored — they are personal data.
+
+### What I could not verify
+
+`/api/health` returns `ok` and is proven against a live database. I could **not** prove
+its 503 branch: a database corrupt at boot stops Payload initialising, so the server never
+starts and the endpoint is never reached. That branch covers a database breaking *after*
+boot — a read-only disk, say — which `healthcheck.sh` also catches via its service-down
+and no-answer branches.
+
+Everything in `deploy/` is syntax-checked and, where it touches data, actually run. None
+of it has been executed against a real VM, because there isn't one.
+
+### Still blocked on a human
+
+- **The VM.** SSH access, and whether storage is NFS-mounted. SQLite corrupts on network
+  filesystems; that answer decides SQLite vs Postgres and is far cheaper now than after
+  real registrations exist. `deploy/README.md` lists what to ask IT.
+- **DNS**: the domain, plus SPF/DKIM/DMARC on the sending domain. Without those,
+  confirmation emails land in spam regardless of the code.
+- **A GA4 measurement ID** and **a YouTube channel ID**.
+
+---
+
+## Agent B post-merge follow-up — 14 Sep 2026
+
+- B-007 is resolved at configuration level: `deploy/Caddyfile` enables `zstd gzip`, gives
+  fingerprinted Next assets a one-year immutable cache, uploaded media a one-day cache,
+  and private/admin APIs `no-store`. Live response-header verification still waits for
+  the VM and DNS.
+- Agent A's two Playwright journeys are now present on `agent/site` after the merge. They
+  remain part of the final merged verification below rather than a frontend code request.
+- Integrated verification: route type generation and lint clean; 80/80 Vitest tests and
+  all 5 Playwright tests pass; the production build is green with the new health route
+  and 31 generated public/static paths.

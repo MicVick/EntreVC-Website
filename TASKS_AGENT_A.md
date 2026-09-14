@@ -214,32 +214,32 @@ You own this end to end: the pages, the form, the endpoint behind it, and the em
 - **CSV export with every custom question as its own column.** Export parity is what stops
   the team drifting back to Google Forms.
 
-### ☐ A4.2 — Backups `4h` · *the one operational task I would not cut*
+### ☑ A4.2 — Backups `4h` · *the one operational task I would not cut*
 **Files:** `deploy/backup.sh`, cron entry
 - Nightly SQLite + `/media` dump, **copied off the box**, with rotation.
 - **Test a restore onto a clean directory before launch and record that you did.** An
   untested backup is a belief, not a backup.
 
-### ☐ A4.3 — Monitoring `2h`
+### ☑ A4.3 — Monitoring `2h`
 - Uptime check to a club address, disk-space alert, log rotation, systemd restart alerts.
 
-### ☐ A4.4 — Tests `5h`
+### ☑ A4.4 — Tests `5h`
 - Vitest: every zod schema; **the capacity transaction under simulated concurrency**; slug
   uniqueness; the category routing resolver.
 - Playwright: student registers from a shared link; editor publishes an event at 390px.
 
-### ☐ A4.5 — Admin usability pass `3h` · PRD §7
+### ☑ A4.5 — Admin usability pass `3h` · PRD §7
 - Walk the three highest-frequency actions on a real 390px viewport: publish an event,
   check a registration count, read a submission.
 - Fix field labels and descriptions that assume knowledge. **The console explaining itself
   is the named mitigation for the biggest adoption risk in the PRD** — an incoming team that
   cannot use it is how this project dies.
 
-### ☐ A4.6 — Retention and data hygiene `2h` · PRD §7
+### ☑ A4.6 — Retention and data hygiene `2h` · PRD §7
 - Documented purge for registrations older than two academic years; export-then-purge
   script; confirm no founder contact detail is stored without `contactConsent`.
 
-### ☐ A4.7 — Handover kit `2h` · PRD Appendix
+### ☑ A4.7 — Handover kit `2h` · PRD Appendix
 **Files:** `docs/handover-guide.md`, `docs/annual-checklist.md`
 - **Two pages, not ten.** How to publish an event, export registrations, add and remove
   users, and who owns the VM. Plus the PRD's annual checklist and a screen recording of the

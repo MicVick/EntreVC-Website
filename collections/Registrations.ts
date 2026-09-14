@@ -55,7 +55,12 @@ export const Registrations: CollectionConfig = {
       type: 'text',
       required: true,
       index: true,
-      admin: { readOnly: true },
+      label: 'Event web address',
+      admin: {
+        readOnly: true,
+        description:
+          'Stored alongside the event so exports still read correctly if the event is ever renamed. Set automatically — you never need to touch it.',
+      },
     },
     {
       type: 'row',
@@ -114,9 +119,12 @@ export const Registrations: CollectionConfig = {
     {
       name: 'waitlistPosition',
       type: 'number',
+      label: 'Place in the queue',
       admin: {
         position: 'sidebar',
         readOnly: true,
+        description:
+          'Number 1 is next in line. Cleared automatically when you confirm someone, and everyone behind them moves up.',
         condition: (data) => data?.status === 'waitlisted',
       },
     },
@@ -160,7 +168,11 @@ export const Registrations: CollectionConfig = {
       name: 'consentGiven',
       type: 'checkbox',
       defaultValue: false,
-      admin: { readOnly: true },
+      admin: {
+        readOnly: true,
+        description:
+          'Recorded when they submitted the form. Read-only on purpose — consent is a record of what happened, not a setting.',
+      },
     },
   ],
 }

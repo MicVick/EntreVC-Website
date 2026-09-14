@@ -207,7 +207,8 @@ points to every section.
   server config is theirs.
 
 > Local production audit passes: 2.444s home / 2.472s event LCP on DevTools-throttled 4G;
-> homepage initial JS is 141KB Brotli excluding the legacy polyfill. B-007 awaits Caddy.
+> homepage initial JS is 141KB Brotli excluding the legacy polyfill. The merged Caddy
+> config has compression/cache rules; only live VM header verification remains.
 
 ### ☐ B4.3 — Responsive and browser QA `3h`
 - 360, 390, 768, 1024, 1440. Chrome, Safari, Firefox, Edge — last two versions.
@@ -226,8 +227,8 @@ points to every section.
 ### ☐ B4.5 — Final QA `1h`
 - Walk the Definition of Done in `EXECUTION_PLAN.md` §7 line by line and tick it honestly.
 
-> Local frontend lines have been walked. Final sign-off remains gated by B4.1/B4.2,
-> deployment/backups, the two committed Playwright flows, real content and handover.
+> Local frontend lines and all five merged Playwright tests pass. Final sign-off remains
+> gated by B4.1/B4.2, live deployment/restore, real content, GA4 and handover delivery.
 
 > **🤝 H4 — Lighthouse target met, axe clean, OG previews checked in a real WhatsApp chat.**
 

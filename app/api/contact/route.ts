@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { fieldErrorsFrom, honeypotTripped, readJson, respond, serverError } from '@/lib/api/respond'
 import { client } from '@/lib/content/payload'
 import { getSiteSettings } from '@/lib/content'
+import { resolveContactRecipient } from '@/lib/contact-routing'
 import { contactAcknowledgement, contactRouting } from '@/lib/email/templates'
 import { queueEmail } from '@/lib/email/send'
 import { checkLimit } from '@/lib/rate-limit'
@@ -46,9 +47,21 @@ export async function POST(request: Request) {
     const payload = await client()
     const settings = await getSiteSettings()
 
-    const route = settings.categoryRouting.find((r) => r.category === input.category)
-    const recipient = route?.email || process.env.CONTACT_FALLBACK_EMAIL || settings.clubEmail
+    const { recipient, source } = resolveContactRecipient({
+      category: input.category,
+      routing: settings.categoryRouting,
+      fallbackEmail: process.env.CONTACT_FALLBACK_EMAIL,
+      clubEmail: settings.clubEmail,
+    })
     const categoryLabel = submissionCategoryLabels[input.category]
+
+    // An enquiry that reaches no inbox is saved but invisible. Nothing here can fix that
+    // at request time, so make it loud in the logs rather than silent.
+    if (source === 'none') {
+      console.error(
+        `[contact] No recipient configured for "${input.category}". The submission is saved but nobody has been notified. Set a routing row in Site Settings.`,
+      )
+    }
 
     const submission = await payload.create({
       collection: 'submissions',
