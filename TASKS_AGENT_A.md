@@ -206,7 +206,7 @@ You own this end to end: the pages, the form, the endpoint behind it, and the em
 
 ## Sprint 4 — Operations and hardening (Days 7–8 · 24h)
 
-### ☐ A4.1 — Registrations view and export `4h`
+### ☑ A4.1 — Registrations view and export `4h`
 **Files:** `collections/Registrations.ts` admin config, `app/api/registrations/csv/route.ts`
 - Payload list view configured for the job: filter by event and status, mark attendance,
   **promote from waitlist** in one click (sends the promotion email) `[ASSUMPTION: manual

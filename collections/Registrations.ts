@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { personalDataAccess } from './access'
+import { clearWaitlistPositionOnConfirm, sendPromotionEmail } from './hooks/promotion'
 
 /**
  * Event registrations — personal data, and the thing that proves this site replaced
@@ -29,8 +30,15 @@ export const Registrations: CollectionConfig = {
       'Everyone who has signed up for an event. Filter by event, then export to CSV — the export includes the answers to any extra questions you asked.',
     group: 'Registrations & enquiries',
     listSearchableFields: ['name', 'email', 'batchOrOrganisation'],
+    components: {
+      beforeListTable: ['/components/admin/export-registrations#ExportAllRegistrations'],
+    },
   },
   access: personalDataAccess,
+  hooks: {
+    beforeChange: [clearWaitlistPositionOnConfirm],
+    afterChange: [sendPromotionEmail],
+  },
   fields: [
     {
       name: 'event',

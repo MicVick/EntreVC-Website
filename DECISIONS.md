@@ -597,3 +597,65 @@ monitoring, the Playwright suite, the 390px admin pass, retention, handover kit,
 **Still blocked on a human:** the VM (A1.4). SSH access, and whether its storage is
 NFS-mounted — SQLite corrupts on network filesystems, so that answer decides SQLite vs
 Postgres and is much cheaper to learn now than after real registrations exist.
+
+---
+
+## Agent A note: A4.1 — registrations view and CSV export
+
+Not a handshake, just a record of two decisions and one new directory.
+
+### `components/admin/**` is Agent A's
+
+The ownership map in CONTRACT.md §6 covers `components/ui/**` and `components/public/**`,
+both Agent B's, but says nothing about admin panel components because we did not expect
+any. There is now one file — `components/admin/export-registrations.tsx` — holding the
+two export links Payload renders inside the admin. It is CMS surface, so it follows the
+rest of the CMS to Agent A. Agent B: nothing here affects you, and you should never need
+to touch it.
+
+### Promotion is a status change, not a bespoke button
+
+The task asked for "promote from waitlist in one click". What shipped is: change Status
+from Waitlisted to Confirmed and save. That is two interactions, not one, and it is
+deliberate — `CLAUDE.md` says configure the CMS rather than build one, and a custom
+Promote button would be one more piece of bespoke admin for next year's team to discover
+and for someone to maintain. The status dropdown is where an editor already looks, and
+its description says exactly what saving will do.
+
+Changing that status now does three things: emails the person the promotion template
+with a calendar file, clears their waitlist position, and re-numbers everyone still
+waiting so #1 is genuinely next. Only the waitlisted → confirmed transition triggers any
+of it; cancelling, editing an already-confirmed row, or creating a new confirmed
+registration all send nothing. That last property is the one worth guarding — an email
+saying "you're in" sent when someone is *cancelled* would be discovered by the attendee,
+not by us — so `tests/promotion.test.ts` asserts silence on all three.
+
+### The export is behind the collection's own access rules
+
+`GET /api/registrations/csv` returns names, emails and phone numbers, so it does two
+things rather than one: it requires a Payload session, and it queries with
+`overrideAccess: false` and the resolved user, so `personalDataAccess` decides what comes
+back. The export can never be more permissive than the admin panel, and tightening the
+collection later tightens the export automatically.
+
+`tests/csv-export.test.ts` covers both layers. I verified the tests have teeth by
+removing the 401 guard (both auth tests fail) and then also switching the query to
+`overrideAccess: true` (they still fail) — so neither protection can be dropped quietly.
+
+Every custom question becomes its own column, keyed by the label an editor wrote rather
+than the field id, and a label shared by two events is one column. Checkbox answers read
+`Yes`/`No`. Timestamps appear twice, IST for reading and UTC for sorting. The file opens
+with a byte-order mark, without which Excel on Windows reads UTF-8 as Latin-1 and mangles
+precisely the names it is most embarrassing to mangle.
+
+One testing note for whoever reads that file: `Response.text()` strips a leading BOM
+during decode, so a `text()`-based assertion cannot tell a file that has one from a file
+that does not. The test reads the raw bytes instead.
+
+### Where I am
+
+A4.1 done. 66 tests, lint and typecheck clean, build green at 33 routes.
+
+A4.2–A4.8 are deploy, backups, monitoring, the Playwright suite, the 390px admin pass,
+retention and handover — and the VM is still the blocker. SSH access, and whether its
+storage is NFS-mounted.

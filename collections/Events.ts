@@ -231,6 +231,17 @@ export const Events: CollectionConfig = {
             'Registration closes automatically at the deadline, and again when the event ends. You never have to close it by hand.',
           fields: [
             {
+              // Stores nothing — it exists so the attendee list is one click from the
+              // event, which is where somebody stands when they need it.
+              name: 'exportRegistrations',
+              type: 'ui',
+              admin: {
+                components: {
+                  Field: '/components/admin/export-registrations#ExportEventRegistrations',
+                },
+              },
+            },
+            {
               name: 'registrationEnabled',
               type: 'checkbox',
               defaultValue: true,
