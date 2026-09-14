@@ -1,0 +1,66 @@
+# systemd unit for the EntreVC Next.js server.
+#
+#   sudo cp deploy/entrevc.service /etc/systemd/system/entrevc.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now entrevc
+#   sudo systemctl status entrevc
+#
+# `enable` is the part people forget: without it the site does not come back after the
+# VM reboots, and college machines reboot for patching without asking anybody.
+
+[Unit]
+Description=EntreVC website (Next.js standalone)
+Documentation=https://github.com/entrevc/website
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=entrevc
+Group=entrevc
+WorkingDirectory=/srv/entrevc/current
+
+# The standalone build. Never `next start` and never `npm run build` here — builds are
+# memory-hungry and will OOM a small VM. Build elsewhere, rsync the output.
+ExecStart=/usr/bin/node server.js
+
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+# Secrets live in a root-owned file readable only by this service, never in this unit
+# (systemd units are world-readable) and never in the repository.
+EnvironmentFile=/etc/entrevc/env
+
+Restart=always
+RestartSec=5
+# If it crash-loops, give up rather than hammering the box, and leave the unit `failed`
+# so the monitoring notices. Silent infinite restarts hide the actual problem.
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=entrevc
+
+# ── Hardening ───────────────────────────────────────────────────────────────
+# The service writes to exactly two places: the SQLite database and the media uploads.
+# Everything else on the filesystem is read-only to it.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/entrevc/data /srv/entrevc/media
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=false
+
+# A small VM. If the process balloons, kill it and restart rather than letting the OOM
+# killer pick a victim — which on a box this size is often the database's page cache.
+MemoryMax=768M
+
+[Install]
+WantedBy=multi-user.target

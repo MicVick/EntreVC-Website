@@ -1,0 +1,81 @@
+# Caddy configuration for EntreVC.
+#
+# Caddy is used rather than nginx for one reason that matters to this project: it obtains
+# and renews TLS certificates automatically, with no cron job and nothing for a future
+# committee to forget. The most likely way this site breaks in year three is an expired
+# certificate nobody was watching, and this removes that failure mode entirely.
+#
+# Install:
+#   sudo cp deploy/Caddyfile /etc/caddy/Caddyfile
+#   sudo caddy validate --config /etc/caddy/Caddyfile
+#   sudo systemctl reload caddy
+#
+# Replace entrevc.iima.ac.in with the real hostname before first use. The email is where
+# Let's Encrypt sends expiry warnings — it MUST be a club address, never a personal one,
+# because the person who owns it will graduate.
+
+{
+	email webmaster@entrevc.iima.ac.in
+	# Uncomment while testing to avoid Let's Encrypt rate limits:
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+entrevc.iima.ac.in {
+	encode zstd gzip
+
+	# There is no CDN in front of this box, so these headers are the entire caching
+	# story. Next fingerprints everything under /_next/static, so it is safe to cache
+	# hard and for a long time.
+	@immutable path /_next/static/* /fonts/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+	# Uploaded media is NOT fingerprinted — replacing a photo reuses its filename — so a
+	# year-long cache would pin the old one. A day is the compromise.
+	@media path /media/*
+	header @media Cache-Control "public, max-age=86400"
+
+	# Never let a proxy or browser store a page containing personal data.
+	@private path /admin* /api/registrations/* /api/cms/*
+	header @private Cache-Control "no-store, private"
+
+	header {
+		# HSTS. Start with a short max-age; raise it once you are confident TLS is stable,
+		# because this is hard to walk back — browsers remember it.
+		Strict-Transport-Security "max-age=86400; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Locks down what the browser will let the page ask for. Kept narrow deliberately.
+		Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+		-Server
+	}
+
+	# The health endpoint must never be cached, or the uptime check monitors a copy.
+	@health path /api/health
+	header @health Cache-Control "no-store"
+
+	reverse_proxy 127.0.0.1:3000 {
+		# Preserves the real client address so the rate limiter sees the caller and not
+		# the proxy. lib/rate-limit.ts reads the left-most X-Forwarded-For entry.
+		header_up X-Real-IP {remote_host}
+
+		# A registration POST must not be retried against another upstream — there is
+		# only one, and a retried POST is a duplicate row.
+		lb_try_duration 0
+	}
+
+	log {
+		output file /var/log/caddy/entrevc.log {
+			roll_size 20MiB
+			roll_keep 10
+			roll_keep_for 720h
+		}
+		format json
+	}
+}
+
+# Anything reaching this box on the wrong hostname gets a flat refusal rather than the
+# site, so the app is never served from an unexpected origin.
+:80, :443 {
+	abort
+}

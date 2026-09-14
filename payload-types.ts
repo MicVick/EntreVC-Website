@@ -679,6 +679,9 @@ export interface Registration {
    * Which event this registration is for.
    */
   event: number | Event;
+  /**
+   * Stored alongside the event so exports still read correctly if the event is ever renamed. Set automatically — you never need to touch it.
+   */
   eventSlug: string;
   name: string;
   email: string;
@@ -689,6 +692,9 @@ export interface Registration {
    * Changing someone from Waitlisted to Confirmed sends them a promotion email.
    */
   status: 'confirmed' | 'waitlisted' | 'cancelled';
+  /**
+   * Number 1 is next in line. Cleared automatically when you confirm someone, and everyone behind them moves up.
+   */
   waitlistPosition?: number | null;
   /**
    * Tick on the day, for attendance records.
@@ -714,6 +720,9 @@ export interface Registration {
    * The exact wording this person agreed to.
    */
   consentText?: string | null;
+  /**
+   * Recorded when they submitted the form. Read-only on purpose — consent is a record of what happened, not a setting.
+   */
   consentGiven?: boolean | null;
   updatedAt: string;
   createdAt: string;

@@ -53,3 +53,6 @@ yarn-error.log*
 
 # scaffolding leftovers
 .scaffold/
+
+# retention exports - personal data, never commit these
+/exports/
