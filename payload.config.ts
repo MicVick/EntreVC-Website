@@ -82,25 +82,33 @@ export default buildConfig({
   // Media normally lives on the VM's local disk (collections/Media.ts), which a
   // platform with an ephemeral filesystem cannot do — uploads would vanish on the
   // next deploy. When S3_BUCKET is set the uploads go to S3-compatible storage
-  // instead. Unset on the VM, where this array is empty and nothing changes.
-  plugins: process.env.S3_BUCKET
-    ? [
-        s3Storage({
-          collections: { media: true },
-          bucket: process.env.S3_BUCKET,
-          config: {
-            endpoint: process.env.S3_ENDPOINT,
-            region: process.env.S3_REGION,
-            credentials: {
-              accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
-            },
-            // Supabase Storage addresses buckets by path, not by subdomain.
-            forcePathStyle: true,
-          },
-        }),
-      ]
-    : [],
+  // instead; on the VM it is unset and `enabled: false` leaves Media untouched.
+  //
+  // The plugin is ALWAYS in this array and switched with `enabled`, never added
+  // and removed conditionally. Payload resolves admin components through the
+  // generated importMap, so a config whose shape changes between environments
+  // produces a map that is correct in one and missing an entry in the other —
+  // and a missing entry renders the whole admin blank with no console error.
+  // Keeping the shape constant keeps `admin/importMap.js` valid everywhere.
+  // `alwaysInsertFields` stays at its default, so a disabled plugin adds no
+  // field to the collection and the VM's schema is unchanged.
+  plugins: [
+    s3Storage({
+      enabled: Boolean(process.env.S3_BUCKET),
+      collections: { media: true },
+      bucket: process.env.S3_BUCKET || 'unused',
+      config: {
+        endpoint: process.env.S3_ENDPOINT,
+        region: process.env.S3_REGION,
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        // Supabase Storage addresses buckets by path, not by subdomain.
+        forcePathStyle: true,
+      },
+    }),
+  ],
 
   secret: process.env.PAYLOAD_SECRET || '',
 

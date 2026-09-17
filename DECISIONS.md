@@ -977,3 +977,21 @@ clean on both.
     so that protection is weak on the preview. It is correct on the VM, which is one
     process, and the preview is not a target. Not a blocker; recorded so nobody reads the
     preview as evidence the limiter works.
+
+- **Bug, found and fixed same day: the admin rendered blank everywhere.** Adding the
+  `s3Storage` plugin in `24ed77a` without re-running `generate:importmap` left the admin
+  unable to resolve `@payloadcms/storage-s3/client#S3ClientUploadHandler`. Payload logs
+  `getFromImportMap: PayloadComponent not found` server-side and then renders **nothing** —
+  no browser console error, no failed request, HTTP 200, a blank white page. It reproduced
+  in `next dev`, in a Turbopack build and in a webpack build, locally and on Vercel, which
+  is what ruled out the deployment as the cause.
+  - `curl` cannot detect this: Payload's admin is client-rendered, so an empty body is
+    indistinguishable from a healthy one. It took a headless browser to see it.
+  - The plugin is now **always** in the `plugins` array, switched with `enabled`, rather
+    than conditionally added. A config whose *shape* varies by environment produces an
+    importMap that is valid in one and missing an entry in the other. Keeping the shape
+    constant is what stops this recurring. `alwaysInsertFields` stays default, so a
+    disabled plugin adds no field and the VM's schema is untouched.
+  - **Any future change to `payload.config.ts` or `collections/**` must re-run
+    `npm run generate:importmap` and commit the result.** DECISIONS.md already said this
+    at Sprint 0; it is repeated here because the failure mode is silent and total.
