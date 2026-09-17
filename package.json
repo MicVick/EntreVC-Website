@@ -24,7 +24,8 @@
     "placeholders": "tsx scripts/generate-placeholders.ts",
     "verify:access": "tsx scripts/verify-access.ts",
     "retention": "tsx scripts/retention.ts",
-    "backup": "bash deploy/backup.sh"
+    "backup": "bash deploy/backup.sh",
+    "placeholders:fill": "tsx scripts/fill-placeholder-images.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
