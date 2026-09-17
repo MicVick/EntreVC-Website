@@ -3,6 +3,7 @@ import sharp from 'sharp'
 import { buildConfig } from 'payload'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Events } from './collections/Events'
 import { Media } from './collections/Media'
@@ -67,11 +68,39 @@ export default buildConfig({
   // on a single VM with no CDN in front of it.
   sharp,
 
+  // libSQL talks to both a local file and a hosted Turso database, so the VM and
+  // the team preview share one adapter and one SQLite dialect. On the VM
+  // DATABASE_AUTH_TOKEN is unset and this is the previous behaviour exactly:
+  // a plain file on local disk.
   db: sqliteAdapter({
     client: {
       url: process.env.DATABASE_URI || 'file:./data/entrevc.db',
+      authToken: process.env.DATABASE_AUTH_TOKEN,
     },
   }),
+
+  // Media normally lives on the VM's local disk (collections/Media.ts), which a
+  // platform with an ephemeral filesystem cannot do — uploads would vanish on the
+  // next deploy. When S3_BUCKET is set the uploads go to S3-compatible storage
+  // instead. Unset on the VM, where this array is empty and nothing changes.
+  plugins: process.env.S3_BUCKET
+    ? [
+        s3Storage({
+          collections: { media: true },
+          bucket: process.env.S3_BUCKET,
+          config: {
+            endpoint: process.env.S3_ENDPOINT,
+            region: process.env.S3_REGION,
+            credentials: {
+              accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+            },
+            // Supabase Storage addresses buckets by path, not by subdomain.
+            forcePathStyle: true,
+          },
+        }),
+      ]
+    : [],
 
   secret: process.env.PAYLOAD_SECRET || '',
 

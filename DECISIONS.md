@@ -23,7 +23,8 @@ Changes needed inside the other agent's territory. The owner applies them and ap
 
 | # | From | To | Request | Status |
 |---|---|---|---|---|
-| | | | | |
+| A-010 | A | B | `next.config.ts`: gate `output: "standalone"` on an env flag for a Vercel preview build. | **APPLIED BY A, 18 Sep 2026 — B please review.** Withdrawn earlier the same day when the target briefly moved to a cloud VM; reinstated when that fell through. Applied directly, following the precedent where A edited this file for `withPayload()` (see Sprint 0 notes). One line, spread-guarded, no effect when `VERCEL` is unset. Revert freely if B objects. |
+| A-011 | A | shared | `package.json`: add `@payloadcms/storage-s3` for Vercel-compatible media storage. | **APPLIED 18 Sep 2026** — `@payloadcms/storage-s3@3.88.0`, pinned to match the other Payload packages. CONTRACT.md §7 needs the addition; logged here as the reason. |
 
 ---
 
@@ -861,3 +862,87 @@ of it has been executed against a real VM, because there isn't one.
 - Motion remains progressive enhancement: hover movement and CSS view-timeline reveals
   are disabled by the existing `prefers-reduced-motion` rule, and unrevealed content stays
   visibly present rather than starting fully transparent.
+
+---
+
+## Agent A: Vercel preview deployment — 18 Sep 2026
+
+Context: the team needs a link to review the site before the college VM exists. This is a
+**preview, not production** — production remains the VM, SQLite on local disk, Caddy.
+
+- **Database.** `payload.config.ts` now passes `authToken` to the libSQL client. libSQL
+  speaks to both a local file and a hosted Turso database, so Turso needs one extra env
+  var and no adapter swap. This keeps the preview on the *same SQLite dialect* as the VM.
+  Supabase was considered and rejected: it means `@payloadcms/db-postgres`, a second SQL
+  dialect to maintain, and free projects pause after about a week idle.
+  On the VM `DATABASE_AUTH_TOKEN` is unset and behaviour is unchanged.
+- **Media is the real obstacle.** `collections/Media.ts` writes uploads to `staticDir` on
+  local disk and sharp generates four sizes per image. Vercel's filesystem is ephemeral,
+  so every upload dies on the next deploy. Fixing it needs `@payloadcms/storage-s3`
+  pointed at Supabase Storage (S3-compatible, 1GB free) — hence request A-011. Until that
+  is agreed, the preview runs with media uploads broken across redeploys.
+- **No other filesystem writes.** The registrations CSV export streams its response rather
+  than writing to disk, so nothing else in `app/`, `lib/`, `collections/` or `globals/`
+  needs changing. The `exports/*.csv` in the repo is a local artifact, not a runtime path.
+- **Still absent: migrations.** There is no `migrations/` directory, so `deploy/deploy.sh`
+  line 72 runs `payload migrate` against an empty set and the schema currently arrives via
+  dev-mode push. That is fine for a Turso preview (push it once) but must be fixed before
+  the VM holds real registrations. Tracked separately from this deployment.
+
+---
+
+## Agent A: preview target is a cloud VM, not Vercel — 18 Sep 2026
+
+Supersedes the Vercel entry above. Requests A-010 and A-011 are withdrawn and the
+`authToken` line added to `payload.config.ts` has been reverted — with a VM the preview
+runs the committed configuration unchanged, which was the whole argument for it.
+
+- **Nothing in the repo changes.** Oracle Cloud's Always Free tier (Ampere ARM) runs
+  `deploy/` verbatim: SQLite on local disk, media on local disk, Caddy, systemd. The
+  preview therefore doubles as the first real rehearsal of the VM deploy path, which has
+  never been exercised against a live host.
+- **`deploy.sh` cannot run from the Windows dev machine as written.** Git Bash here has
+  `ssh`, `scp` and `tar` but **no `rsync`**, and there is no WSL distro installed. Line 59
+  is the only rsync call in the script. Options are a `tar | ssh` fallback in the script,
+  or installing WSL. Flagged rather than fixed — see the request below if it lands on B.
+- **ARM64 is fine for this stack.** `sharp` and `@libsql/client` both publish linux-arm64
+  prebuilds; Node 20+ is native on ARM.
+- **The Ubuntu images Oracle ships carry iptables rules that drop inbound 80/443**, in
+  addition to the VCN security list. Both layers must be opened or Caddy will fail its
+  ACME challenge and issue no certificate. This is the single most common way an Oracle
+  instance looks correctly configured and still serves nothing.
+- Migrations remain absent; unchanged by this decision and still owed before the VM holds
+  real registrations.
+
+---
+
+## Agent A: Vercel preview — applied, 18 Sep 2026
+
+Supersedes the "preview target is a cloud VM" entry above; Oracle Cloud signup could not be
+completed, so the target is Vercel after all. **Production is still the VM.** Every change
+below is inert when its environment variable is unset, so the VM runs exactly as before.
+
+| Change | File | Behaviour with the env var unset |
+|---|---|---|
+| `authToken` passed to the libSQL client | `payload.config.ts` | Plain local SQLite file — unchanged |
+| `s3Storage` plugin, gated on `S3_BUCKET` | `payload.config.ts` | `plugins: []` — uploads stay on `staticDir` |
+| `output: "standalone"` gated on `VERCEL` | `next.config.ts` | Standalone still emitted for `deploy.sh` |
+
+Verified both ways rather than assumed: a normal `npm run build` still produces
+`.next/standalone/server.js`, and `VERCEL=1 npm run build` omits it. Typecheck and lint
+clean on both.
+
+- **Turso over Supabase Postgres, again.** The libSQL client covers a local file and a
+  hosted database with the same adapter, so the preview keeps the VM's SQLite dialect. A
+  Postgres preview would mean a second dialect to maintain for no benefit.
+- **Supabase is still used, but for Storage only** — it is S3-compatible and free at 1GB,
+  which solves the ephemeral-filesystem problem that is the real obstacle on Vercel.
+  `forcePathStyle: true` is required; Supabase addresses buckets by path.
+- **The plugin is an array switch, not `enabled: false`.** With `enabled: false` the
+  plugin still inserts its `prefix` field into the collection schema unless
+  `alwaysInsertFields` is also managed. An empty array leaves the VM's schema untouched,
+  which matters while there are still no migrations.
+- **CONTRACT.md §7 is now out of date** — it does not list `@payloadcms/storage-s3`. That
+  is an interface change and belongs to whoever owns the contract edit.
+- Migrations remain absent. Unchanged by this, still owed before the VM takes real
+  registrations.
