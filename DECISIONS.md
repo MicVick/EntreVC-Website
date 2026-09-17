@@ -965,3 +965,15 @@ clean on both.
     but Payload + Next + aws-sdk is a heavy tree against a 500MB uncompressed slug limit.
   - Verified: `PREVIEW_PLATFORM=1 npm run build` omits `.next/standalone` and still emits
     `.next/server`, so `next start` has what it needs.
+
+- **Addendum 2, same day: back to Vercel; Heroku dropped.** Heroku's one advantage was
+  holding `lib/rate-limit.ts`'s single-instance assumption, which does not matter for a
+  team preview. Since Turso and Supabase Storage are required on either host, Heroku cost
+  $7/mo of club credits for no practical gain over Vercel at $0. The `Procfile` is deleted.
+  The `VERCEL || PREVIEW_PLATFORM` gate in `next.config.ts` is kept as-is: Vercel sets
+  `VERCEL=1` itself, and `PREVIEW_PLATFORM` stays as the escape hatch for any future host
+  that builds its own output.
+  - Known and accepted: on Vercel each serverless instance gets its own rate-limit `Map`,
+    so that protection is weak on the preview. It is correct on the VM, which is one
+    process, and the preview is not a target. Not a blocker; recorded so nobody reads the
+    preview as evidence the limiter works.
