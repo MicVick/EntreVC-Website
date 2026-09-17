@@ -109,7 +109,7 @@ export function ResourceDirectory({ resources, tags }: ResourceDirectoryProps) {
       </div>
 
       {filtered.length ? (
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="reveal-grid mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((resource) => <ResourceCard key={resource.id} resource={resource} />)}
         </div>
       ) : (

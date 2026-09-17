@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import { ArrowUpRight, Mail, MapPin, MessageSquareText, Share2 } from 'lucide-react'
+import { ArrowUpRight, CheckCircle2, Mail, MapPin, MessageSquareText, Share2 } from 'lucide-react'
 
 import { ContactForm } from '@/components/public/contact-form'
+import { PageHero } from '@/components/public/page-hero'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getRoleContacts, getSiteSettings } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
@@ -19,16 +20,25 @@ export default async function ContactPage() {
 
   return (
     <>
-      <section className="surface-grid border-b border-border">
-        <div className="site-shell py-16 sm:py-24">
-          <p className="eyebrow">Start a useful conversation</p>
-          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[0.9] sm:text-7xl lg:text-8xl">
-            You should not need to guess who to{' '}
-            <span className="text-accent">email.</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-fg-muted">Choose what your note is about. The site routes it to the relevant EntreVC vertical and keeps a copy even if email delivery has a bad day.</p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Contact EntreVC"
+        title={<>Tell us what you need. We will route it to the <span className="text-accent">right team.</span></>}
+        description="Choose a topic, add the useful context and send. Your note goes to the relevant EntreVC vertical, so you do not have to guess who to email."
+        aside={
+          <div className="rounded-lg border border-border bg-surface p-6 shadow-md sm:p-7">
+            <p className="text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">Good reasons to write</p>
+            <ul className="mt-5 space-y-4 text-sm leading-6 text-fg-muted">
+              {['List or update a startup', 'Speak, mentor, sponsor or partner', 'Ask about an event or opportunity'].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <CheckCircle2 aria-hidden="true" className="mt-1 size-4 shrink-0 text-accent" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 border-t border-border pt-5 text-xs leading-5 text-fg-subtle">Typical response route: one form → one relevant vertical.</p>
+          </div>
+        }
+      />
 
       <section className="section-shell">
         <div className="site-shell grid gap-12 lg:grid-cols-[minmax(17rem,0.7fr)_minmax(0,1.3fr)]">
@@ -87,10 +97,10 @@ export default async function ContactPage() {
         <section className="section-shell border-t border-border bg-surface">
           <div className="site-shell">
             <p className="eyebrow">Direct routes</p>
-            <h2 className="display-type mt-5 max-w-3xl text-4xl font-semibold leading-none sm:text-5xl">When you already know what you need.</h2>
-            <div className="mt-10 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
+            <h2 className="display-type mt-5 max-w-3xl text-4xl font-semibold leading-none sm:text-5xl">Email the relevant vertical directly.</h2>
+            <div className="reveal-grid mt-8 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
               {contacts.map((contact) => (
-                <article key={`${contact.role}-${contact.email}`} className="min-h-64 border-b border-r border-border bg-bg p-6">
+                <article key={`${contact.role}-${contact.email}`} className="min-h-56 border-b border-r border-border bg-bg p-6">
                   <p className="text-xs font-bold uppercase tracking-[0.13em] text-accent">{contact.role}</p>
                   {contact.name ? <h3 className="display-type mt-7 text-2xl font-semibold">{contact.name}</h3> : null}
                   {contact.description ? <p className="mt-3 text-sm leading-6 text-fg-muted">{contact.description}</p> : null}

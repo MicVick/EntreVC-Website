@@ -22,8 +22,8 @@ export function Footer({ settings }: FooterProps) {
 
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="site-shell py-14 sm:py-18">
-        <div className="grid gap-12 border-b border-border pb-14 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+      <div className="site-shell py-12 sm:py-14">
+        <div className="grid gap-10 border-b border-border pb-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
           <div>
             <p className="eyebrow">Stay in the loop</p>
             <h2 className="display-type mt-5 max-w-3xl text-4xl font-semibold leading-none sm:text-5xl">
@@ -33,7 +33,7 @@ export function Footer({ settings }: FooterProps) {
           <NewsletterSignup source="footer" compact />
         </div>
 
-        <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.7fr_0.85fr]">
+        <div className="grid gap-9 py-10 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.7fr_0.85fr]">
           <div>
             <BrandLogo />
             <p className="mt-6 max-w-md text-sm leading-6 text-fg-muted">{settings.positioningStatement}</p>

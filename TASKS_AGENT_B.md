@@ -196,8 +196,9 @@ points to every section.
   management in the gallery lightbox, alt text everywhere.
 - axe clean on all five pages.
 
-> B-owned pages are axe-clean; keyboard focus, headings and alt semantics pass. Event
-> detail still has two Agent A-owned blockers recorded as B-005 and B-006.
+> B-owned pages are axe-clean; keyboard focus, headings and alt semantics pass. The
+> Agent A-owned event detail still has the B-005 definition-list blocker; B-006 focus
+> handling is resolved in the shared dialog primitive.
 
 ### ☐ B4.2 — Performance `3h` · LCP < 2.5s on 4G, with no CDN
 - Throttled 4G Lighthouse on home and event detail.

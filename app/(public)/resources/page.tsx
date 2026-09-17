@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { ArrowRight, BookMarked, ExternalLink, Play } from 'lucide-react'
 
+import { PageHero } from '@/components/public/page-hero'
 import { ResourceDirectory } from '@/components/public/resource-directory'
 import { SectionHeader } from '@/components/public/section-header'
 import { buttonVariants } from '@/components/ui/button'
@@ -21,32 +23,39 @@ export default async function ResourcesPage() {
 
   return (
     <>
-      <section className="surface-grid border-b border-border">
-        <div className="site-shell grid gap-10 py-16 sm:py-24 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end">
-          <div>
-            <p className="eyebrow">The EntreVC library</p>
-            <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[0.9] sm:text-7xl lg:text-8xl">
-              Read less. Learn the thing that{' '}
-              <span className="text-accent">moves you.</span>
-            </h1>
+      <PageHero
+        eyebrow="The EntreVC library"
+        title={<>Find the next useful <span className="text-accent">answer.</span></>}
+        description="Search practical reading, listening, templates and tools by topic or format. Every result opens directly at the source."
+        aside={
+          <div className="group relative min-h-60 overflow-hidden rounded-lg border border-brand bg-brand-muted shadow-md sm:min-h-64">
+            <Image
+              src="/images/editorial/field-notes.webp"
+              alt="A dark worktable with notebooks, paper prototypes and a red pencil"
+              width={1600}
+              height={900}
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="absolute inset-0 h-full w-full object-cover opacity-45 transition duration-1000 group-hover:scale-[1.025] group-hover:opacity-55"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/65 to-bg/10" />
+            <div className="relative flex min-h-60 flex-col justify-end p-6 sm:min-h-64 sm:p-7">
+              <BookMarked aria-hidden="true" className="size-6 text-accent" />
+              <h2 className="display-type mt-4 text-3xl font-semibold">Start with the playbook.</h2>
+              <p className="mt-2 max-w-md text-sm leading-6 text-fg-muted">A web-first field guide written here and improved by every team that inherits it.</p>
+              <Link href="/resources/playbook" className={`${buttonVariants({ size: 'sm' })} mt-5 w-fit`}>
+                Read the playbook <ArrowRight aria-hidden="true" className="size-4" />
+              </Link>
+            </div>
           </div>
-          <div className="rounded-lg border border-brand bg-brand-muted p-6 sm:p-8">
-            <BookMarked aria-hidden="true" className="size-7 text-accent" />
-            <h2 className="display-type mt-6 text-3xl font-semibold">The Startup Playbook</h2>
-            <p className="mt-3 text-sm leading-6 text-fg-muted">A web-first field guide written here, revised by every team that inherits it.</p>
-            <Link href="/resources/playbook" className={`${buttonVariants({ size: 'sm' })} mt-6`}>
-              Read the playbook <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
+        }
+      />
 
       <section className="section-shell">
         <div className="site-shell">
           <SectionHeader
             eyebrow="Curated, not collected"
-            title="A practical shelf for builders."
-            description="Filter by format and topic. Every result takes you directly to the source—no interstitials and no email gates."
+            title="Browse by the problem you are solving."
+            description="Filter the library by format or topic. Every result opens directly at the source—no interstitials and no email gates."
           />
           <Suspense fallback={<Skeleton className="min-h-[40rem] w-full" />}>
             <ResourceDirectory resources={resources} tags={tags} />
@@ -58,9 +67,9 @@ export default async function ResourcesPage() {
         <div className="site-shell grid gap-8 py-14 sm:py-18 md:grid-cols-[1fr_auto] md:items-center">
           <div>
             <p className="eyebrow">Watch and listen</p>
-            <h2 className="display-type mt-5 text-3xl font-semibold sm:text-4xl">Sessions from the room, available outside it.</h2>
+            <h2 className="display-type mt-5 text-3xl font-semibold sm:text-4xl">Catch up on sessions you could not attend.</h2>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-fg-muted">
-              The live video feed is intentionally non-blocking. If it is unavailable, the channel is always one click away.
+              Talks and workshops are published on the EntreVC channel when a recording is available.
             </p>
           </div>
           {settings.youtubeChannelUrl ? (

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 
+import { PageHero } from '@/components/public/page-hero'
 import { TeamRoster } from '@/components/public/team-roster'
 import { getTeam, getTeamYears, getVerticals } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
@@ -16,16 +18,26 @@ export default async function TeamPage() {
 
   return (
     <>
-      <section className="surface-grid border-b border-border">
-        <div className="site-shell py-16 sm:py-24">
-          <p className="eyebrow">The people carrying it forward</p>
-          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[0.9] sm:text-7xl lg:text-8xl">
-            A club should feel like a{' '}
-            <span className="text-accent">lineage, not a reset.</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-fg-muted">Meet the current committee, understand how the work is organised, and revisit the teams that built what we inherited.</p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="The people behind EntreVC"
+        title={<>Meet the team carrying the work <span className="text-accent">forward.</span></>}
+        description="See the current committee, understand how the club is organised and revisit the teams that built what we inherited."
+        aside={
+          <figure className="group relative aspect-[16/10] overflow-hidden rounded-lg border border-border bg-surface shadow-md">
+            <Image
+              src="/images/editorial/founder-workroom.webp"
+              alt="Students collaborating around a worktable"
+              width={1600}
+              height={900}
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="h-full w-full object-cover opacity-85 transition duration-1000 group-hover:scale-[1.025] group-hover:opacity-100"
+            />
+            <figcaption className="absolute bottom-4 left-4 rounded-full border border-white/20 bg-bg/75 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.13em] text-fg backdrop-blur">
+              One team · Four verticals
+            </figcaption>
+          </figure>
+        }
+      />
       <TeamRoster members={members} verticals={verticals} years={years} activeYear={currentYear} currentYear={currentYear} />
     </>
   )

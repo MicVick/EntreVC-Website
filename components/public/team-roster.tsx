@@ -47,11 +47,11 @@ export function TeamRoster({ members, verticals, years, activeYear, currentYear 
 
       <section className="section-shell">
         <div className="site-shell">
-          <div className="mb-16">
+          <div className="mb-12">
             <p className="eyebrow">How the club moves</p>
             <h2 className="display-type mt-5 max-w-4xl text-4xl font-semibold leading-none sm:text-5xl">One team, organised around the work.</h2>
             {verticals.length ? (
-              <div className="relative mt-10 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
+              <div className="reveal-grid relative mt-8 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
                 {verticals.map((vertical, index) => (
                   <div key={vertical.name} className="min-h-52 border-b border-r border-border bg-surface p-6">
                     <span className="text-xs font-bold tabular-nums tracking-[0.13em] text-brand">{String(index + 1).padStart(2, '0')}</span>
@@ -64,7 +64,7 @@ export function TeamRoster({ members, verticals, years, activeYear, currentYear 
           </div>
 
           {members.length ? (
-            <div className="space-y-20">
+            <div className="space-y-16">
               {verticals.map((vertical) => {
                 const group = members.filter((member) => member.vertical === vertical.name)
                 if (!group.length) return null
@@ -77,7 +77,7 @@ export function TeamRoster({ members, verticals, years, activeYear, currentYear 
                       </div>
                       <p className="text-sm text-fg-subtle">{group.length} {group.length === 1 ? 'member' : 'members'}</p>
                     </div>
-                    <div className={cn('mt-7 grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4', group.length < 4 && 'lg:grid-cols-3')}>
+                    <div className={cn('reveal-grid mt-7 grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-4', group.length < 4 && 'lg:grid-cols-3')}>
                       {group.map((person) => <PersonCard key={person.id} person={person} />)}
                     </div>
                   </section>
@@ -101,7 +101,7 @@ export function TeamRoster({ members, verticals, years, activeYear, currentYear 
             />
           )}
 
-          <div className="mt-20 flex flex-col gap-6 rounded-lg border border-brand bg-brand-muted p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div className="mt-16 flex flex-col gap-6 rounded-lg border border-brand bg-brand-muted p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
             <div>
               <h2 className="display-type text-2xl font-semibold">Looking for the right person?</h2>
               <p className="mt-2 text-sm leading-6 text-fg-muted">Use the category-based contact form and your note will reach the relevant vertical.</p>

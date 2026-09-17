@@ -44,8 +44,8 @@
 :root {
   color-scheme: dark;
   --page-gutter: clamp(1.25rem, 4vw, 4.5rem);
-  --section-space: clamp(5rem, 10vw, 9rem);
-  --header-height: 5.25rem;
+  --section-space: clamp(4rem, 7.5vw, 7rem);
+  --header-height: 4.75rem;
 }
 
 * {
@@ -266,6 +266,35 @@ svg {
   animation: enter-up 700ms 120ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
+.signal-dot {
+  position: relative;
+}
+
+.signal-dot::after {
+  position: absolute;
+  inset: -0.32rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand), transparent 20%);
+  border-radius: 999px;
+  content: "";
+  animation: signal-pulse 2.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal-on-scroll {
+      animation: reveal-up both cubic-bezier(0.2, 0.75, 0.25, 1);
+      animation-range: entry 8% cover 24%;
+      animation-timeline: view();
+    }
+
+    .reveal-grid > * {
+      animation: reveal-up both cubic-bezier(0.2, 0.75, 0.25, 1);
+      animation-range: entry 5% cover 22%;
+      animation-timeline: view();
+    }
+  }
+}
+
 @keyframes enter-up {
   from {
     opacity: 0;
@@ -275,6 +304,29 @@ svg {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    transform: translateY(1.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes signal-pulse {
+  0%, 35% {
+    opacity: 0.72;
+    transform: scale(0.72);
+  }
+
+  75%, 100% {
+    opacity: 0;
+    transform: scale(1.55);
   }
 }
 

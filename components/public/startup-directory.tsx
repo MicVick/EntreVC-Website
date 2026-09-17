@@ -196,7 +196,7 @@ export function StartupDirectory({ startups, facets }: StartupDirectoryProps) {
         </div>
 
         {visible.length ? (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="reveal-grid grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {visible.map((startup) => <StartupCard key={startup.id} startup={startup} />)}
           </div>
         ) : (

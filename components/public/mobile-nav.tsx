@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { ArrowUpRightIcon, MenuIcon } from '@/components/ui/icons'
@@ -18,6 +19,7 @@ type MobileNavProps = {
 
 export function MobileNav({ items }: MobileNavProps) {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
 
   return (
     <>
@@ -38,8 +40,9 @@ export function MobileNav({ items }: MobileNavProps) {
               key={item.href}
               href={item.href}
               prefetch={false}
+              aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined}
               onClick={() => setOpen(false)}
-              className="group flex min-h-16 items-center justify-between gap-4 border-b border-border py-4 text-lg font-semibold text-fg transition hover:text-accent"
+              className="group flex min-h-16 items-center justify-between gap-4 border-b border-border py-4 text-lg font-semibold text-fg transition hover:text-accent aria-[current=page]:text-accent"
             >
               <span className="flex items-center gap-4">
                 <span className="text-xs tabular-nums text-fg-subtle">0{index + 1}</span>
@@ -52,8 +55,9 @@ export function MobileNav({ items }: MobileNavProps) {
         <Link
           href="/contact"
           prefetch={false}
+          aria-current={pathname === '/contact' || pathname.startsWith('/contact/') ? 'page' : undefined}
           onClick={() => setOpen(false)}
-          className="mt-10 inline-flex min-h-12 items-center justify-center rounded-full bg-brand px-5 text-sm font-bold text-brand-fg"
+          className="mt-10 inline-flex min-h-12 items-center justify-center rounded-full bg-brand px-5 text-sm font-bold text-brand-fg aria-[current=page]:ring-2 aria-[current=page]:ring-accent aria-[current=page]:ring-offset-2 aria-[current=page]:ring-offset-bg"
         >
           Start a conversation
         </Link>

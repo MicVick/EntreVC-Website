@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useId, useRef, type ReactNode } from 'react'
-import { X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/components/ui/cn'
+import { XIcon } from '@/components/ui/icons'
 
 export type DialogProps = {
   open: boolean
@@ -33,7 +33,10 @@ export function Dialog({
     const dialog = ref.current
     if (!dialog) return
 
-    if (open && !dialog.open) dialog.showModal()
+    if (open && !dialog.open) {
+      dialog.showModal()
+      dialog.querySelector<HTMLElement>('[data-dialog-initial-focus]')?.focus({ preventScroll: true })
+    }
     if (!open && dialog.open) dialog.close()
   }, [open])
 
@@ -70,10 +73,11 @@ export function Dialog({
           variant="ghost"
           size="icon"
           aria-label="Close dialog"
+          data-dialog-initial-focus
           onClick={() => onOpenChange(false)}
           className="-mr-2 -mt-2"
         >
-          <X aria-hidden="true" className="size-5" />
+          <XIcon aria-hidden="true" className="size-5" />
         </Button>
       </div>
       <div className="p-5 sm:p-6">{children}</div>

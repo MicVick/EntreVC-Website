@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
+import { PageHero } from '@/components/public/page-hero'
 import { StartupDirectory } from '@/components/public/startup-directory'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getStartupFacets, getStartups } from '@/lib/content'
@@ -17,18 +18,11 @@ export default async function StartupsPage() {
 
   return (
     <>
-      <section className="surface-grid border-b border-border">
-        <div className="site-shell py-16 sm:py-24">
-          <p className="eyebrow">Built from IIMA</p>
-          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[0.92] sm:text-7xl lg:text-8xl">
-            A directory of people turning insight into{' '}
-            <span className="text-accent">enterprise.</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-fg-muted">
-            Verified student and alumni ventures, made browsable for investors, mentors, collaborators and the next person ready to begin.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Startup directory"
+        title={<>Discover ventures built by the <span className="text-accent">IIMA community.</span></>}
+        description="Search verified student and alumni ventures by sector, stage or founder batch—whether you want to invest, mentor, collaborate or simply learn what is being built."
+      />
       <section className="section-shell">
         <div className="site-shell">
           <Suspense fallback={<Skeleton className="min-h-[48rem] w-full" />}>

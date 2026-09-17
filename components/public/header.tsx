@@ -1,10 +1,6 @@
-import Link from 'next/link'
-import { ArrowUpRight } from 'lucide-react'
-
 import { BrandLogo } from '@/components/public/brand-logo'
 import { MobileNav, type NavigationItem } from '@/components/public/mobile-nav'
-import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/components/ui/cn'
+import { NavigationLink } from '@/components/public/navigation-link'
 
 export const navigationItems: readonly NavigationItem[] = [
   { href: '/events', label: 'Events' },
@@ -21,21 +17,11 @@ export function Header() {
         <BrandLogo compact />
         <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
           {navigationItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              prefetch={false}
-              className="rounded-full px-3 py-2 text-sm font-semibold text-fg-muted transition hover:bg-surface hover:text-fg xl:px-4"
-            >
-              {item.label}
-            </Link>
+            <NavigationLink key={item.href} {...item} />
           ))}
         </nav>
         <div className="hidden lg:block">
-          <Link href="/contact" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}>
-            Contact
-            <ArrowUpRight aria-hidden="true" className="size-4" />
-          </Link>
+          <NavigationLink href="/contact" label="Contact" variant="action" />
         </div>
         <MobileNav items={navigationItems} />
       </div>

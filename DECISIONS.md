@@ -829,3 +829,35 @@ of it has been executed against a real VM, because there isn't one.
 - Integrated verification: route type generation and lint clean; 80/80 Vitest tests and
   all 5 Playwright tests pass; the production build is green with the new health route
   and 31 generated public/static paths.
+- B-006 is resolved by Agent B in the shared `Dialog` primitive: opening a modal now moves
+  focus to the labelled close button without scrolling. The gallery keeps native Escape
+  handling and returns focus to its opener on close.
+- B-009 → Agent A: `tests/e2e/helpers.ts#setEventStatus` should assert the PATCH response.
+  After all five Playwright tests passed against the isolated production server, the next
+  build generated `unannounced-speaker-session`, proving the silent afterAll cleanup had
+  left the seeded draft published. No real content was affected; Agent B will reset the
+  disposable database before final verification.
+- Correction to B-006: the first audit queried the first `<dialog>` in the document,
+  which was the closed mobile-navigation sheet, while focus was already on the gallery's
+  “Close dialog” control. The focused regression now queries `dialog[open]`; the explicit
+  focus placement added to the primitive makes that intended behaviour deterministic.
+
+---
+
+## Agent B interface refinement — 17 Sep 2026
+
+- Top-level B-owned landing pages now share a compact `PageHero` structure. The homepage
+  retains a larger editorial hero but no longer fills the entire first viewport on
+  desktop; section spacing and footer spacing are reduced globally.
+- The homepage moves four task-based routes directly below the hero: attend an event,
+  explore startups, find a resource and get venture support. The later duplicate route
+  grid is replaced by a team/contact narrative, while the required homepage newsletter
+  remains as a compact event-alert band instead of sitting beside the footer form.
+- Primary navigation now exposes `aria-current="page"` and a visible active state on
+  desktop and mobile, including Contact.
+- Three project-bound editorial placeholders were generated with the built-in image tool,
+  compressed to WebP and saved under `public/images/editorial/`. They intentionally contain
+  no text, logos or UI so real club photography can replace them without changing layout.
+- Motion remains progressive enhancement: hover movement and CSS view-timeline reveals
+  are disabled by the existing `prefers-reduced-motion` rule, and unrevealed content stays
+  visibly present rather than starting fully transparent.

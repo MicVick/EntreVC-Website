@@ -26,15 +26,15 @@ export default async function IimaVenturesPage() {
   return (
     <>
       <section className="surface-grid overflow-hidden border-b border-border">
-        <div className="site-shell grid gap-12 py-16 sm:py-24 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end">
+        <div className="site-shell grid gap-9 py-10 sm:py-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end lg:py-16">
           <div>
             <p className="eyebrow">Institutional support</p>
-            <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[0.9] sm:text-7xl lg:text-8xl">
-              Turn campus access into{' '}
-              <span className="text-accent">momentum.</span>
+            <h1 className="display-type mt-5 max-w-5xl text-[clamp(2.6rem,5.8vw,5.8rem)] font-semibold leading-[0.91]">
+              Find the support that fits your{' '}
+              <span className="text-accent">next stage.</span>
             </h1>
-            <div className="rich-text mt-8 max-w-3xl" dangerouslySetInnerHTML={{ __html: content.overview.html }} />
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="rich-text mt-6 max-w-3xl" dangerouslySetInnerHTML={{ __html: content.overview.html }} />
+            <div className="mt-7 flex flex-wrap gap-3">
               {content.website ? (
                 <a href={content.website} target="_blank" rel="noreferrer" className={buttonVariants({ size: 'lg' })}>
                   Visit IIMA Ventures <ExternalLink aria-hidden="true" className="size-4" />
@@ -48,7 +48,7 @@ export default async function IimaVenturesPage() {
             </div>
           </div>
 
-          <div className="relative min-h-80 overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
+          <div className="reveal-on-scroll relative min-h-72 overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
             {content.image ? (
               <Image
                 src={content.image.url}
@@ -57,7 +57,7 @@ export default async function IimaVenturesPage() {
                 height={content.image.height}
                 sizes="(min-width: 1024px) 40vw, 100vw"
                 priority
-                className="h-full min-h-80 w-full object-cover opacity-80"
+                className="h-full min-h-72 w-full object-cover opacity-80"
               />
             ) : (
               <div className="surface-grid absolute inset-0" aria-hidden="true" />
