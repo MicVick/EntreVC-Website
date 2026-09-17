@@ -6,10 +6,13 @@ const nextConfig: NextConfig = {
   // server bundle that we rsync to the box — the VM never runs `next build`,
   // which would OOM on a small instance. See deploy/ and CLAUDE.md.
   //
-  // Vercel sets VERCEL=1 and produces its own build output, so the team-preview
-  // deployment skips standalone. Production is still the VM, and with VERCEL
-  // unset this is byte-for-byte the previous configuration.
-  ...(process.env.VERCEL ? {} : { output: "standalone" as const }),
+  // Skipped where the platform handles its own output: Vercel builds via its own
+  // pipeline (and sets VERCEL=1 itself), Heroku starts the app with `next start`.
+  // Set PREVIEW_PLATFORM on any such host. Production is still the VM, and with
+  // both unset this is byte-for-byte the previous configuration.
+  ...(process.env.VERCEL || process.env.PREVIEW_PLATFORM
+    ? {}
+    : { output: "standalone" as const }),
 
   images: {
     // Media is served from local disk on the same origin, so no remote patterns

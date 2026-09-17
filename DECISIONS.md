@@ -946,3 +946,22 @@ clean on both.
   is an interface change and belongs to whoever owns the contract edit.
 - Migrations remain absent. Unchanged by this, still owed before the VM takes real
   registrations.
+
+- **Addendum, same day: preview host is Heroku, not Vercel.** Club credits cover a Basic
+  dyno. The deciding technical point is `lib/rate-limit.ts`, which declares
+  `[ASSUMPTION] Single instance` over a module-level `Map`: a Heroku dyno is one
+  long-running process and holds that assumption, whereas each Vercel serverless instance
+  would get its own `Map` and the limiter would stop being meaningful. Heroku is also
+  structurally closer to the single-process VM this ships to.
+  - The `VERCEL` gate in `next.config.ts` is now `VERCEL || PREVIEW_PLATFORM`, since
+    Heroku sets no such variable of its own. Both unset on the VM — no behaviour change.
+  - New root `Procfile` runs `npm start`. Heroku compiles its own slug and starts with
+    `next start`, so the standalone bundle is skipped there.
+  - Heroku's filesystem is ephemeral and dynos restart roughly daily, so Turso and
+    Supabase Storage are still required. Heroku Postgres was rejected for the same reason
+    Supabase Postgres was: a second SQL dialect for no gain.
+  - **Watch the first push.** Heroku compiles the slug on a build dyno, which is the
+    practice CLAUDE.md forbids on the VM. The build dyno is much larger so it should hold,
+    but Payload + Next + aws-sdk is a heavy tree against a 500MB uncompressed slug limit.
+  - Verified: `PREVIEW_PLATFORM=1 npm run build` omits `.next/standalone` and still emits
+    `.next/server`, so `next start` has what it needs.
