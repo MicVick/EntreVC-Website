@@ -42,8 +42,17 @@ export function EventCard({
             className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-[1.035] group-hover:opacity-100"
           />
         ) : (
-          <div className="surface-grid flex h-full min-h-56 items-end p-6" aria-hidden="true">
-            <span className="display-type text-7xl font-semibold text-border-strong">E/{event.startDateTime.slice(5, 7)}</span>
+          <div className="relative h-full min-h-56 overflow-hidden" aria-hidden="true">
+            <Image
+              src="/images/editorial/ideas-in-motion-light.webp"
+              alt=""
+              width={1600}
+              height={900}
+              sizes={featured ? '(min-width: 768px) 52vw, 100vw' : '(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw'}
+              className="h-full w-full object-cover opacity-75 transition duration-700 group-hover:scale-[1.035] group-hover:opacity-90"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-fg/45 via-transparent to-transparent" />
+            <span className="display-type absolute bottom-5 left-5 text-6xl font-semibold text-brand-fg/90">E/{event.startDateTime.slice(5, 7)}</span>
           </div>
         )}
         <div className="absolute left-4 top-4 flex flex-wrap gap-2">

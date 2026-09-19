@@ -34,8 +34,18 @@ export function ResourceCard({ resource, className, featured = false }: Resource
             className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-[1.035] group-hover:opacity-100"
           />
         ) : (
-          <div className="surface-grid flex h-full min-h-48 items-center justify-center" aria-hidden="true">
-            <BookOpen className="size-12 text-border-strong" strokeWidth={1.25} />
+          <div className="relative h-full min-h-48 overflow-hidden" aria-hidden="true">
+            <Image
+              src="/images/editorial/field-notes-light.webp"
+              alt=""
+              width={1600}
+              height={900}
+              sizes={featured ? '(min-width: 768px) 42vw, 100vw' : '(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw'}
+              className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-[1.035] group-hover:opacity-100"
+            />
+            <span className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full border border-border bg-bg/85 text-accent backdrop-blur">
+              <BookOpen className="size-5" strokeWidth={1.5} />
+            </span>
           </div>
         )}
       </div>

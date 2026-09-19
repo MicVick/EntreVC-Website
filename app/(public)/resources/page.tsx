@@ -30,14 +30,14 @@ export default async function ResourcesPage() {
         aside={
           <div className="group relative min-h-60 overflow-hidden rounded-lg border border-brand bg-brand-muted shadow-md sm:min-h-64">
             <Image
-              src="/images/editorial/field-notes.webp"
-              alt="A dark worktable with notebooks, paper prototypes and a red pencil"
+              src="/images/editorial/field-notes-light.webp"
+              alt="A bright worktable with notebooks, paper prototypes and a red pencil"
               width={1600}
               height={900}
               sizes="(min-width: 1024px) 40vw, 100vw"
-              className="absolute inset-0 h-full w-full object-cover opacity-45 transition duration-1000 group-hover:scale-[1.025] group-hover:opacity-55"
+              className="absolute inset-0 h-full w-full object-cover opacity-70 transition duration-1000 group-hover:scale-[1.025] group-hover:opacity-80"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/65 to-bg/10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/75 to-bg/10" />
             <div className="relative flex min-h-60 flex-col justify-end p-6 sm:min-h-64 sm:p-7">
               <BookMarked aria-hidden="true" className="size-6 text-accent" />
               <h2 className="display-type mt-4 text-3xl font-semibold">Start with the playbook.</h2>

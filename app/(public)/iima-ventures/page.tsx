@@ -60,7 +60,16 @@ export default async function IimaVenturesPage() {
                 className="h-full min-h-72 w-full object-cover opacity-80"
               />
             ) : (
-              <div className="surface-grid absolute inset-0" aria-hidden="true" />
+              <Image
+                src="/images/editorial/ideas-in-motion-light.webp"
+                alt=""
+                width={1600}
+                height={900}
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                priority
+                className="absolute inset-0 h-full w-full object-cover opacity-80"
+                aria-hidden="true"
+              />
             )}
             {content.highlight ? (
               <div className="absolute inset-x-5 bottom-5 rounded-md border border-border bg-bg/88 p-5 backdrop-blur sm:inset-x-7 sm:bottom-7">

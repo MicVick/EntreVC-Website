@@ -25,14 +25,14 @@ export default async function TeamPage() {
         aside={
           <figure className="group relative aspect-[16/10] overflow-hidden rounded-lg border border-border bg-surface shadow-md">
             <Image
-              src="/images/editorial/founder-workroom.webp"
+              src="/images/editorial/founder-workroom-light.webp"
               alt="Students collaborating around a worktable"
               width={1600}
               height={900}
               sizes="(min-width: 1024px) 40vw, 100vw"
-              className="h-full w-full object-cover opacity-85 transition duration-1000 group-hover:scale-[1.025] group-hover:opacity-100"
+              className="h-full w-full object-cover transition duration-1000 group-hover:scale-[1.025]"
             />
-            <figcaption className="absolute bottom-4 left-4 rounded-full border border-white/20 bg-bg/75 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.13em] text-fg backdrop-blur">
+            <figcaption className="absolute bottom-4 left-4 rounded-full border border-border bg-bg/85 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.13em] text-fg backdrop-blur">
               One team · Four verticals
             </figcaption>
           </figure>

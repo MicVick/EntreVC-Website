@@ -236,8 +236,18 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="surface-grid flex aspect-[16/10] items-end p-8" aria-hidden="true">
-                  <span className="display-type text-6xl font-semibold text-border-strong">
+                <div className="relative aspect-[16/10] overflow-hidden" aria-hidden="true">
+                  <Image
+                    src="/images/editorial/ideas-in-motion-light.webp"
+                    alt=""
+                    width={1600}
+                    height={900}
+                    sizes="(min-width: 1024px) 42vw, 100vw"
+                    priority
+                    className="h-full w-full object-cover opacity-80"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-fg/55 via-transparent to-transparent" />
+                  <span className="display-type absolute bottom-7 left-7 text-4xl font-semibold text-brand-fg sm:text-5xl">
                     {formatDateInIST(event.startDateTime)}
                   </span>
                 </div>

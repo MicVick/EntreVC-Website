@@ -91,61 +91,71 @@ export default async function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd }} />
 
-      <section className="surface-grid relative overflow-hidden border-b border-border">
-        <div className="site-shell grid gap-9 py-12 sm:py-16 lg:min-h-[clamp(34rem,72svh,42rem)] lg:grid-cols-[minmax(0,1.16fr)_minmax(20rem,0.84fr)] lg:items-center lg:py-18">
-          <div className="self-center">
+      <section className="surface-grid relative overflow-hidden border-b border-border bg-bg">
+        <div className="pointer-events-none absolute -right-32 -top-40 size-96 rounded-full bg-brand-muted blur-3xl" aria-hidden="true" />
+        <div className="site-shell grid gap-12 py-12 sm:py-16 lg:min-h-[clamp(38rem,78svh,48rem)] lg:grid-cols-[minmax(0,1.02fr)_minmax(24rem,0.98fr)] lg:items-center lg:py-20">
+          <div className="animate-enter self-center">
             <p className="eyebrow">Entrepreneurship × Venture Capital · IIM Ahmedabad</p>
-            <h1 className="display-type mt-6 max-w-5xl text-[clamp(3.25rem,8vw,7.15rem)] font-semibold leading-[0.88]">
-              Ideas deserve a place to become{' '}
-              <span className="text-accent">real.</span>
+            <h1 className="display-type mt-6 max-w-5xl text-[clamp(3.35rem,7.2vw,6.8rem)] font-semibold leading-[0.9]">
+              Big ideas start in the{' '}
+              <span className="text-accent">right room.</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-fg-muted sm:text-lg sm:leading-8">
-              {settings.positioningStatement}
+            <p className="mt-7 max-w-2xl text-base leading-7 text-fg-muted sm:text-lg sm:leading-8">
+              {settings.positioningStatement} Find your next conversation, collaborator or point of momentum here.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/events" prefetch={false} className={buttonVariants({ size: 'lg' })}>
-                Browse upcoming events
+                Find your next room
                 <ArrowRight aria-hidden="true" className="size-4" />
               </Link>
               <Link href="/startups" prefetch={false} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-                Explore IIMA startups
+                Meet IIMA founders
               </Link>
             </div>
+            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs font-bold uppercase tracking-[0.12em] text-fg-subtle" aria-label="Community qualities">
+              {['Student-led', 'Founder-first', 'Alumni-connected'].map((quality) => (
+                <li key={quality} className="flex items-center gap-2">
+                  <span className="size-1.5 rounded-full bg-brand" aria-hidden="true" />
+                  {quality}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="animate-enter-delayed group relative mx-auto w-full max-w-xl lg:mx-0 lg:ml-auto">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-lg border border-border bg-surface shadow-lg lg:aspect-[4/3]">
+          <div className="animate-enter-delayed group relative mx-auto w-full max-w-2xl lg:mx-0 lg:ml-auto">
+            <div className="absolute -inset-4 translate-x-5 translate-y-5 rounded-lg border border-brand/20 bg-brand-muted sm:-inset-5" aria-hidden="true" />
+            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-surface shadow-lg lg:aspect-[5/6] lg:max-h-[39rem]">
               <Image
-                src="/images/editorial/ideas-in-motion.webp"
-                alt="Abstract architectural forms built around a red focal point"
+                src="/images/editorial/ideas-in-motion-light.webp"
+                alt="Bright abstract architectural forms built around a red focal point"
                 width={1600}
                 height={900}
-                sizes="(min-width: 1024px) 40vw, 100vw"
+                sizes="(min-width: 1024px) 46vw, 100vw"
                 priority
                 className="h-full w-full object-cover transition duration-1000 group-hover:scale-[1.025]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-bg/70 via-transparent to-transparent" />
-              <div className="surface-grid absolute inset-0 opacity-35" aria-hidden="true" />
-              <p className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-white/20 bg-bg/70 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-fg backdrop-blur">
+              <div className="absolute inset-0 bg-gradient-to-t from-fg/25 via-transparent to-transparent" />
+              <p className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-border bg-bg/85 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-fg backdrop-blur">
                 <span className="signal-dot size-1.5 rounded-full bg-accent" />
-                Ideas in motion
+                Ahmedabad · India
               </p>
             </div>
-            <div className="absolute -bottom-4 left-4 rounded-md border border-border bg-bg/92 px-4 py-3 text-xs font-bold uppercase tracking-[0.13em] text-fg-muted shadow-md backdrop-blur sm:left-8">
-              Student-led · Alumni-connected
+            <div className="animate-drift absolute -bottom-5 left-4 max-w-64 rounded-md border border-border bg-bg/95 p-4 shadow-md backdrop-blur sm:-left-7 sm:bottom-8 sm:p-5">
+              <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-accent">Built for momentum</p>
+              <p className="display-type mt-2 text-lg font-semibold leading-tight">From first questions to serious ventures.</p>
             </div>
           </div>
         </div>
       </section>
 
       <section aria-labelledby="choose-path" className="border-b border-border bg-surface">
-        <div className="site-shell py-10 sm:py-12">
+        <div className="site-shell py-12 sm:py-14">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="eyebrow">Choose your next step</p>
               <h2 id="choose-path" className="display-type mt-4 text-3xl font-semibold sm:text-4xl">What are you here to do?</h2>
             </div>
-            <p className="max-w-md text-sm leading-6 text-fg-muted">Go straight to the part of the EntreVC ecosystem that is useful today.</p>
+            <p className="max-w-md text-sm leading-6 text-fg-muted">No long tour. Start with the part of the EntreVC ecosystem that can help you today.</p>
           </div>
           <div className="reveal-grid mt-7 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
             {entryPoints.map((entry) => {
@@ -155,10 +165,12 @@ export default async function HomePage() {
                   key={entry.href}
                   href={entry.href}
                   prefetch={false}
-                  className="group flex min-h-48 flex-col border-b border-r border-border bg-bg/70 p-5 transition hover:z-10 hover:bg-surface-2 sm:p-6"
+                  className="group flex min-h-52 flex-col border-b border-r border-border bg-bg p-5 transition duration-300 hover:z-10 hover:-translate-y-1 hover:border-brand/40 hover:shadow-md sm:p-6"
                 >
                   <div className="flex items-center justify-between gap-4">
-                    <Icon aria-hidden="true" className="size-5 text-accent" strokeWidth={1.7} />
+                    <span className="flex size-11 items-center justify-center rounded-full bg-brand-muted text-accent transition duration-300 group-hover:bg-brand group-hover:text-brand-fg">
+                      <Icon aria-hidden="true" className="size-5" strokeWidth={1.7} />
+                    </span>
                     <span className="text-xs font-bold tabular-nums tracking-[0.13em] text-fg-subtle">{entry.index}</span>
                   </div>
                   <div className="mt-auto pt-8">
@@ -175,13 +187,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="intro" className="border-b border-border bg-surface">
-        <div className="site-shell grid gap-7 py-12 md:grid-cols-[0.58fr_1.42fr] md:py-16">
+      <section id="intro" className="border-b border-border bg-bg">
+        <div className="site-shell grid gap-8 py-14 md:grid-cols-[0.55fr_1.45fr] md:py-20">
           <p className="eyebrow self-start">What EntreVC does</p>
-          <div
-            className="rich-text max-w-4xl text-xl leading-9 sm:text-2xl sm:leading-10"
-            dangerouslySetInnerHTML={{ __html: settings.intro.html }}
-          />
+          <div className="reveal-on-scroll">
+            <h2 className="display-type max-w-4xl text-3xl font-semibold leading-[1.02] sm:text-5xl">
+              We make the next useful connection easier to find.
+            </h2>
+            <div
+              className="rich-text mt-6 max-w-3xl"
+              dangerouslySetInnerHTML={{ __html: settings.intro.html }}
+            />
+          </div>
         </div>
       </section>
 
@@ -205,12 +222,12 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      <section className="border-y border-border bg-surface">
+      <section className="border-y border-border bg-brand-muted/60">
         <div className="site-shell grid gap-6 py-10 md:grid-cols-[0.8fr_1.2fr] md:items-end md:py-12">
           <div>
             <p className="eyebrow">Event alerts</p>
-            <h2 className="display-type mt-4 text-3xl font-semibold leading-none sm:text-4xl">Know what is coming up.</h2>
-            <p className="mt-3 max-w-lg text-sm leading-6 text-fg-muted">Occasional updates with new sessions, deadlines and useful club news.</p>
+            <h2 className="display-type mt-4 text-3xl font-semibold leading-none sm:text-4xl">Do not miss the room.</h2>
+            <p className="mt-3 max-w-lg text-sm leading-6 text-fg-muted">A concise note when a worthwhile session, opportunity or deadline goes live.</p>
           </div>
           <NewsletterSignup source="homepage" compact />
         </div>
@@ -244,7 +261,7 @@ export default async function HomePage() {
 
       <section className="section-shell">
         <div className="site-shell grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
-          <div>
+          <div className="reveal-on-scroll">
             <p className="eyebrow">Latest thinking</p>
             <h2 className="display-type mt-5 text-4xl font-semibold leading-none sm:text-5xl">Useful before it is impressive.</h2>
             <p className="mt-5 max-w-xl text-base leading-7 text-fg-muted">
@@ -262,13 +279,19 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-brand text-brand-fg">
-        <div className="site-shell grid gap-10 py-14 sm:grid-cols-3 sm:py-18">
-          <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} className="border-brand-fg/35 [&>p]:text-brand-fg" />
-          <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} className="border-brand-fg/35 [&>p]:text-brand-fg" />
-          {numbers.alumniNetwork === null ? null : (
-            <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} className="border-brand-fg/35 [&>p]:text-brand-fg" />
-          )}
+      <section className="border-y border-border bg-surface">
+        <div className="site-shell py-14 sm:py-18">
+          <div className="mb-9 grid gap-4 md:grid-cols-[0.8fr_1.2fr] md:items-end">
+            <p className="eyebrow">The network in motion</p>
+            <h2 className="display-type max-w-3xl text-3xl font-semibold leading-none sm:text-4xl">A community that keeps compounding.</h2>
+          </div>
+          <div className="reveal-grid grid gap-10 border-t border-border pt-9 sm:grid-cols-3">
+            <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} className="border-brand" />
+            <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} className="border-brand" />
+            {numbers.alumniNetwork === null ? null : (
+              <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} className="border-brand" />
+            )}
+          </div>
         </div>
       </section>
 
@@ -276,18 +299,18 @@ export default async function HomePage() {
         <div className="site-shell grid gap-9 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.95fr)] lg:items-center">
           <figure className="reveal-on-scroll group relative overflow-hidden rounded-lg border border-border bg-surface shadow-md">
             <Image
-              src="/images/editorial/founder-workroom.webp"
+              src="/images/editorial/founder-workroom-light.webp"
               alt="A small group of students developing an idea around a worktable"
               width={1600}
               height={900}
               sizes="(min-width: 1024px) 55vw, 100vw"
-              className="aspect-[16/10] w-full object-cover opacity-90 transition duration-1000 group-hover:scale-[1.025] group-hover:opacity-100"
+              className="aspect-[16/10] w-full object-cover transition duration-1000 group-hover:scale-[1.025]"
             />
-            <figcaption className="absolute bottom-4 left-4 rounded-full border border-white/20 bg-bg/78 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.13em] text-fg backdrop-blur">
+            <figcaption className="absolute bottom-4 left-4 rounded-full border border-border bg-bg/85 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.13em] text-fg backdrop-blur">
               The work happens together
             </figcaption>
           </figure>
-          <div>
+          <div className="reveal-on-scroll">
             <p className="eyebrow">The people behind the platform</p>
             <h2 className="display-type mt-4 max-w-xl text-4xl font-semibold leading-[0.98] sm:text-5xl">A student team, built to be useful.</h2>
             <p className="mt-5 max-w-xl text-base leading-7 text-fg-muted">

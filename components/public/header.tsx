@@ -13,7 +13,7 @@ export const navigationItems: readonly NavigationItem[] = [
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-bg/88 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-bg/92 shadow-sm backdrop-blur-xl">
       <div className="site-shell flex min-h-[var(--header-height)] items-center justify-between gap-5">
         <BrandLogo compact />
         <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
