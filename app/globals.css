@@ -284,7 +284,7 @@ svg {
   to { transform: rotate(360deg); }
 }
 
-/* A repeating story, paused off screen and controlled by the visitor. */
+/* Start on every page load; the visitor can pause the repeating scene. */
 .dream-scene {
   --flight-duration: 9s;
   --dream-play-state: paused;
@@ -327,8 +327,8 @@ svg {
 
 .dream-trail { opacity: 0.4; }
 
-/* Explicit playback also works for visitors who normally prefer reduced motion.
-   Only these scene elements override the global reduced-motion rule. */
+/* This scene autoplays by design. Its local pause control stays available,
+   and the rest of the site retains its reduced-motion behavior. */
 .dream-scene[data-motion="on"] .dream-animated {
   animation-duration: var(--dream-duration, var(--flight-duration)) !important;
   animation-iteration-count: infinite !important;

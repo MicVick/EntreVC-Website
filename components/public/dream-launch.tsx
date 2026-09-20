@@ -1,48 +1,14 @@
 'use client'
 
-import { useEffect, useId, useRef, useState } from 'react'
+import { useId, useState } from 'react'
 import { Pause, Play } from 'lucide-react'
 
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/components/ui/cn'
 
 export function DreamLaunch() {
-  const [reducedMotion, setReducedMotion] = useState(false)
-  const [explicitMotion, setExplicitMotion] = useState(false)
   const [paused, setPaused] = useState(false)
-  const [visible, setVisible] = useState(false)
-  const scene = useRef<HTMLDivElement>(null)
   const titleId = useId()
-  const motionEnabled = !reducedMotion || explicitMotion
-  const playing = motionEnabled && !paused && visible
-
-  useEffect(() => {
-    const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const syncPreference = () => {
-      setReducedMotion(preference.matches)
-      setExplicitMotion(false)
-    }
-    syncPreference()
-    preference.addEventListener('change', syncPreference)
-
-    const observer = new IntersectionObserver(([entry]) => {
-      setVisible(entry.isIntersecting)
-    }, { threshold: 0.15 })
-    if (scene.current) observer.observe(scene.current)
-    return () => {
-      preference.removeEventListener('change', syncPreference)
-      observer.disconnect()
-    }
-  }, [])
-
-  function togglePlayback() {
-    if (!motionEnabled) {
-      setExplicitMotion(true)
-      setPaused(false)
-    } else {
-      setPaused(value => !value)
-    }
-  }
 
   return (
     <section id="dream-launch" aria-labelledby={titleId} className="border-b border-border bg-bg">
@@ -57,16 +23,16 @@ export function DreamLaunch() {
           </p>
           <button
             type="button"
-            onClick={togglePlayback}
+            onClick={() => setPaused(value => !value)}
             aria-controls={`${titleId}-scene`}
             className={cn(buttonVariants({ variant: 'outline' }), 'mt-6')}
           >
-            {motionEnabled && !paused ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
-            {motionEnabled && !paused ? 'Pause animation' : 'Play animation'}
+            {paused ? <Play aria-hidden="true" className="size-4" /> : <Pause aria-hidden="true" className="size-4" />}
+            {paused ? 'Play animation' : 'Pause animation'}
           </button>
         </div>
 
-        <div id={`${titleId}-scene`} ref={scene} className="dream-scene relative min-w-0" data-motion={motionEnabled ? 'on' : 'off'} data-playing={playing}>
+        <div id={`${titleId}-scene`} className="dream-scene relative min-w-0" data-motion="on" data-playing={!paused}>
           <svg viewBox="0 0 640 430" role="img" aria-label="An animated countdown and a smiling young astronaut waving, then blasting off from campus in a red rocket with flames and billowing smoke, flying up toward the stars." className="h-auto w-full overflow-hidden">
             <g aria-hidden="true" strokeLinecap="round" strokeLinejoin="round">
               {/* A quiet orbital map keeps the canvas white. */}
