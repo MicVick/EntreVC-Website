@@ -284,103 +284,152 @@ svg {
   to { transform: rotate(360deg); }
 }
 
-/* A single, bounded launch: no perpetual movement or animation dependency. */
+/* A repeating story, paused off screen and controlled by the visitor. */
 .dream-scene {
-  --flight-duration: 4.6s;
+  --flight-duration: 9s;
+  --dream-play-state: paused;
+}
+
+.dream-scene[data-playing="true"] {
+  --dream-play-state: running;
 }
 
 .dream-rocket {
-  transform: translate(139px, 273px) rotate(0deg) scale(0.65);
+  transform: translate(450px, 170px) rotate(32deg) scale(1.12);
 }
 
 .dream-exhaust,
 .dream-smoke,
-.dream-trail {
+.dream-smoke-drift,
+.dream-countdown,
+.dream-count-three,
+.dream-count-two,
+.dream-count-one,
+.dream-liftoff {
   opacity: 0;
 }
 
-.dream-exhaust {
+.dream-flame {
   transform-origin: 0 60px;
 }
 
-.dream-smoke {
+.dream-smoke,
+.dream-smoke-drift {
   transform-origin: 138px 335px;
 }
+
+.dream-wave { transform-origin: 12px -2px; }
 
 .dream-star {
   transform-box: fill-box;
   transform-origin: center;
 }
 
-.dream-scene[data-phase="complete"] .dream-rocket {
-  transform: translate(452px, 152px) rotate(32deg) scale(0.86);
+.dream-trail { opacity: 0.4; }
+
+/* Explicit playback also works for visitors who normally prefer reduced motion.
+   Only these scene elements override the global reduced-motion rule. */
+.dream-scene[data-motion="on"] .dream-animated {
+  animation-duration: var(--dream-duration, var(--flight-duration)) !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: var(--dream-play-state) !important;
+  animation-fill-mode: both;
+  animation-timing-function: linear;
 }
 
-.dream-scene[data-phase="complete"] .dream-trail {
-  opacity: 0.4;
+.dream-scene[data-motion="on"] .dream-rocket { animation-name: dream-rocket-flight; }
+.dream-scene[data-motion="on"] .dream-exhaust { animation-name: dream-engine; }
+.dream-scene[data-motion="on"] .dream-flame {
+  --dream-duration: 240ms;
+  animation-name: dream-thrust;
+  animation-direction: alternate;
 }
+.dream-scene[data-motion="on"] .dream-smoke { animation-name: dream-smoke; }
+.dream-scene[data-motion="on"] .dream-smoke-drift { animation-name: dream-smoke-drift; }
+.dream-scene[data-motion="on"] .dream-trail { animation-name: dream-trail; }
+.dream-scene[data-motion="on"] .dream-star { animation-name: dream-star; }
+.dream-scene[data-motion="on"] .dream-countdown { animation-name: dream-countdown; }
+.dream-scene[data-motion="on"] .dream-count-three { animation-name: dream-count-three; }
+.dream-scene[data-motion="on"] .dream-count-two { animation-name: dream-count-two; }
+.dream-scene[data-motion="on"] .dream-count-one { animation-name: dream-count-one; }
+.dream-scene[data-motion="on"] .dream-liftoff { animation-name: dream-liftoff; }
+.dream-scene[data-motion="on"] .dream-wave { animation-name: dream-wave; }
 
-@media (prefers-reduced-motion: no-preference) {
-  .dream-scene[data-phase="flying"] .dream-rocket {
-    animation: dream-rocket-flight var(--flight-duration) both;
-  }
-
-  .dream-scene[data-phase="flying"] .dream-exhaust {
-    opacity: 1;
-    animation: dream-thrust 300ms ease-in-out infinite alternate;
-  }
-
-  .dream-scene[data-phase="flying"] .dream-smoke {
-    animation: dream-smoke var(--flight-duration) both;
-  }
-
-  .dream-scene[data-phase="flying"] .dream-trail {
-    animation: dream-trail var(--flight-duration) both;
-  }
-
-  .dream-scene[data-phase="flying"] .dream-star {
-    animation: dream-star var(--flight-duration) ease-in-out both;
-  }
+@keyframes dream-countdown {
+  0%, 20% { opacity: 1; }
+  22%, 100% { opacity: 0; }
+}
+@keyframes dream-count-three {
+  0%, 6.9% { opacity: 1; }
+  7%, 100% { opacity: 0; }
+}
+@keyframes dream-count-two {
+  0%, 6.9%, 14%, 100% { opacity: 0; }
+  7%, 13.9% { opacity: 1; }
+}
+@keyframes dream-count-one {
+  0%, 13.9%, 22%, 100% { opacity: 0; }
+  14%, 21.9% { opacity: 1; }
+}
+@keyframes dream-liftoff {
+  0%, 22% { opacity: 0; translate: 0 10px; }
+  28%, 48% { opacity: 1; translate: 0 0; }
+  58%, 100% { opacity: 0; translate: 0 -12px; }
 }
 
 @keyframes dream-rocket-flight {
-  0%, 8% { transform: translate(139px, 273px) rotate(0deg) scale(0.65); }
-  12% { transform: translate(137px, 273px) rotate(-2deg) scale(0.65); }
-  16% { transform: translate(141px, 272px) rotate(2deg) scale(0.65); }
-  20% { transform: translate(139px, 273px) rotate(0deg) scale(0.65); animation-timing-function: cubic-bezier(0.5, 0, 0.7, 0.5); }
-  42% { transform: translate(181px, 230px) rotate(22deg) scale(0.69); animation-timing-function: cubic-bezier(0.2, 0.5, 0.3, 1); }
-  76% { transform: translate(458px, 141px) rotate(40deg) scale(0.86); }
-  88% { transform: translate(449px, 155px) rotate(29deg) scale(0.86); }
-  100% { transform: translate(452px, 152px) rotate(32deg) scale(0.86); }
+  0%, 10% { opacity: 1; transform: translate(139px, 273px) rotate(0deg) scale(0.88); }
+  12%, 16%, 20% { transform: translate(136px, 273px) rotate(-2deg) scale(0.88); }
+  14%, 18%, 22% { transform: translate(142px, 271px) rotate(2deg) scale(0.88); }
+  24% { transform: translate(139px, 267px) rotate(0deg) scale(0.88); animation-timing-function: ease-in; }
+  36% { transform: translate(183px, 202px) rotate(26deg) scale(0.96); }
+  52% { transform: translate(325px, 159px) rotate(58deg) scale(1.12); }
+  66% { transform: translate(440px, 149px) rotate(32deg) scale(1.12); }
+  74% { transform: translate(455px, 128px) rotate(20deg) scale(1.12); animation-timing-function: ease-in; }
+  87% { opacity: 1; transform: translate(653px, -126px) rotate(40deg) scale(0.8); }
+  88% { opacity: 0; transform: translate(653px, -126px) rotate(40deg) scale(0.8); }
+  89%, 94% { opacity: 0; transform: translate(139px, 289px) rotate(0deg) scale(0.88); }
+  100% { opacity: 1; transform: translate(139px, 273px) rotate(0deg) scale(0.88); }
+}
+
+@keyframes dream-engine {
+  0%, 12%, 89%, 100% { opacity: 0; }
+  18%, 87% { opacity: 1; }
 }
 
 @keyframes dream-thrust {
-  from { transform: scale(0.9, 0.85); }
-  to { transform: scale(1.05, 1.08); }
+  from { transform: scale(0.9, 0.8); }
+  to { transform: scale(1.1, 1.3); }
 }
 
 @keyframes dream-smoke {
-  0%, 8% { opacity: 0; transform: scale(0.5); }
-  22% { opacity: 1; transform: scale(1); }
-  48%, 100% { opacity: 0; transform: translateY(-8px) scale(1.8); }
+  0%, 14% { opacity: 0; transform: scale(0.4); }
+  24% { opacity: 1; transform: scale(1.4); }
+  55%, 100% { opacity: 0; transform: translate(-40px, -25px) scale(2.5); }
+}
+
+@keyframes dream-smoke-drift {
+  0%, 20% { opacity: 0; transform: scale(0.5); }
+  30% { opacity: 0.9; transform: scale(1.3); }
+  64%, 100% { opacity: 0; transform: translate(62px, -16px) scale(2); }
 }
 
 @keyframes dream-trail {
-  0%, 30% { opacity: 0; clip-path: inset(0 100% 0 0); }
-  76%, 100% { opacity: 0.4; clip-path: inset(0 0 0 0); }
+  0%, 25% { opacity: 0; clip-path: inset(0 100% 0 0); stroke-dashoffset: 0; }
+  75% { opacity: 0.5; clip-path: inset(0 0 0 0); }
+  88% { opacity: 0.5; clip-path: inset(0 0 0 0); }
+  97%, 100% { opacity: 0; clip-path: inset(0 0 0 0); stroke-dashoffset: -100; }
 }
 
 @keyframes dream-star {
-  0%, 45%, 100% { scale: 1; }
-  75% { scale: 1.3; }
+  0%, 30%, 100% { scale: 0.8; opacity: 0.5; }
+  50%, 80% { scale: 1.3; opacity: 1; }
+  65% { scale: 1; opacity: 0.8; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .dream-rocket {
-    transform: translate(452px, 152px) rotate(32deg) scale(0.86);
-  }
-
-  .dream-trail { opacity: 0.4; }
+@keyframes dream-wave {
+  0%, 8%, 16%, 30%, 100% { rotate: 0deg; }
+  4%, 12%, 20% { rotate: -22deg; }
 }
 
 .signal-dot {
