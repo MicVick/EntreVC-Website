@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowUpRight, Camera, ContactRound, Mail, Play } from 'lucide-react'
 
 import { BrandLogo } from '@/components/public/brand-logo'
+import { InstituteMark } from '@/components/public/institute-mark'
 import { navigationItems } from '@/components/public/header'
 import { NewsletterSignup } from '@/components/public/newsletter-signup'
 import type { SiteSettings, SocialLink } from '@/lib/schemas'
@@ -35,7 +36,7 @@ export function Footer({ settings }: FooterProps) {
 
         <div className="grid gap-9 py-10 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.7fr_0.85fr]">
           <div>
-            <BrandLogo />
+            <div className="flex items-center gap-4"><BrandLogo /><InstituteMark /></div>
             <p className="mt-6 max-w-md text-sm leading-6 text-fg-muted">{settings.positioningStatement}</p>
           </div>
           <nav aria-label="Footer navigation">

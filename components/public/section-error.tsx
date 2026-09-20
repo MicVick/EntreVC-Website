@@ -25,7 +25,7 @@ export function SectionError({ error, reset, eyebrow, title, description }: Sect
           <TriangleAlertIcon aria-hidden="true" className="size-5 text-danger" />
         </div>
         <p className="eyebrow mt-8">{eyebrow}</p>
-        <h1 className="display-type mt-6 max-w-4xl text-5xl font-semibold leading-[0.9] sm:text-7xl">{title}</h1>
+        <h1 className="display-type mt-6 max-w-4xl text-5xl font-semibold leading-[1.16] sm:text-7xl">{title}</h1>
         <p className="mt-7 max-w-xl text-lg leading-8 text-fg-muted">{description}</p>
         <Button size="lg" className="mt-9" onClick={reset}>
           <RefreshIcon aria-hidden="true" className="size-4" /> Try this section again

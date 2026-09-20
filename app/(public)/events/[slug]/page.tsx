@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
+import { ContentImage } from '@/components/public/content-image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
@@ -159,7 +159,7 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
                 ) : null}
               </div>
 
-              <h1 className="display-type mt-6 break-words text-4xl font-semibold leading-[0.94] sm:text-6xl lg:text-7xl">
+              <h1 className="display-type mt-6 break-words text-4xl font-semibold leading-[1.16] sm:text-6xl lg:text-7xl">
                 {event.title}
               </h1>
               {event.subtitle ? (
@@ -225,33 +225,7 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
             </div>
 
             <div className="overflow-hidden rounded-lg border border-border bg-surface-2">
-              {event.heroImage ? (
-                <Image
-                  src={event.heroImage.url}
-                  alt={event.heroImage.alt}
-                  width={event.heroImage.width}
-                  height={event.heroImage.height}
-                  sizes="(min-width: 1024px) 42vw, 100vw"
-                  priority
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="relative aspect-[16/10] overflow-hidden" aria-hidden="true">
-                  <Image
-                    src="/images/editorial/ideas-in-motion-light.webp"
-                    alt=""
-                    width={1600}
-                    height={900}
-                    sizes="(min-width: 1024px) 42vw, 100vw"
-                    priority
-                    className="h-full w-full object-cover opacity-80"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-fg/55 via-transparent to-transparent" />
-                  <span className="display-type absolute bottom-7 left-7 text-4xl font-semibold text-brand-fg sm:text-5xl">
-                    {formatDateInIST(event.startDateTime)}
-                  </span>
-                </div>
-              )}
+              <ContentImage image={event.heroImage} kind="event" label={event.title} sizes="(min-width: 1024px) 42vw, 100vw" priority className="min-h-72" />
             </div>
           </div>
         </div>
@@ -331,20 +305,7 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
                     >
                       <div className="flex items-start gap-4">
                         <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-surface-2">
-                          {speaker.photo ? (
-                            <Image
-                              src={speaker.photo.url}
-                              alt={speaker.photo.alt}
-                              width={speaker.photo.width}
-                              height={speaker.photo.height}
-                              sizes="64px"
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <span className="display-type text-xl font-semibold text-fg-muted">
-                              {speaker.name.slice(0, 1)}
-                            </span>
-                          )}
+                          <ContentImage image={speaker.photo} kind="person" label={speaker.name} sizes="64px" />
                         </div>
                         <div className="min-w-0">
                           <h3 className="font-bold text-fg">{speaker.name}</h3>

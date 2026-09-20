@@ -2,10 +2,10 @@
 
 @theme inline {
   --color-bg: #ffffff;
-  --color-surface: #f8f6f2;
-  --color-surface-2: #efebe5;
-  --color-border: #e1dcd5;
-  --color-border-strong: #b8aea4;
+  --color-surface: #ffffff;
+  --color-surface-2: #f5f6f8;
+  --color-border: #e5e7eb;
+  --color-border-strong: #b6bac3;
 
   --color-fg: #191513;
   --color-fg-muted: #5f5751;
@@ -37,8 +37,16 @@
   --shadow-md: 0 2px 4px #271a1408, 0 20px 50px #271a1412;
   --shadow-lg: 0 4px 10px #271a140d, 0 34px 90px #271a141c;
 
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --color-playful: #fdf0b8;
+  --color-playful-ink: #76601a;
+  --color-lilac: #efeafd;
+  --color-lilac-ink: #675299;
+  --color-rocket-outline: #3d292b;
+  --color-rocket-skin: #e9ad7f;
+  --color-rocket-cheek: #dc836f;
+  --color-rocket-flame: #ed9845;
 }
 
 :root {
@@ -62,12 +70,10 @@ body {
   min-height: 100%;
   margin: 0;
   overflow-x: clip;
-  background:
-    radial-gradient(circle at 8% -10%, #bd282e0d 0, transparent 30rem),
-    radial-gradient(circle at 92% 22%, #d8cfc31f 0, transparent 25rem),
-    var(--color-bg);
+  background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-sans), Arial, sans-serif;
+  line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
 
@@ -90,8 +96,10 @@ summary {
   outline-offset: 3px;
 }
 
-a {
-  color: inherit;
+@layer base {
+  a {
+    color: inherit;
+  }
 }
 
 button,
@@ -129,7 +137,8 @@ svg {
 
 .display-type {
   font-family: var(--font-display), Arial, sans-serif;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.025em;
+  line-height: 1.16;
   text-wrap: balance;
 }
 
@@ -141,7 +150,7 @@ svg {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.15em;
-  line-height: 1;
+  line-height: 1.6;
   text-transform: uppercase;
 }
 
@@ -155,19 +164,6 @@ svg {
 .surface-grid {
   position: relative;
   isolation: isolate;
-}
-
-.surface-grid::before {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, #1915130a 1px, transparent 1px),
-    linear-gradient(to bottom, #1915130a 1px, transparent 1px);
-  background-size: 4rem 4rem;
-  mask-image: linear-gradient(to bottom, #000000, transparent 82%);
-  pointer-events: none;
-  content: "";
 }
 
 .hairline {
@@ -191,8 +187,8 @@ svg {
   color: var(--color-fg);
   font-family: var(--font-display), Arial, sans-serif;
   font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 1.15;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
 }
 
 .rich-text h2 {
@@ -270,6 +266,123 @@ svg {
   animation: drift 7s ease-in-out infinite;
 }
 
+.idea-sticker {
+  box-shadow: var(--shadow-sm);
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+
+.idea-sticker:hover {
+  transform: translateY(-4px) rotate(3deg);
+  box-shadow: var(--shadow-md);
+}
+
+.orbit-spark {
+  animation: spark-turn 14s linear infinite;
+}
+
+@keyframes spark-turn {
+  to { transform: rotate(360deg); }
+}
+
+/* A single, bounded launch: no perpetual movement or animation dependency. */
+.dream-scene {
+  --flight-duration: 4.6s;
+}
+
+.dream-rocket {
+  transform: translate(139px, 273px) rotate(0deg) scale(0.65);
+}
+
+.dream-exhaust,
+.dream-smoke,
+.dream-trail {
+  opacity: 0;
+}
+
+.dream-exhaust {
+  transform-origin: 0 60px;
+}
+
+.dream-smoke {
+  transform-origin: 138px 335px;
+}
+
+.dream-star {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.dream-scene[data-phase="complete"] .dream-rocket {
+  transform: translate(452px, 152px) rotate(32deg) scale(0.86);
+}
+
+.dream-scene[data-phase="complete"] .dream-trail {
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dream-scene[data-phase="flying"] .dream-rocket {
+    animation: dream-rocket-flight var(--flight-duration) both;
+  }
+
+  .dream-scene[data-phase="flying"] .dream-exhaust {
+    opacity: 1;
+    animation: dream-thrust 300ms ease-in-out infinite alternate;
+  }
+
+  .dream-scene[data-phase="flying"] .dream-smoke {
+    animation: dream-smoke var(--flight-duration) both;
+  }
+
+  .dream-scene[data-phase="flying"] .dream-trail {
+    animation: dream-trail var(--flight-duration) both;
+  }
+
+  .dream-scene[data-phase="flying"] .dream-star {
+    animation: dream-star var(--flight-duration) ease-in-out both;
+  }
+}
+
+@keyframes dream-rocket-flight {
+  0%, 8% { transform: translate(139px, 273px) rotate(0deg) scale(0.65); }
+  12% { transform: translate(137px, 273px) rotate(-2deg) scale(0.65); }
+  16% { transform: translate(141px, 272px) rotate(2deg) scale(0.65); }
+  20% { transform: translate(139px, 273px) rotate(0deg) scale(0.65); animation-timing-function: cubic-bezier(0.5, 0, 0.7, 0.5); }
+  42% { transform: translate(181px, 230px) rotate(22deg) scale(0.69); animation-timing-function: cubic-bezier(0.2, 0.5, 0.3, 1); }
+  76% { transform: translate(458px, 141px) rotate(40deg) scale(0.86); }
+  88% { transform: translate(449px, 155px) rotate(29deg) scale(0.86); }
+  100% { transform: translate(452px, 152px) rotate(32deg) scale(0.86); }
+}
+
+@keyframes dream-thrust {
+  from { transform: scale(0.9, 0.85); }
+  to { transform: scale(1.05, 1.08); }
+}
+
+@keyframes dream-smoke {
+  0%, 8% { opacity: 0; transform: scale(0.5); }
+  22% { opacity: 1; transform: scale(1); }
+  48%, 100% { opacity: 0; transform: translateY(-8px) scale(1.8); }
+}
+
+@keyframes dream-trail {
+  0%, 30% { opacity: 0; clip-path: inset(0 100% 0 0); }
+  76%, 100% { opacity: 0.4; clip-path: inset(0 0 0 0); }
+}
+
+@keyframes dream-star {
+  0%, 45%, 100% { scale: 1; }
+  75% { scale: 1.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dream-rocket {
+    transform: translate(452px, 152px) rotate(32deg) scale(0.86);
+  }
+
+  .dream-trail { opacity: 0.4; }
+}
+
 .signal-dot {
   position: relative;
 }
@@ -325,12 +438,10 @@ svg {
 
 @keyframes reveal-up {
   from {
-    opacity: 0;
     transform: translateY(1.25rem);
   }
 
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }

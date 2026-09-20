@@ -91,7 +91,7 @@ async function main() {
   const upload = async (file: string, alt: string): Promise<number> => {
     const doc = await payload.create({
       collection: 'media',
-      data: { alt },
+      data: { alt: `Placeholder: ${alt}` },
       filePath: path.join(PLACEHOLDER_DIR, file),
     })
     return doc.id

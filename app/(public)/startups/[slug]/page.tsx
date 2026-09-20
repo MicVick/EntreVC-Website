@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
+import { ContentImage } from '@/components/public/content-image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowUpRight, Building2, CalendarDays, ExternalLink } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, CalendarDays, ExternalLink } from 'lucide-react'
 
 import { ShareButton } from '@/components/public/share-button'
 import { StartupViewTracker } from '@/components/public/startup-view-tracker'
@@ -64,23 +64,11 @@ export default async function StartupDetailPage({ params }: PageProps<'/startups
                 {startup.stage ? <Badge>{startupStageLabels[startup.stage]}</Badge> : null}
                 {startup.foundedYear ? <Badge variant="outline">Founded {startup.foundedYear}</Badge> : null}
               </div>
-              <h1 className="display-type mt-6 break-words text-5xl font-semibold leading-[0.9] sm:text-7xl lg:text-8xl">{startup.name}</h1>
+              <h1 className="display-type mt-6 break-words text-5xl font-semibold leading-[1.16] sm:text-7xl lg:text-8xl">{startup.name}</h1>
               <p className="mt-7 max-w-3xl text-xl leading-8 text-fg-muted sm:text-2xl">{startup.tagline}</p>
             </div>
-            <div className="flex aspect-square w-full max-w-72 items-center justify-center overflow-hidden rounded-lg border border-border bg-fg p-8 text-bg shadow-lg lg:ml-auto">
-              {startup.logo ? (
-                <Image
-                  src={startup.logo.url}
-                  alt={startup.logo.alt}
-                  width={startup.logo.width}
-                  height={startup.logo.height}
-                  sizes="288px"
-                  priority
-                  className="h-full w-full object-contain"
-                />
-              ) : (
-                <Building2 aria-hidden="true" className="size-20" strokeWidth={1.2} />
-              )}
+            <div className="flex aspect-square w-full max-w-72 items-center justify-center overflow-hidden rounded-lg border border-border bg-bg shadow-lg lg:ml-auto">
+              <ContentImage image={startup.logo} kind="startup" label={startup.name} sizes="288px" priority className="aspect-square object-contain" />
             </div>
           </div>
         </div>
@@ -139,11 +127,7 @@ export default async function StartupDetailPage({ params }: PageProps<'/startups
               {startup.founders.map((founder) => (
                 <article key={`${startup.id}-${founder.name}`} className="flex items-center gap-5 rounded-lg border border-border bg-bg p-5">
                   <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-surface-2">
-                    {founder.photo ? (
-                      <Image src={founder.photo.url} alt={founder.photo.alt} width={founder.photo.width} height={founder.photo.height} sizes="64px" className="h-full w-full object-cover" />
-                    ) : (
-                      <span className="display-type text-xl font-semibold text-fg-muted">{founder.name.slice(0, 1)}</span>
-                    )}
+                    <ContentImage image={founder.photo} kind="person" label={founder.name} sizes="64px" />
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-bold text-fg">{founder.name}</h3>

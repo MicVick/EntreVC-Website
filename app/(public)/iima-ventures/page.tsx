@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
+import { ContentImage } from '@/components/public/content-image'
 import { ArrowUpRight, CalendarClock, CheckCircle2, ExternalLink, Mail } from 'lucide-react'
 
 import { SectionHeader } from '@/components/public/section-header'
@@ -29,7 +29,7 @@ export default async function IimaVenturesPage() {
         <div className="site-shell grid gap-9 py-10 sm:py-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end lg:py-16">
           <div>
             <p className="eyebrow">Institutional support</p>
-            <h1 className="display-type mt-5 max-w-5xl text-[clamp(2.6rem,5.8vw,5.8rem)] font-semibold leading-[0.91]">
+            <h1 className="display-type mt-5 max-w-5xl text-[clamp(2.6rem,5.8vw,5.8rem)] font-semibold leading-[1.16]">
               Find the support that fits your{' '}
               <span className="text-accent">next stage.</span>
             </h1>
@@ -49,28 +49,7 @@ export default async function IimaVenturesPage() {
           </div>
 
           <div className="reveal-on-scroll relative min-h-72 overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
-            {content.image ? (
-              <Image
-                src={content.image.url}
-                alt={content.image.alt}
-                width={content.image.width}
-                height={content.image.height}
-                sizes="(min-width: 1024px) 40vw, 100vw"
-                priority
-                className="h-full min-h-72 w-full object-cover opacity-80"
-              />
-            ) : (
-              <Image
-                src="/images/editorial/ideas-in-motion-light.webp"
-                alt=""
-                width={1600}
-                height={900}
-                sizes="(min-width: 1024px) 40vw, 100vw"
-                priority
-                className="absolute inset-0 h-full w-full object-cover opacity-80"
-                aria-hidden="true"
-              />
-            )}
+            <ContentImage image={content.image} kind="event" label="IIMA Ventures" sizes="(min-width: 1024px) 40vw, 100vw" priority className="min-h-80" />
             {content.highlight ? (
               <div className="absolute inset-x-5 bottom-5 rounded-md border border-border bg-bg/88 p-5 backdrop-blur sm:inset-x-7 sm:bottom-7">
                 <p className="text-xs font-bold uppercase tracking-[0.13em] text-accent">At a glance</p>

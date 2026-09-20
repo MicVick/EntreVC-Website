@@ -32,7 +32,7 @@ export default async function ArchivedTeamPage({ params }: PageProps<'/team/[yea
       <section className="surface-grid border-b border-border">
         <div className="site-shell py-16 sm:py-24">
           <p className="eyebrow">Team archive · {year}</p>
-          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[0.9] sm:text-7xl lg:text-8xl">
+          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[1.16] sm:text-7xl lg:text-8xl">
             The people who moved the club{' '}
             <span className="text-accent">forward.</span>
           </h1>

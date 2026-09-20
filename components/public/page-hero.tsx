@@ -21,7 +21,7 @@ export function PageHero({ eyebrow, title, description, aside, className }: Page
       >
         <div>
           <p className="eyebrow">{eyebrow}</p>
-          <h1 className="display-type mt-5 max-w-5xl text-[clamp(2.6rem,5.8vw,5.8rem)] font-semibold leading-[0.91]">
+          <h1 className="display-type mt-5 max-w-5xl text-[clamp(2.6rem,5.8vw,5.8rem)] font-semibold leading-[1.16]">
             {title}
           </h1>
           {description ? (

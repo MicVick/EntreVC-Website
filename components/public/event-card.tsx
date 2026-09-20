@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { ContentImage } from '@/components/public/content-image'
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, MapPin } from 'lucide-react'
 
@@ -32,29 +32,7 @@ export function EventCard({
       )}
     >
       <div className={cn('relative overflow-hidden bg-surface-2', featured ? 'min-h-64 md:min-h-full' : 'aspect-[16/10]')}>
-        {event.heroImage ? (
-          <Image
-            src={event.heroImage.url}
-            alt={event.heroImage.alt}
-            width={event.heroImage.width}
-            height={event.heroImage.height}
-            sizes={featured ? '(min-width: 768px) 52vw, 100vw' : '(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw'}
-            className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-[1.035] group-hover:opacity-100"
-          />
-        ) : (
-          <div className="relative h-full min-h-56 overflow-hidden" aria-hidden="true">
-            <Image
-              src="/images/editorial/ideas-in-motion-light.webp"
-              alt=""
-              width={1600}
-              height={900}
-              sizes={featured ? '(min-width: 768px) 52vw, 100vw' : '(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw'}
-              className="h-full w-full object-cover opacity-75 transition duration-700 group-hover:scale-[1.035] group-hover:opacity-90"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-fg/45 via-transparent to-transparent" />
-            <span className="display-type absolute bottom-5 left-5 text-6xl font-semibold text-brand-fg/90">E/{event.startDateTime.slice(5, 7)}</span>
-          </div>
-        )}
+        <ContentImage image={event.heroImage} kind="event" label={event.title} sizes={featured ? '(min-width: 768px) 52vw, 100vw' : '(min-width: 1024px) 32vw, 100vw'} className={featured ? 'min-h-64' : undefined} />
         <div className="absolute left-4 top-4 flex flex-wrap gap-2">
           <Badge variant="brand">{event.eventType ?? 'EntreVC'}</Badge>
           <Badge>{eventFormatLabels[event.format]}</Badge>

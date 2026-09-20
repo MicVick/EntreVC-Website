@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import Image from 'next/image'
+import { ContentImage } from '@/components/public/content-image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { Dialog } from '@/components/ui/dialog'
@@ -69,11 +69,10 @@ export function EventGallery({ images, eventTitle }: EventGalleryProps) {
               <span className="sr-only">
                 Open photo {index + 1} of {images.length}: {image.alt}
               </span>
-              <Image
-                src={image.url}
-                alt=""
-                width={image.width}
-                height={image.height}
+              <ContentImage
+                image={image}
+                kind="event"
+                label={`${eventTitle}, photo ${index + 1}`}
                 sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
                 className="aspect-[4/3] h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
               />
@@ -95,13 +94,12 @@ export function EventGallery({ images, eventTitle }: EventGalleryProps) {
       >
         {active ? (
           <div>
-            <Image
-              src={active.url}
-              alt={active.alt}
-              width={active.width}
-              height={active.height}
+            <ContentImage
+              image={active}
+              kind="event"
+              label={`${eventTitle}, photo ${(openIndex ?? 0) + 1}`}
               sizes="(min-width: 640px) 56rem, 100vw"
-              className="h-auto w-full rounded-md object-contain"
+              className="aspect-[4/3] h-auto w-full rounded-md object-contain"
             />
             <p className="mt-4 text-sm leading-6 text-fg-muted">{active.alt}</p>
 

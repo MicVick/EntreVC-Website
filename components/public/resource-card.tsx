@@ -1,5 +1,5 @@
-import Image from 'next/image'
-import { ArrowUpRight, BookOpen, ExternalLink } from 'lucide-react'
+import { ContentImage } from '@/components/public/content-image'
+import { ArrowUpRight, ExternalLink } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/components/ui/cn'
@@ -24,30 +24,7 @@ export function ResourceCard({ resource, className, featured = false }: Resource
       )}
     >
       <div className={cn('relative overflow-hidden bg-surface-2', featured ? 'min-h-60' : 'aspect-[16/10]')}>
-        {resource.coverImage ? (
-          <Image
-            src={resource.coverImage.url}
-            alt={resource.coverImage.alt}
-            width={resource.coverImage.width}
-            height={resource.coverImage.height}
-            sizes={featured ? '(min-width: 768px) 42vw, 100vw' : '(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw'}
-            className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-[1.035] group-hover:opacity-100"
-          />
-        ) : (
-          <div className="relative h-full min-h-48 overflow-hidden" aria-hidden="true">
-            <Image
-              src="/images/editorial/field-notes-light.webp"
-              alt=""
-              width={1600}
-              height={900}
-              sizes={featured ? '(min-width: 768px) 42vw, 100vw' : '(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw'}
-              className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-[1.035] group-hover:opacity-100"
-            />
-            <span className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full border border-border bg-bg/85 text-accent backdrop-blur">
-              <BookOpen className="size-5" strokeWidth={1.5} />
-            </span>
-          </div>
-        )}
+        <ContentImage image={resource.coverImage} kind="resource" label={resource.title} sizes={featured ? '(min-width: 768px) 42vw, 100vw' : '(min-width: 1024px) 32vw, 100vw'} className={featured ? 'min-h-60' : undefined} />
       </div>
 
       <div className="flex min-w-0 flex-col p-5 sm:p-6">

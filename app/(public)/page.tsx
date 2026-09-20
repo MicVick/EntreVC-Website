@@ -6,10 +6,15 @@ import {
   BookOpen,
   Building2,
   CalendarDays,
+  Coffee,
   Lightbulb,
+  MapPin,
+  MoveUpRight,
+  Sparkles,
 } from 'lucide-react'
 
 import { EmptyState } from '@/components/public/empty-state'
+import { DreamLaunch } from '@/components/public/dream-launch'
 import { EventCard } from '@/components/public/event-card'
 import { NewsletterSignup } from '@/components/public/newsletter-signup'
 import { ResourceCard } from '@/components/public/resource-card'
@@ -44,6 +49,7 @@ const entryPoints = [
     description: 'See what is coming up and reserve your place.',
     icon: CalendarDays,
     index: '01',
+    color: 'bg-playful text-playful-ink',
   },
   {
     href: '/startups',
@@ -51,6 +57,7 @@ const entryPoints = [
     description: 'Search ventures by sector, stage or founder batch.',
     icon: Building2,
     index: '02',
+    color: 'bg-brand-muted text-accent',
   },
   {
     href: '/resources',
@@ -58,6 +65,7 @@ const entryPoints = [
     description: 'Open practical playbooks, reports, tools and talks.',
     icon: BookOpen,
     index: '03',
+    color: 'bg-lilac text-lilac-ink',
   },
   {
     href: '/iima-ventures',
@@ -65,6 +73,7 @@ const entryPoints = [
     description: 'Find grants, incubation and institutional routes.',
     icon: Lightbulb,
     index: '04',
+    color: 'bg-success-muted text-success',
   },
 ] as const
 
@@ -91,12 +100,11 @@ export default async function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd }} />
 
-      <section className="surface-grid relative overflow-hidden border-b border-border bg-bg">
-        <div className="pointer-events-none absolute -right-32 -top-40 size-96 rounded-full bg-brand-muted blur-3xl" aria-hidden="true" />
+      <section className="relative overflow-hidden border-b border-border bg-bg">
         <div className="site-shell grid gap-12 py-12 sm:py-16 lg:min-h-[clamp(38rem,78svh,48rem)] lg:grid-cols-[minmax(0,1.02fr)_minmax(24rem,0.98fr)] lg:items-center lg:py-20">
           <div className="animate-enter self-center">
             <p className="eyebrow">Entrepreneurship × Venture Capital · IIM Ahmedabad</p>
-            <h1 className="display-type mt-6 max-w-5xl text-[clamp(3.35rem,7.2vw,6.8rem)] font-semibold leading-[0.9]">
+            <h1 className="display-type mt-6 max-w-5xl text-[clamp(2.8rem,5.6vw,5.4rem)] font-semibold leading-[1.12]">
               Big ideas start in the{' '}
               <span className="text-accent">right room.</span>
             </h1>
@@ -122,31 +130,43 @@ export default async function HomePage() {
             </ul>
           </div>
 
-          <div className="animate-enter-delayed group relative mx-auto w-full max-w-2xl lg:mx-0 lg:ml-auto">
-            <div className="absolute -inset-4 translate-x-5 translate-y-5 rounded-lg border border-brand/20 bg-brand-muted sm:-inset-5" aria-hidden="true" />
-            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-surface shadow-lg lg:aspect-[5/6] lg:max-h-[39rem]">
+          <figure className="animate-enter-delayed group relative mx-auto mb-6 w-full max-w-2xl pt-6 lg:mx-0 lg:ml-auto">
+            <Sparkles aria-hidden="true" className="orbit-spark absolute -left-5 -top-3 z-10 size-12 text-accent sm:size-16" strokeWidth={1.2} />
+            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-bg shadow-md lg:aspect-[6/5]">
               <Image
-                src="/images/editorial/ideas-in-motion-light.webp"
-                alt="Bright abstract architectural forms built around a red focal point"
-                width={1600}
-                height={900}
+                src="/images/campus/louis-kahn-plaza.webp"
+                alt="The red-brick arches and green lawns of Louis Kahn Plaza at IIM Ahmedabad"
+                width={1280}
+                height={720}
                 sizes="(min-width: 1024px) 46vw, 100vw"
                 priority
                 className="h-full w-full object-cover transition duration-1000 group-hover:scale-[1.025]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-fg/25 via-transparent to-transparent" />
-              <p className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-border bg-bg/85 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-fg backdrop-blur">
+              <p className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full border border-border bg-bg px-3 py-2 text-[0.65rem] font-bold tracking-[0.04em] text-fg">
+                <MapPin aria-hidden="true" className="size-3.5 text-accent" />
+                Louis Kahn Plaza, IIMA
+              </p>
+              <p className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-border bg-bg px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-fg">
                 <span className="signal-dot size-1.5 rounded-full bg-accent" />
                 Ahmedabad · India
               </p>
             </div>
-            <div className="animate-drift absolute -bottom-5 left-4 max-w-64 rounded-md border border-border bg-bg/95 p-4 shadow-md backdrop-blur sm:-left-7 sm:bottom-8 sm:p-5">
-              <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-accent">Built for momentum</p>
-              <p className="display-type mt-2 text-lg font-semibold leading-tight">From first questions to serious ventures.</p>
+            <div className="animate-drift absolute -right-1 -top-3 z-10 flex items-center gap-2 rounded-full border border-playful-ink/15 bg-playful px-4 py-3 text-sm font-bold text-playful-ink sm:-right-4">
+              <Lightbulb aria-hidden="true" className="size-5" /> What if...?
             </div>
-          </div>
+            <div className="idea-sticker relative -mt-10 ml-4 flex w-fit max-w-[85%] items-center gap-3 rounded-md border border-border bg-bg p-4 sm:-ml-5 sm:gap-4 sm:p-5">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-muted text-accent"><MoveUpRight aria-hidden="true" className="size-6" /></span>
+              <div><p className="text-xs font-semibold text-fg-muted">Born on campus.</p><p className="mt-1 text-lg font-bold">Built for the world.</p></div>
+            </div>
+            <figcaption className="mt-4 text-right text-[0.65rem] leading-5 text-fg-subtle">
+              Photo: <a href="https://commons.wikimedia.org/wiki/File:Louis_Kahn_Plaza,_IIM_Ahmedabad.jpg" target="_blank" rel="noreferrer" className="underline underline-offset-2">Perspectives, IIM Ahmedabad</a>
+              {' · '}<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer" className="underline underline-offset-2">CC BY-SA 4.0</a> · Resized &amp; cropped to fit
+            </figcaption>
+          </figure>
         </div>
       </section>
+
+      <DreamLaunch />
 
       <section aria-labelledby="choose-path" className="border-b border-border bg-surface">
         <div className="site-shell py-12 sm:py-14">
@@ -155,7 +175,7 @@ export default async function HomePage() {
               <p className="eyebrow">Choose your next step</p>
               <h2 id="choose-path" className="display-type mt-4 text-3xl font-semibold sm:text-4xl">What are you here to do?</h2>
             </div>
-            <p className="max-w-md text-sm leading-6 text-fg-muted">No long tour. Start with the part of the EntreVC ecosystem that can help you today.</p>
+            <p className="flex max-w-md items-center gap-3 text-sm leading-6 text-fg-muted"><Coffee aria-hidden="true" className="size-8 shrink-0 -rotate-12 text-accent" />Bring your curiosity. We’ll bring the connections.</p>
           </div>
           <div className="reveal-grid mt-7 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
             {entryPoints.map((entry) => {
@@ -168,7 +188,7 @@ export default async function HomePage() {
                   className="group flex min-h-52 flex-col border-b border-r border-border bg-bg p-5 transition duration-300 hover:z-10 hover:-translate-y-1 hover:border-brand/40 hover:shadow-md sm:p-6"
                 >
                   <div className="flex items-center justify-between gap-4">
-                    <span className="flex size-11 items-center justify-center rounded-full bg-brand-muted text-accent transition duration-300 group-hover:bg-brand group-hover:text-brand-fg">
+                    <span className={cn('flex size-12 items-center justify-center rounded-2xl transition duration-300 group-hover:-rotate-12 group-hover:scale-110', entry.color)}>
                       <Icon aria-hidden="true" className="size-5" strokeWidth={1.7} />
                     </span>
                     <span className="text-xs font-bold tabular-nums tracking-[0.13em] text-fg-subtle">{entry.index}</span>
@@ -222,7 +242,7 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      <section className="border-y border-border bg-brand-muted/60">
+      <section className="border-y border-border bg-bg">
         <div className="site-shell grid gap-6 py-10 md:grid-cols-[0.8fr_1.2fr] md:items-end md:py-12">
           <div>
             <p className="eyebrow">Event alerts</p>
@@ -312,7 +332,7 @@ export default async function HomePage() {
           </figure>
           <div className="reveal-on-scroll">
             <p className="eyebrow">The people behind the platform</p>
-            <h2 className="display-type mt-4 max-w-xl text-4xl font-semibold leading-[0.98] sm:text-5xl">A student team, built to be useful.</h2>
+            <h2 className="display-type mt-4 max-w-xl text-4xl font-semibold leading-[1.16] sm:text-5xl">A student team, built to be useful.</h2>
             <p className="mt-5 max-w-xl text-base leading-7 text-fg-muted">
               EntreVC connects builders, operators, alumni and investors—then makes the next conversation easier to start.
             </p>

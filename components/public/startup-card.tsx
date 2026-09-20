@@ -1,6 +1,6 @@
-import Image from 'next/image'
+import { ContentImage } from '@/components/public/content-image'
 import Link from 'next/link'
-import { ArrowUpRight, Building2, ExternalLink } from 'lucide-react'
+import { ArrowUpRight, ExternalLink } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/components/ui/cn'
@@ -16,20 +16,8 @@ export function StartupCard({ startup, className, priority = false }: StartupCar
   return (
     <article className={cn('group relative flex min-w-0 flex-col rounded-lg border border-border bg-surface p-5 transition duration-300 hover:-translate-y-1 hover:border-border-strong hover:shadow-md sm:p-6', className)}>
       <div className="flex items-start justify-between gap-5">
-        <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-fg p-2 text-bg">
-          {startup.logo ? (
-            <Image
-              src={startup.logo.url}
-              alt={startup.logo.alt}
-              width={startup.logo.width}
-              height={startup.logo.height}
-              sizes="64px"
-              priority={priority}
-              className="h-full w-full object-contain"
-            />
-          ) : (
-            <Building2 aria-hidden="true" className="size-7" />
-          )}
+        <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-bg">
+          <ContentImage image={startup.logo} kind="startup" label={startup.name} sizes="64px" priority={priority} className="object-contain" />
         </div>
         <span className="flex size-10 items-center justify-center rounded-full border border-border bg-surface-2 transition group-hover:border-brand group-hover:bg-brand group-hover:text-brand-fg">
           <ArrowUpRight aria-hidden="true" className="size-4" />

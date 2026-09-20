@@ -35,7 +35,7 @@ export default async function EventsPage() {
       <section className="surface-grid border-b border-border">
         <div className="site-shell py-16 sm:py-24">
           <p className="eyebrow">What’s on</p>
-          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[0.92] sm:text-7xl lg:text-8xl">
+          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[1.16] sm:text-7xl lg:text-8xl">
             The room where it <span className="text-accent">happens.</span>
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-fg-muted">

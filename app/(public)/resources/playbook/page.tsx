@@ -30,7 +30,7 @@ export default async function PlaybookPage() {
           <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(17rem,0.8fr)] lg:items-end">
             <div>
               <p className="eyebrow">EntreVC field notes</p>
-              <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[0.9] sm:text-7xl lg:text-8xl">{meta.title}</h1>
+              <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[1.16] sm:text-7xl lg:text-8xl">{meta.title}</h1>
               <div className="rich-text mt-8 max-w-3xl" dangerouslySetInnerHTML={{ __html: meta.intro.html }} />
             </div>
             <div className="rounded-lg border border-border bg-surface p-6 sm:p-8">

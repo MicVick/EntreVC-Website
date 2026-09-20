@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Space_Grotesk } from 'next/font/google'
+import localFont from 'next/font/local'
 
 import { Footer } from '@/components/public/footer'
 import { GoogleAnalytics } from '@/components/public/google-analytics'
@@ -10,10 +10,11 @@ import { getSiteUrl } from '@/lib/seo'
 
 import '../globals.css'
 
-const spaceGrotesk = Space_Grotesk({
-  variable: '--font-space-grotesk',
-  subsets: ['latin'],
-  display: 'optional',
+const jakarta = localFont({
+  src: '../../brand/fonts/plus-jakarta-sans.ttf',
+  variable: '--font-jakarta',
+  weight: '200 800',
+  display: 'swap',
 })
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -48,7 +49,7 @@ export default async function PublicLayout({ children }: LayoutProps<'/'>) {
   const settings = await getSiteSettings()
 
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} h-full antialiased`}>
+    <html lang="en" className={`${jakarta.variable} h-full antialiased`}>
       <body className="flex min-h-dvh flex-col bg-bg text-fg">
         <a
           href="#main-content"
