@@ -22,15 +22,15 @@ export default async function PlaybookPage() {
 
   return (
     <>
-      <section className="surface-grid border-b border-border">
+      <section>
         <div className="site-shell py-12 sm:py-20">
           <Link href="/resources" className="inline-flex items-center gap-2 text-sm font-semibold text-fg-muted transition hover:text-accent">
             <ArrowLeft aria-hidden="true" className="size-4" /> Back to resources
           </Link>
           <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(17rem,0.8fr)] lg:items-end">
             <div>
-              <p className="eyebrow">EntreVC field notes</p>
-              <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[1.16] sm:text-7xl lg:text-8xl">{meta.title}</h1>
+              <p className="eyebrow">The EntreVC playbook</p>
+              <h1 className="display-xl mt-5 max-w-5xl text-[clamp(3rem,8vw,6.75rem)]">{meta.title}</h1>
               <div className="rich-text mt-8 max-w-3xl" dangerouslySetInnerHTML={{ __html: meta.intro.html }} />
             </div>
             <div className="rounded-lg border border-border bg-surface p-6 sm:p-8">
@@ -86,7 +86,7 @@ export default async function PlaybookPage() {
                   className="scroll-mt-28 border-b border-border pb-16 pt-2 first:pt-0 last:border-0 last:pb-0 [&+article]:pt-16"
                 >
                   <div className="flex items-center gap-4">
-                    <span className="flex size-10 items-center justify-center rounded-full border border-brand bg-brand-muted text-xs font-bold tabular-nums text-accent">
+                    <span className="flex size-10 items-center justify-center rounded-md border border-accent/45 bg-brand-muted font-mono text-xs font-medium tabular-nums text-accent">
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     <p className="text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">Chapter</p>
@@ -98,7 +98,7 @@ export default async function PlaybookPage() {
               ))
             ) : (
               <div className="rounded-lg border border-dashed border-border-strong bg-surface p-8">
-                <h2 className="display-type text-2xl font-semibold">The web edition is being prepared.</h2>
+                <h2 className="display-type text-2xl">The online version is on its way</h2>
                 <p className="mt-3 text-fg-muted">Check back soon, or use the PDF edition if it is available.</p>
               </div>
             )}
@@ -106,13 +106,13 @@ export default async function PlaybookPage() {
         </div>
       </section>
 
-      <section className="border-t border-border bg-brand text-brand-fg">
-        <div className="site-shell flex flex-col gap-6 py-12 sm:flex-row sm:items-center sm:justify-between">
+      <section className="site-shell pb-[var(--section-space)]">
+        <div className="relative flex flex-col gap-6 overflow-hidden rounded-2xl bg-brand p-8 text-brand-fg shadow-[0_30px_80px_-30px_var(--color-brand)] sm:flex-row sm:items-center sm:justify-between sm:p-12">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.13em] opacity-75">Finished a chapter?</p>
-            <h2 className="display-type mt-3 text-3xl font-semibold">Put it to work in a room full of builders.</h2>
+            <h2 className="display-type mt-3 text-3xl">Try it out at the next event</h2>
           </div>
-          <Link href="/events" className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }), 'border-brand-fg/40 bg-brand-fg text-bg hover:bg-accent')}>
+          <Link href="/events" className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }), 'border-brand-fg/40 bg-brand-fg text-bg hover:bg-paper')}>
             Find an event <ArrowUpRight aria-hidden="true" className="size-4" />
           </Link>
         </div>

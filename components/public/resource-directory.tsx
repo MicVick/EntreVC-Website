@@ -115,8 +115,8 @@ export function ResourceDirectory({ resources, tags }: ResourceDirectoryProps) {
       ) : (
         <EmptyState
           className="mt-6"
-          title="Nothing matches those filters."
-          description="Try a broader search or remove one topic. Every listed resource opens directly—there are no email gates."
+          title="Nothing matches those filters"
+          description="Try a broader search or remove a topic."
         />
       )}
     </div>

@@ -1,35 +1,32 @@
+import type { CSSProperties } from 'react'
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
-import {
-  ArrowRight,
-  BookOpen,
-  Building2,
-  CalendarDays,
-  Coffee,
-  Lightbulb,
-  MapPin,
-  MoveUpRight,
-  Sparkles,
-} from 'lucide-react'
+import { ArrowRightIcon as ArrowRight, ArrowUpRightIcon as ArrowUpRight, CalendarClockIcon as CalendarClock, MailIcon as Mail } from '@/components/ui/icons'
 
 import { EmptyState } from '@/components/public/empty-state'
-import { DreamLaunch } from '@/components/public/dream-launch'
 import { EventCard } from '@/components/public/event-card'
-import { NewsletterSignup } from '@/components/public/newsletter-signup'
+import { LogoOrbit } from '@/components/public/logo-orbit'
+import { Marquee } from '@/components/public/marquee'
+import { OrbitBadge } from '@/components/public/orbit-badge'
+import { PersonCard } from '@/components/public/person-card'
+import { PlazaLaunch } from '@/components/public/plaza-launch'
 import { ResourceCard } from '@/components/public/resource-card'
 import { SectionHeader } from '@/components/public/section-header'
 import { StartupCard } from '@/components/public/startup-card'
 import { StatBlock } from '@/components/public/stat-block'
 import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/components/ui/cn'
 import {
   getFeaturedStartups,
   getKeyNumbers,
-  getLatestResource,
+  getPastEvents,
+  getResources,
   getSiteSettings,
+  getTeam,
   getUpcomingEvents,
+  getVentureSchemes,
 } from '@/lib/content'
+import { formatDateInIST, formatShortDateInIST } from '@/lib/format'
+import { publicExternalUrl } from '@/lib/public-link'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -42,49 +39,64 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-const entryPoints = [
-  {
-    href: '/events',
-    label: 'Attend an event',
-    description: 'See what is coming up and reserve your place.',
-    icon: CalendarDays,
-    index: '01',
-    color: 'bg-playful text-playful-ink',
-  },
-  {
-    href: '/startups',
-    label: 'Explore IIMA startups',
-    description: 'Search ventures by sector, stage or founder batch.',
-    icon: Building2,
-    index: '02',
-    color: 'bg-brand-muted text-accent',
-  },
-  {
-    href: '/resources',
-    label: 'Find a useful resource',
-    description: 'Open practical playbooks, reports, tools and talks.',
-    icon: BookOpen,
-    index: '03',
-    color: 'bg-lilac text-lilac-ink',
-  },
-  {
-    href: '/iima-ventures',
-    label: 'Get venture support',
-    description: 'Find grants, incubation and institutional routes.',
-    icon: Lightbulb,
-    index: '04',
-    color: 'bg-success-muted text-success',
-  },
+type Indexed = CSSProperties & Record<'--w' | '--i', number>
+const indexed = (index: number): Indexed => ({ '--w': index, '--i': index })
+
+type Delayed = CSSProperties & Record<'--delay', string>
+const delay = (ms: number): Delayed => ({ '--delay': `${ms}ms` })
+
+const HEADLINE = ['Build', 'the', 'thing', 'you', 'keep'] as const
+const HEADLINE_ACCENT = ['talking', 'about.'] as const
+
+const COMMUNITY = ['Founders', 'Investors', 'Alumni', 'Mentors', 'First-time builders', 'Ahmedabad'] as const
+
+const CONTACT_TOPICS = [
+  { label: 'List or update your startup', category: 'startup_listing' },
+  { label: 'Speak at an event', category: 'speaking' },
+  { label: 'Mentor IIMA founders', category: 'mentorship' },
+  { label: 'Sponsor or partner with us', category: 'sponsorship' },
 ] as const
 
+/** Four-point stars in the hero sky: [left, top, size in rem]. */
+const SPARKLES: readonly (readonly [string, string, number])[] = [
+  ['58%', '12%', 0.9],
+  ['76%', '7%', 0.6],
+  ['91%', '20%', 1.1],
+  ['66%', '30%', 0.5],
+  ['47%', '6%', 0.55],
+]
+
+const SPARKLE_PATH = 'M12 0c.6 6.4 5.6 11.4 12 12-6.4.6-11.4 5.6-12 12-.6-6.4-5.6-11.4-12-12C6.4 11.4 11.4 6.4 12 0Z'
+
+function SeeAll({ href, label }: { href: string; label: string }) {
+  return (
+    <Link href={href} prefetch={false} className={buttonVariants({ variant: 'outline', size: 'md' })}>
+      {label} <ArrowRight aria-hidden="true" className="size-4" />
+    </Link>
+  )
+}
+
+/**
+ * The homepage is a short tour of the site: a landing hero, then one plain, clearly
+ * named section per page (events first, because that is why most people come), each
+ * with a few cards and a link to the full page.
+ */
 export default async function HomePage() {
-  const [settings, events, startups, latestResource, numbers] = await Promise.all([
+  const [settings, upcoming, recent, startups, resources, schemes, team, numbers] = await Promise.all([
     getSiteSettings(),
     getUpcomingEvents({ limit: 3 }),
+    getPastEvents({ limit: 3 }),
     getFeaturedStartups({ limit: 3 }),
-    getLatestResource(),
+    getResources(),
+    getVentureSchemes(),
+    getTeam(),
     getKeyNumbers(),
   ])
+
+  const nextEvent = upcoming[0] ?? null
+  const latestResources = resources.slice(0, 3)
+  const openSchemes = schemes.filter((scheme) => !scheme.isExpired).slice(0, 2)
+  const teamPreview = team.slice(0, 4)
 
   const organizationJsonLd = JSON.stringify({
     '@context': 'https://schema.org',
@@ -93,256 +105,339 @@ export default async function HomePage() {
     url: absoluteUrl('/'),
     email: settings.clubEmail,
     address: settings.campusAddress ?? undefined,
-    sameAs: settings.socialLinks.map((social) => social.url),
+    sameAs: settings.socialLinks.map((social) => publicExternalUrl(social.url)).filter((url): url is string => Boolean(url)),
   }).replace(/</g, '\\u003c')
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd }} />
 
-      <section className="relative overflow-hidden border-b border-border bg-bg">
-        <div className="site-shell grid gap-12 py-12 sm:py-16 lg:min-h-[clamp(38rem,78svh,48rem)] lg:grid-cols-[minmax(0,1.02fr)_minmax(24rem,0.98fr)] lg:items-center lg:py-20">
-          <div className="animate-enter self-center">
-            <p className="eyebrow">Entrepreneurship × Venture Capital · IIM Ahmedabad</p>
-            <h1 className="display-type mt-6 max-w-5xl text-[clamp(2.8rem,5.6vw,5.4rem)] font-semibold leading-[1.12]">
-              Big ideas start in the{' '}
-              <span className="text-accent">right room.</span>
+      {/* ── Landing ─────────────────────────────────────────────────────────── */}
+      {/* Pulled up under the floating header so the dusk glow runs behind the glass. */}
+      <section aria-labelledby="home-title" className="relative isolate -mt-[var(--header-height)] overflow-hidden pt-[var(--header-height)]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(55%_60%_at_72%_88%,color-mix(in_srgb,var(--color-brand)_26%,transparent),transparent_70%)]"
+        />
+        {SPARKLES.map(([left, top, size], index) => (
+          <svg
+            key={`${left}-${top}`}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+            className="sparkle hidden md:block"
+            style={{ left, top, width: `${size}rem`, height: `${size}rem`, ...indexed(index) }}
+          >
+            <path fill="currentColor" d={SPARKLE_PATH} />
+          </svg>
+        ))}
+
+        <div className="site-shell grid grid-cols-[minmax(0,1fr)] items-center gap-6 pb-14 pt-12 sm:pt-16 lg:min-h-[calc(100svh-var(--header-height))] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-6 lg:pb-28 lg:pt-8">
+          <div className="relative z-10 min-w-0">
+            <p className="eyebrow animate-enter">Entrepreneurship &amp; Venture Capital Club · IIM Ahmedabad</p>
+            <h1 id="home-title" className="display-xl mt-6 text-[clamp(3.1rem,6.6vw,6.4rem)]">
+              {HEADLINE.map((word, index) => (
+                <span key={word}>
+                  <span className="hero-word">
+                    <span style={indexed(index)}>{word}</span>
+                  </span>{' '}
+                </span>
+              ))}
+              {HEADLINE_ACCENT.map((word, index) => (
+                <span key={word}>
+                  <span className="hero-word accent-serif">
+                    <span className="text-accent" style={indexed(HEADLINE.length + index)}>
+                      {word}
+                    </span>
+                  </span>
+                  {index < HEADLINE_ACCENT.length - 1 ? ' ' : null}
+                </span>
+              ))}
             </h1>
-            <p className="mt-7 max-w-2xl text-base leading-7 text-fg-muted sm:text-lg sm:leading-8">
-              {settings.positioningStatement} Find your next conversation, collaborator or point of momentum here.
+            <p className="animate-enter mt-7 max-w-xl text-lg leading-8 text-fg-muted" style={delay(450)}>
+              EntreVC is the student club at IIM Ahmedabad for people who want to start companies, or invest in them.
+              Come to a talk, find a co-founder, or meet the founders who sat in the same classrooms.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/events" prefetch={false} className={buttonVariants({ size: 'lg' })}>
-                Find your next room
-                <ArrowRight aria-hidden="true" className="size-4" />
+            <div className="animate-enter mt-9 flex flex-col gap-3 sm:flex-row" style={delay(600)}>
+              <Link href="#upcoming-events" className={buttonVariants({ size: 'lg' })}>
+                See upcoming events <ArrowRight aria-hidden="true" className="size-4" />
               </Link>
               <Link href="/startups" prefetch={false} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-                Meet IIMA founders
+                Explore startups
               </Link>
             </div>
-            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs font-bold uppercase tracking-[0.12em] text-fg-subtle" aria-label="Community qualities">
-              {['Student-led', 'Founder-first', 'Alumni-connected'].map((quality) => (
-                <li key={quality} className="flex items-center gap-2">
-                  <span className="size-1.5 rounded-full bg-brand" aria-hidden="true" />
-                  {quality}
-                </li>
-              ))}
-            </ul>
+            {nextEvent ? (
+              <Link
+                href={`/events/${nextEvent.slug}`}
+                prefetch={false}
+                className="glass animate-enter group mt-8 inline-flex max-w-full items-center gap-3 rounded-full py-2 pl-4 pr-2 text-sm text-fg-muted transition hover:text-fg"
+                style={delay(750)}
+              >
+                <span aria-hidden="true" className="pulse-dot size-2 shrink-0 rounded-full bg-accent" />
+                <span className="meta-label shrink-0 text-accent">Next up</span>
+                <span className="truncate">
+                  {nextEvent.title} · {formatShortDateInIST(nextEvent.startDateTime)}
+                </span>
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-fg/10 transition group-hover:rotate-45 group-hover:bg-brand group-hover:text-brand-fg">
+                  <ArrowUpRight aria-hidden="true" className="size-3.5" />
+                </span>
+              </Link>
+            ) : null}
           </div>
 
-          <figure className="animate-enter-delayed group relative mx-auto mb-6 w-full max-w-2xl pt-6 lg:mx-0 lg:ml-auto">
-            <Sparkles aria-hidden="true" className="orbit-spark absolute -left-5 -top-3 z-10 size-12 text-accent sm:size-16" strokeWidth={1.2} />
-            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-bg shadow-md lg:aspect-[6/5]">
-              <Image
-                src="/images/campus/louis-kahn-plaza.webp"
-                alt="The red-brick arches and green lawns of Louis Kahn Plaza at IIM Ahmedabad"
-                width={1280}
-                height={720}
-                sizes="(min-width: 1024px) 46vw, 100vw"
-                priority
-                className="h-full w-full object-cover transition duration-1000 group-hover:scale-[1.025]"
+          <div className="relative -mx-3 sm:mx-0">
+            <PlazaLaunch />
+          </div>
+        </div>
+
+        <div className="site-shell pointer-events-none absolute inset-x-0 bottom-6 hidden lg:block">
+          <OrbitBadge
+            href="#upcoming-events"
+            label="Scroll to upcoming events"
+            ring="Scroll to explore · From the ground up · "
+            className="pointer-events-auto"
+          />
+        </div>
+      </section>
+
+      {/* ── Who it's for ────────────────────────────────────────────────────── */}
+      <div className="border-y border-fg/[0.06] bg-bg/40 py-6 backdrop-blur-sm sm:py-8">
+        <Marquee words={COMMUNITY} />
+      </div>
+
+      {/* ── Upcoming events ─────────────────────────────────────────────────── */}
+      <section id="upcoming-events" aria-labelledby="upcoming-events-title" className="section-shell isolate">
+        <div aria-hidden="true" className="glow-orb -left-56 top-10 size-[36rem]" />
+        <div className="site-shell">
+          <SectionHeader
+            id="upcoming-events-title"
+            eyebrow="What’s on"
+            title="Upcoming"
+            accent="events"
+            description="Talks, workshops and competitions coming up at IIMA. Registering takes about a minute."
+            action={<SeeAll href="/events" label="All events" />}
+          />
+          {upcoming.length ? (
+            <div className="reveal-grid grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {upcoming.map((event) => <EventCard key={event.id} event={event} />)}
+            </div>
+          ) : (
+            <div className="grid gap-12">
+              <EmptyState
+                compact
+                title="Nothing on the calendar right now"
+                description="New events usually go up a week or two in advance. Leave your email at the bottom of this page and we’ll tell you when registration opens."
               />
-              <p className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full border border-border bg-bg px-3 py-2 text-[0.65rem] font-bold tracking-[0.04em] text-fg">
-                <MapPin aria-hidden="true" className="size-3.5 text-accent" />
-                Louis Kahn Plaza, IIMA
-              </p>
-              <p className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-border bg-bg px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-fg">
-                <span className="signal-dot size-1.5 rounded-full bg-accent" />
-                Ahmedabad · India
-              </p>
+              {recent.length ? (
+                <div>
+                  <h3 className="meta-label mb-5 text-fg-subtle">Recent events</h3>
+                  <div className="reveal-grid grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                    {recent.map((event) => <EventCard key={event.id} event={event} />)}
+                  </div>
+                </div>
+              ) : null}
             </div>
-            <div className="animate-drift absolute -right-1 -top-3 z-10 flex items-center gap-2 rounded-full border border-playful-ink/15 bg-playful px-4 py-3 text-sm font-bold text-playful-ink sm:-right-4">
-              <Lightbulb aria-hidden="true" className="size-5" /> What if...?
-            </div>
-            <div className="idea-sticker relative -mt-10 ml-4 flex w-fit max-w-[85%] items-center gap-3 rounded-md border border-border bg-bg p-4 sm:-ml-5 sm:gap-4 sm:p-5">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-muted text-accent"><MoveUpRight aria-hidden="true" className="size-6" /></span>
-              <div><p className="text-xs font-semibold text-fg-muted">Born on campus.</p><p className="mt-1 text-lg font-bold">Built for the world.</p></div>
-            </div>
-            <figcaption className="mt-4 text-right text-[0.65rem] leading-5 text-fg-subtle">
-              Photo: <a href="https://commons.wikimedia.org/wiki/File:Louis_Kahn_Plaza,_IIM_Ahmedabad.jpg" target="_blank" rel="noreferrer" className="underline underline-offset-2">Perspectives, IIM Ahmedabad</a>
-              {' · '}<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer" className="underline underline-offset-2">CC BY-SA 4.0</a> · Resized &amp; cropped to fit
-            </figcaption>
-          </figure>
+          )}
         </div>
       </section>
 
-      <DreamLaunch />
+      {/* ── What is EntreVC ─────────────────────────────────────────────────── */}
+      <section aria-labelledby="about-title" className="section-shell isolate">
+        <div aria-hidden="true" className="glow-orb -right-48 top-1/3 size-[32rem]" />
+        <div className="site-shell">
+          <p className="eyebrow">About the club</p>
+          <h2 id="about-title" className="display-type mt-4 text-[clamp(2.3rem,5vw,4rem)]">
+            What is <span className="accent-serif text-accent">EntreVC?</span>
+          </h2>
+          <p className="scroll-fill-block display-type mt-10 max-w-6xl text-[clamp(1.9rem,4.4vw,3.75rem)] leading-[1.1]">
+            <span className="scroll-fill">
+              Some of us want to start companies. Some want to back them. Some just want to see how it’s done. There’s room
+              for all three.
+            </span>
+          </p>
 
-      <section aria-labelledby="choose-path" className="border-b border-border bg-surface">
-        <div className="site-shell py-12 sm:py-14">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mt-16 grid items-center gap-14 lg:mt-24 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-20">
+            <LogoOrbit />
             <div>
-              <p className="eyebrow">Choose your next step</p>
-              <h2 id="choose-path" className="display-type mt-4 text-3xl font-semibold sm:text-4xl">What are you here to do?</h2>
-            </div>
-            <p className="flex max-w-md items-center gap-3 text-sm leading-6 text-fg-muted"><Coffee aria-hidden="true" className="size-8 shrink-0 -rotate-12 text-accent" />Bring your curiosity. We’ll bring the connections.</p>
-          </div>
-          <div className="reveal-grid mt-7 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
-            {entryPoints.map((entry) => {
-              const Icon = entry.icon
-              return (
-                <Link
-                  key={entry.href}
-                  href={entry.href}
-                  prefetch={false}
-                  className="group flex min-h-52 flex-col border-b border-r border-border bg-bg p-5 transition duration-300 hover:z-10 hover:-translate-y-1 hover:border-brand/40 hover:shadow-md sm:p-6"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <span className={cn('flex size-12 items-center justify-center rounded-2xl transition duration-300 group-hover:-rotate-12 group-hover:scale-110', entry.color)}>
-                      <Icon aria-hidden="true" className="size-5" strokeWidth={1.7} />
-                    </span>
-                    <span className="text-xs font-bold tabular-nums tracking-[0.13em] text-fg-subtle">{entry.index}</span>
-                  </div>
-                  <div className="mt-auto pt-8">
-                    <h3 className="display-type text-xl font-semibold">{entry.label}</h3>
-                    <p className="mt-2 text-sm leading-6 text-fg-muted">{entry.description}</p>
-                    <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-fg transition group-hover:text-accent">
-                      Go there <ArrowRight aria-hidden="true" className="size-4 transition group-hover:translate-x-1" />
-                    </span>
-                  </div>
+              <div className="rich-text max-w-2xl" dangerouslySetInnerHTML={{ __html: settings.intro.html }} />
+              <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
+                <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} />
+                <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} />
+                {numbers.alumniNetwork === null ? null : (
+                  <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} />
+                )}
+              </div>
+              <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <Link href="/team" prefetch={false} className={buttonVariants({ variant: 'outline', size: 'md' })}>
+                  Meet the people behind it <ArrowRight aria-hidden="true" className="size-4" />
                 </Link>
-              )
-            })}
+                <p className="text-sm text-fg-subtle">Run by students. A new team takes over every year.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="intro" className="border-b border-border bg-bg">
-        <div className="site-shell grid gap-8 py-14 md:grid-cols-[0.55fr_1.45fr] md:py-20">
-          <p className="eyebrow self-start">What EntreVC does</p>
-          <div className="reveal-on-scroll">
-            <h2 className="display-type max-w-4xl text-3xl font-semibold leading-[1.02] sm:text-5xl">
-              We make the next useful connection easier to find.
-            </h2>
-            <div
-              className="rich-text mt-6 max-w-3xl"
-              dangerouslySetInnerHTML={{ __html: settings.intro.html }}
+      {/* ── Startups ────────────────────────────────────────────────────────── */}
+      <section aria-labelledby="startups-title" className="section-shell isolate">
+        <div aria-hidden="true" className="glow-orb -left-40 bottom-0 size-[30rem]" />
+        <div className="site-shell">
+          <SectionHeader
+            id="startups-title"
+            eyebrow="Startup directory"
+            title="What IIMA students and alumni are"
+            accent="building"
+            description="A few of the companies in our startup directory. Each profile lists the founders, the stage they’re at and how to reach them."
+            action={<SeeAll href="/startups" label="All startups" />}
+          />
+          {startups.length ? (
+            <div className="reveal-grid grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))]">
+              {startups.map((startup, index) => <StartupCard key={startup.id} startup={startup} priority={index === 0} />)}
+            </div>
+          ) : (
+            <EmptyState
+              title="The directory is on its way"
+              description="We’re checking details with founders before the first profiles go live. Started something at IIMA? We’d love to list it."
+              action={{ href: '/contact?category=startup_listing', label: 'List your startup' }}
             />
-          </div>
+          )}
         </div>
       </section>
 
-      {events.length ? (
-        <section className="section-shell">
+      {/* ── Resources ───────────────────────────────────────────────────────── */}
+      <section aria-labelledby="resources-title" className="section-shell isolate">
+        <div className="site-shell">
+          <SectionHeader
+            id="resources-title"
+            eyebrow="Library"
+            title="Resources for"
+            accent="founders"
+            description="Reading lists, templates, reports and recorded talks we’ve found useful. All free, and every link opens at the source."
+            action={<SeeAll href="/resources" label="All resources" />}
+          />
+          {latestResources.length ? (
+            <div className="reveal-grid grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {latestResources.map((resource) => <ResourceCard key={resource.id} resource={resource} />)}
+            </div>
+          ) : (
+            <EmptyState compact title="The library is being put together" description="The first set of resources will be up soon." />
+          )}
+        </div>
+      </section>
+
+      {/* ── Support ─────────────────────────────────────────────────────────── */}
+      <section aria-labelledby="support-title" className="section-shell isolate">
+        <div aria-hidden="true" className="glow-orb -right-40 top-0 size-[28rem]" />
+        <div className="site-shell">
+          <SectionHeader
+            id="support-title"
+            eyebrow="IIMA Ventures"
+            title="Support for founders at"
+            accent="IIMA"
+            description="Grants, incubation and funding routes open to IIMA students and alumni through IIMA Ventures, the institute’s incubator."
+            action={<SeeAll href="/iima-ventures" label="All support options" />}
+          />
+          {openSchemes.length ? (
+            <div className="reveal-grid grid gap-6 md:grid-cols-2">
+              {openSchemes.map((scheme) => (
+                <Link
+                  key={scheme.id}
+                  href="/iima-ventures"
+                  prefetch={false}
+                  className="surface-card spotlight group relative flex min-w-0 flex-col overflow-hidden rounded-xl p-7 transition duration-500 hover:-translate-y-1 hover:border-fg/20 sm:p-9"
+                >
+                  <span aria-hidden="true" className="absolute -bottom-24 -right-24 size-56 rounded-full border border-fg/[0.08] transition duration-700 group-hover:scale-110" />
+                  <span aria-hidden="true" className="absolute -bottom-12 -right-12 size-32 rounded-full border border-dashed border-fg/[0.12]" />
+                  <p className="meta-label inline-flex w-fit items-center gap-2 rounded-full bg-brand-muted px-3 py-1.5 text-accent">
+                    <CalendarClock aria-hidden="true" className="size-3.5" />
+                    {scheme.deadline ? `Apply by ${formatDateInIST(scheme.deadline)}` : 'Open all year'}
+                  </p>
+                  <h3 className="display-type mt-6 text-[1.9rem]">{scheme.name}</h3>
+                  <p className="mt-3 line-clamp-3 max-w-md text-[0.95rem] leading-7 text-fg-muted">{scheme.summary}</p>
+                  <span className="relative mt-auto inline-flex items-center gap-2 pt-8 text-sm font-semibold text-fg">
+                    Who it’s for and how to apply
+                    <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-full border border-fg/15 transition duration-300 group-hover:translate-x-1 group-hover:border-brand group-hover:bg-brand group-hover:text-brand-fg">
+                      <ArrowRight className="size-4" />
+                    </span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              compact
+              title="No open calls right now"
+              description="IIMA Ventures runs programmes through the year. See what’s usually on offer, or ask the office directly."
+              action={{ href: '/iima-ventures', label: 'See support options' }}
+            />
+          )}
+        </div>
+      </section>
+
+      {/* ── Team ────────────────────────────────────────────────────────────── */}
+      {teamPreview.length ? (
+        <section aria-labelledby="team-title" className="section-shell isolate">
           <div className="site-shell">
             <SectionHeader
-              eyebrow="Up next"
-              title="Rooms worth being in."
-              description="Workshops, candid conversations and the occasional useful argument—open to the IIMA entrepreneurship community."
-              action={
-                <Link href="/events" className={buttonVariants({ variant: 'outline' })}>
-                  All events <ArrowRight aria-hidden="true" className="size-4" />
-                </Link>
-              }
+              id="team-title"
+              eyebrow="The people"
+              title="Meet the"
+              accent="team"
+              description="EntreVC is run by students, and a new team takes over every year. These are the people running it now."
+              action={<SeeAll href="/team" label="Meet the full team" />}
             />
-            <div className="reveal-grid grid gap-5 lg:grid-cols-3">
-              {events.map((event) => <EventCard key={event.id} event={event} />)}
+            <div className="reveal-grid grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-7">
+              {teamPreview.map((person) => <PersonCard key={person.id} person={person} />)}
             </div>
           </div>
         </section>
       ) : null}
 
-      <section className="border-y border-border bg-bg">
-        <div className="site-shell grid gap-6 py-10 md:grid-cols-[0.8fr_1.2fr] md:items-end md:py-12">
-          <div>
-            <p className="eyebrow">Event alerts</p>
-            <h2 className="display-type mt-4 text-3xl font-semibold leading-none sm:text-4xl">Do not miss the room.</h2>
-            <p className="mt-3 max-w-lg text-sm leading-6 text-fg-muted">A concise note when a worthwhile session, opportunity or deadline goes live.</p>
-          </div>
-          <NewsletterSignup source="homepage" compact />
-        </div>
-      </section>
-
-      <section className="section-shell border-y border-border bg-surface">
+      {/* ── Get in touch ────────────────────────────────────────────────────── */}
+      <section aria-labelledby="contact-title" className="section-shell isolate">
         <div className="site-shell">
-          <SectionHeader
-            eyebrow="Built from here"
-            title="The campus is already building."
-            description="Meet the student and alumni ventures turning sharp observations into durable companies."
-            action={
-              <Link href="/startups" className={buttonVariants({ variant: 'outline' })}>
-                Browse the directory <ArrowRight aria-hidden="true" className="size-4" />
-              </Link>
-            }
-          />
-          {startups.length ? (
-            <div className="reveal-grid grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {startups.map((startup, index) => <StartupCard key={startup.id} startup={startup} priority={index === 0} />)}
-            </div>
-          ) : (
-            <EmptyState
-              title="The directory is being assembled."
-              description="We’re verifying venture details and founder permissions before the first profiles go live."
-              action={{ href: '/contact?category=startup_listing', label: 'Talk to the ventures team' }}
-            />
-          )}
-        </div>
-      </section>
-
-      <section className="section-shell">
-        <div className="site-shell grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
-          <div className="reveal-on-scroll">
-            <p className="eyebrow">Latest thinking</p>
-            <h2 className="display-type mt-5 text-4xl font-semibold leading-none sm:text-5xl">Useful before it is impressive.</h2>
-            <p className="mt-5 max-w-xl text-base leading-7 text-fg-muted">
-              Practical reading, listening and tools for the messy middle between an idea and a company.
-            </p>
-            <Link href="/resources" className={cn(buttonVariants({ variant: 'outline' }), 'mt-7')}>
-              Open the library <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
-          </div>
-          {latestResource ? (
-            <ResourceCard resource={latestResource} featured />
-          ) : (
-            <EmptyState compact title="The library opens soon." description="The first set of founder resources is being curated now." />
-          )}
-        </div>
-      </section>
-
-      <section className="border-y border-border bg-surface">
-        <div className="site-shell py-14 sm:py-18">
-          <div className="mb-9 grid gap-4 md:grid-cols-[0.8fr_1.2fr] md:items-end">
-            <p className="eyebrow">The network in motion</p>
-            <h2 className="display-type max-w-3xl text-3xl font-semibold leading-none sm:text-4xl">A community that keeps compounding.</h2>
-          </div>
-          <div className="reveal-grid grid gap-10 border-t border-border pt-9 sm:grid-cols-3">
-            <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} className="border-brand" />
-            <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} className="border-brand" />
-            {numbers.alumniNetwork === null ? null : (
-              <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} className="border-brand" />
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell surface-grid">
-        <div className="site-shell grid gap-9 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.95fr)] lg:items-center">
-          <figure className="reveal-on-scroll group relative overflow-hidden rounded-lg border border-border bg-surface shadow-md">
-            <Image
-              src="/images/editorial/founder-workroom-light.webp"
-              alt="A small group of students developing an idea around a worktable"
-              width={1600}
-              height={900}
-              sizes="(min-width: 1024px) 55vw, 100vw"
-              className="aspect-[16/10] w-full object-cover transition duration-1000 group-hover:scale-[1.025]"
-            />
-            <figcaption className="absolute bottom-4 left-4 rounded-full border border-border bg-bg/85 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.13em] text-fg backdrop-blur">
-              The work happens together
-            </figcaption>
-          </figure>
-          <div className="reveal-on-scroll">
-            <p className="eyebrow">The people behind the platform</p>
-            <h2 className="display-type mt-4 max-w-xl text-4xl font-semibold leading-[1.16] sm:text-5xl">A student team, built to be useful.</h2>
-            <p className="mt-5 max-w-xl text-base leading-7 text-fg-muted">
-              EntreVC connects builders, operators, alumni and investors—then makes the next conversation easier to start.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/team" className={buttonVariants({ variant: 'outline' })}>
-                Meet the team <ArrowRight aria-hidden="true" className="size-4" />
-              </Link>
-              <Link href="/contact" className={buttonVariants()}>
-                Contact EntreVC <ArrowRight aria-hidden="true" className="size-4" />
-              </Link>
+          <div className="paper relative isolate overflow-hidden rounded-2xl p-8 shadow-panel sm:p-12 lg:p-16">
+            <div aria-hidden="true" className="absolute -right-24 -top-24 -z-10 size-[22rem] rounded-full bg-paper-brand-muted" />
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 400 400" className="spin-slow absolute -right-24 -top-24 -z-10 hidden size-[26rem] md:block">
+              <circle className="line-art" cx="200" cy="200" r="190" opacity="0.16" />
+              <circle className="line-art" cx="200" cy="200" r="150" opacity="0.22" strokeDasharray="2 7" />
+              <circle className="line-art" cx="200" cy="200" r="110" opacity="0.1" />
+            </svg>
+            <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+              <div>
+                <p className="eyebrow">Work with us</p>
+                <h2 id="contact-title" className="display-type mt-4 text-[clamp(2.5rem,5.4vw,4.4rem)]">
+                  Get in <span className="accent-serif text-accent">touch</span>
+                </h2>
+                <p className="mt-5 max-w-xl text-base leading-7 text-fg-muted sm:text-lg sm:leading-8">
+                  Want to speak at IIMA, list your startup, mentor students or sponsor an event? Write to us and the right
+                  person on the team will get back to you.
+                </p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <Link href="/contact" prefetch={false} className={buttonVariants({ size: 'lg' })}>
+                    Contact us <ArrowRight aria-hidden="true" className="size-4" />
+                  </Link>
+                  <a href={`mailto:${settings.clubEmail}`} className="inline-flex min-h-12 items-center gap-2 px-1 text-sm font-semibold text-fg underline decoration-border-strong underline-offset-4 transition hover:text-accent">
+                    <Mail aria-hidden="true" className="size-4" /> {settings.clubEmail}
+                  </a>
+                </div>
+              </div>
+              <ul className="flex flex-wrap gap-2.5 lg:justify-end">
+                {CONTACT_TOPICS.map((item) => (
+                  <li key={item.category}>
+                    <Link
+                      href={`/contact?category=${item.category}`}
+                      prefetch={false}
+                      className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface-2/60 py-2 pl-4 pr-2 text-sm font-semibold text-fg transition hover:border-fg hover:bg-fg hover:text-bg"
+                    >
+                      {item.label}
+                      <span aria-hidden="true" className="flex size-7 items-center justify-center rounded-full bg-fg/[0.07] transition group-hover:rotate-45 group-hover:bg-brand group-hover:text-brand-fg">
+                        <ArrowUpRight className="size-3.5" />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

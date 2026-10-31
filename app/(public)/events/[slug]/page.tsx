@@ -21,6 +21,7 @@ import { cn } from '@/components/ui/cn'
 import { getAllEventSlugs, getEventBySlug } from '@/lib/content'
 import { formatDateInIST, formatDateRangeInIST, formatTimeInIST } from '@/lib/format'
 import { eventFormatLabels, type Event } from '@/lib/schemas'
+import { publicExternalUrl } from '@/lib/public-link'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 
 import { EventGallery } from './event-gallery'
@@ -134,12 +135,13 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
   const recording = event.recap?.recordingUrl ? embedUrl(event.recap.recordingUrl) : null
   const gallery = event.recap?.gallery ?? []
   const showRegistration = !event.isRegistrationClosed
+  const longTitle = event.title.length > 76
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: eventJsonLd(event) }} />
 
-      <section className="surface-grid border-b border-border">
+      <section>
         <div className="site-shell py-12 sm:py-18">
           <Link
             href={event.isPast ? '/events?when=past' : '/events'}
@@ -148,8 +150,8 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
             <ArrowLeft aria-hidden="true" className="size-4" /> All events
           </Link>
 
-          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-center">
-            <div>
+          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start">
+            <div className="min-w-0">
               <div className="flex flex-wrap gap-2">
                 {event.eventType ? <Badge variant="brand">{event.eventType}</Badge> : null}
                 <Badge>{eventFormatLabels[event.format]}</Badge>
@@ -159,7 +161,7 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
                 ) : null}
               </div>
 
-              <h1 className="display-type mt-6 break-words text-4xl font-semibold leading-[1.16] sm:text-6xl lg:text-7xl">
+              <h1 className={cn('display-type mt-6 break-words font-semibold', longTitle ? 'text-3xl leading-[1.15] sm:text-4xl lg:text-5xl' : 'text-4xl leading-[1.16] sm:text-6xl lg:text-7xl')}>
                 {event.title}
               </h1>
               {event.subtitle ? (
@@ -224,8 +226,8 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
               </dl>
             </div>
 
-            <div className="overflow-hidden rounded-lg border border-border bg-surface-2">
-              <ContentImage image={event.heroImage} kind="event" label={event.title} sizes="(min-width: 1024px) 42vw, 100vw" priority className="min-h-72" />
+            <div className="aspect-[16/10] overflow-hidden rounded-lg border border-border bg-surface-2">
+              <ContentImage image={event.heroImage} kind="event" label={event.title} sizes="(min-width: 1024px) 42vw, 100vw" priority />
             </div>
           </div>
         </div>
@@ -298,8 +300,9 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
                   {event.speakers.length === 1 ? 'The speaker.' : 'The speakers.'}
                 </h2>
                 <ul className="mt-10 grid list-none gap-6 p-0 sm:grid-cols-2">
-                  {event.speakers.map((speaker) => (
-                    <li
+                  {event.speakers.map((speaker) => {
+                    const speakerLink = publicExternalUrl(speaker.linkedin)
+                    return <li
                       key={`${event.id}-${speaker.name}`}
                       className="rounded-lg border border-border bg-surface p-5 sm:p-6"
                     >
@@ -314,11 +317,11 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
                               {[speaker.title, speaker.org].filter(Boolean).join(' · ')}
                             </p>
                           ) : null}
-                          {speaker.linkedin ? (
+                          {speakerLink ? (
                             <a
-                              href={speaker.linkedin}
+                              href={speakerLink}
                               target="_blank"
-                              rel="noreferrer"
+                              rel="noopener noreferrer"
                               className="mt-2 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-accent hover:underline"
                             >
                               LinkedIn <ArrowUpRight aria-hidden="true" className="size-3.5" />
@@ -333,7 +336,7 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
                         />
                       ) : null}
                     </li>
-                  ))}
+                  })}
                 </ul>
               </div>
             ) : null}

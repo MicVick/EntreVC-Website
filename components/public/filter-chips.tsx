@@ -47,7 +47,7 @@ export function FilterChips({
               type="button"
               aria-pressed={active}
               onClick={() => toggle(option.value)}
-              className="min-h-10 rounded-full border border-border bg-surface px-4 text-sm font-semibold text-fg-muted transition hover:border-border-strong hover:text-fg aria-pressed:border-brand aria-pressed:bg-brand-muted aria-pressed:text-accent"
+              className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-fg-muted transition hover:border-border-strong hover:text-fg aria-pressed:border-brand aria-pressed:bg-brand-muted aria-pressed:text-accent"
             >
               {option.label}
               {option.count === undefined ? null : <span className="ml-2 text-fg-subtle">{option.count}</span>}

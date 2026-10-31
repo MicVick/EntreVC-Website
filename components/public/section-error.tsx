@@ -19,13 +19,13 @@ export function SectionError({ error, reset, eyebrow, title, description }: Sect
   }, [error])
 
   return (
-    <section className="surface-grid flex min-h-[62vh] items-center border-b border-border">
+    <section className="flex min-h-[62vh] items-center border-b border-border">
       <div className="site-shell py-20">
         <div className="flex size-12 items-center justify-center rounded-full border border-danger bg-danger-muted">
           <TriangleAlertIcon aria-hidden="true" className="size-5 text-danger" />
         </div>
         <p className="eyebrow mt-8">{eyebrow}</p>
-        <h1 className="display-type mt-6 max-w-4xl text-5xl font-semibold leading-[1.16] sm:text-7xl">{title}</h1>
+        <h1 className="display-type mt-6 max-w-4xl text-[clamp(2.6rem,6vw,4.75rem)]">{title}</h1>
         <p className="mt-7 max-w-xl text-lg leading-8 text-fg-muted">{description}</p>
         <Button size="lg" className="mt-9" onClick={reset}>
           <RefreshIcon aria-hidden="true" className="size-4" /> Try this section again

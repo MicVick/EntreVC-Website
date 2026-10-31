@@ -108,19 +108,21 @@ export function StartupDirectory({ startups, facets }: StartupDirectoryProps) {
         <div className="flex flex-col gap-6 border-b border-border pb-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">Venture type</p>
-            <div className="inline-flex rounded-full border border-border bg-bg p-1">
+            <div className="flex w-full rounded-md border border-border bg-bg p-1 sm:inline-flex sm:w-auto">
               {(['all', ...startupTypes] as const).map((type) => (
                 <button
                   key={type}
                   type="button"
+                  aria-label={type === 'all' ? 'All ventures' : startupTypeLabels[type]}
                   aria-pressed={ventureType === type}
                   onClick={() => {
                     setVentureType(type)
                     writeParam('type', type === 'all' ? [] : [type])
                   }}
-                  className="min-h-9 rounded-full px-4 text-sm font-semibold text-fg-muted transition hover:text-fg aria-pressed:bg-fg aria-pressed:text-bg"
+                  className="min-h-9 flex-1 whitespace-nowrap rounded-sm px-3 text-sm font-semibold text-fg-muted transition hover:text-fg aria-pressed:bg-fg aria-pressed:text-bg sm:flex-none sm:px-4"
                 >
-                  {type === 'all' ? 'All ventures' : startupTypeLabels[type]}
+                  <span className="sm:hidden">{type === 'all' ? 'All' : type === 'alumni' ? 'Alumni' : 'Student'}</span>
+                  <span className="hidden sm:inline">{type === 'all' ? 'All ventures' : startupTypeLabels[type]}</span>
                 </button>
               ))}
             </div>
@@ -146,7 +148,7 @@ export function StartupDirectory({ startups, facets }: StartupDirectoryProps) {
           </div>
         </div>
 
-        <details className="group mt-6" open>
+        <details className="group mt-6">
           <summary className="flex min-h-11 list-none items-center gap-2 text-sm font-bold text-fg transition hover:text-accent">
             <SlidersHorizontal aria-hidden="true" className="size-4" /> Refine the directory
           </summary>
@@ -201,8 +203,8 @@ export function StartupDirectory({ startups, facets }: StartupDirectoryProps) {
           </div>
         ) : (
           <EmptyState
-            title="No venture matches that combination."
-            description="Try removing one filter or searching for a broader term. The directory only shows verified, approved listings."
+            title="No startups match those filters"
+            description="Try removing a filter or searching for something broader. We only list startups whose founders have approved their profile."
           />
         )}
 

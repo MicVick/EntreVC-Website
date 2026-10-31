@@ -1,19 +1,39 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 
+import { EntreVCSprite } from '@/components/public/entrevc-sprite'
 import { Footer } from '@/components/public/footer'
 import { GoogleAnalytics } from '@/components/public/google-analytics'
 import { Header } from '@/components/public/header'
-import { Toaster } from '@/components/ui/toast'
+import { JourneyBackdrop } from '@/components/public/journey-backdrop'
+import { PointerGlow } from '@/components/public/pointer-glow'
 import { getSiteSettings } from '@/lib/content'
 import { getSiteUrl } from '@/lib/seo'
 
 import '../globals.css'
 
-const jakarta = localFont({
-  src: '../../brand/fonts/plus-jakarta-sans.ttf',
-  variable: '--font-jakarta',
-  weight: '200 800',
+// Geist for headings and text, Instrument Serif italic for the odd accent word, Geist
+// Mono for labels, dates and numbers. All latin-only woff2, self-hosted, OFL.
+const geist = localFont({
+  src: '../../brand/fonts/geist-variable.woff2',
+  variable: '--font-geist',
+  weight: '100 900',
+  display: 'swap',
+})
+
+const geistMono = localFont({
+  src: '../../brand/fonts/geist-mono-variable.woff2',
+  variable: '--font-geist-mono',
+  weight: '100 900',
+  display: 'swap',
+})
+
+const instrumentSerif = localFont({
+  src: [
+    { path: '../../brand/fonts/instrument-serif-regular.woff2', weight: '400', style: 'normal' },
+    { path: '../../brand/fonts/instrument-serif-italic.woff2', weight: '400', style: 'italic' },
+  ],
+  variable: '--font-instrument',
   display: 'swap',
 })
 
@@ -49,20 +69,22 @@ export default async function PublicLayout({ children }: LayoutProps<'/'>) {
   const settings = await getSiteSettings()
 
   return (
-    <html lang="en" className={`${jakarta.variable} h-full antialiased`}>
-      <body className="flex min-h-dvh flex-col bg-bg text-fg">
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}>
+      <body className="relative isolate flex min-h-dvh flex-col bg-bg text-fg">
         <a
           href="#main-content"
-          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-fg shadow-lg transition focus:translate-y-0"
+          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-brand px-5 py-3 text-sm font-semibold text-brand-fg shadow-lg transition focus:translate-y-0"
         >
           Skip to content
         </a>
+        <EntreVCSprite />
+        <JourneyBackdrop />
         <Header />
         <main id="main-content" className="min-h-[60vh] flex-1">
           {children}
         </main>
         <Footer settings={settings} />
-        <Toaster />
+        <PointerGlow />
         <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
       </body>
     </html>

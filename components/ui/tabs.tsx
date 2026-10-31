@@ -55,7 +55,7 @@ export function TabsList({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       role="tablist"
-      className={cn('inline-flex rounded-full border border-border bg-surface p-1', className)}
+      className={cn('inline-flex rounded-md border border-border bg-surface p-1', className)}
       {...props}
     />
   )
@@ -75,7 +75,7 @@ export function TabsTrigger({ value, className, children, ...props }: TabsTrigge
       tabIndex={selected ? 0 : -1}
       {...props}
       className={cn(
-        'min-h-9 rounded-full px-4 text-sm font-semibold text-fg-muted transition hover:text-fg aria-selected:bg-fg aria-selected:text-bg',
+        'min-h-9 rounded-sm px-4 text-sm font-semibold text-fg-muted transition hover:text-fg aria-selected:bg-fg aria-selected:text-bg',
         className,
       )}
       onClick={() => tabs.setValue(value)}

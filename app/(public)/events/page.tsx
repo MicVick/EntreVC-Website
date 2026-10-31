@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
+import { PageHero } from '@/components/public/page-hero'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getEventTypes, getPastEvents, getUpcomingEvents } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
@@ -32,18 +33,11 @@ export default async function EventsPage() {
 
   return (
     <>
-      <section className="surface-grid border-b border-border">
-        <div className="site-shell py-16 sm:py-24">
-          <p className="eyebrow">What’s on</p>
-          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[1.16] sm:text-7xl lg:text-8xl">
-            The room where it <span className="text-accent">happens.</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-fg-muted">
-            Speaker sessions, workshops and competitions, open across campus. Registering
-            takes a minute and the calendar invite lands in your inbox straight away.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="What’s on"
+        title="Events"
+        description="Talks, workshops and competitions through the year. Most are open to everyone at IIMA. Registering takes about a minute, and the calendar invite lands in your inbox straight away."
+      />
 
       <section className="section-shell">
         <div className="site-shell">

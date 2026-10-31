@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
+import { PageHero } from '@/components/public/page-hero'
 import { TeamRoster } from '@/components/public/team-roster'
 import { getTeam, getTeamYears, getVerticals } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
@@ -29,16 +30,11 @@ export default async function ArchivedTeamPage({ params }: PageProps<'/team/[yea
 
   return (
     <>
-      <section className="surface-grid border-b border-border">
-        <div className="site-shell py-16 sm:py-24">
-          <p className="eyebrow">Team archive · {year}</p>
-          <h1 className="display-type mt-6 max-w-5xl text-5xl font-semibold leading-[1.16] sm:text-7xl lg:text-8xl">
-            The people who moved the club{' '}
-            <span className="text-accent">forward.</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-fg-muted">Every committee leaves behind events, relationships and knowledge for the next one to build on.</p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Team archive"
+        title={`Team ${year}`}
+        description={`The EntreVC team for the ${year} academic year. Every team leaves behind events, contacts and know-how for the next one to build on.`}
+      />
       <TeamRoster members={members} verticals={verticals} years={years} activeYear={year} currentYear={currentYear} />
     </>
   )

@@ -12,7 +12,7 @@ type ShareButtonProps = {
 }
 
 export function ShareButton({ title, text, url }: ShareButtonProps) {
-  const [copied, setCopied] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle')
 
   const share = async () => {
     const resolvedUrl = url ?? window.location.href
@@ -21,20 +21,27 @@ export function ShareButton({ title, text, url }: ShareButtonProps) {
       try {
         await navigator.share({ title, text, url: resolvedUrl })
         return
-      } catch {
-        return
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return
       }
     }
 
-    await navigator.clipboard.writeText(resolvedUrl)
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 1800)
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable')
+      await navigator.clipboard.writeText(resolvedUrl)
+      setStatus('copied')
+    } catch {
+      // Clipboard access can be denied on non-secure previews; let the user copy manually.
+      window.prompt('Copy this link', resolvedUrl)
+      setStatus('error')
+    }
+    window.setTimeout(() => setStatus('idle'), 2500)
   }
 
   return (
     <Button variant="outline" size="sm" onClick={share} aria-live="polite">
-      {copied ? <Check aria-hidden="true" className="size-4" /> : <Share2 aria-hidden="true" className="size-4" />}
-      {copied ? 'Link copied' : 'Share'}
+      {status === 'copied' ? <Check aria-hidden="true" className="size-4" /> : <Share2 aria-hidden="true" className="size-4" />}
+      {status === 'copied' ? 'Link copied' : status === 'error' ? 'Copy link' : 'Share'}
     </Button>
   )
 }

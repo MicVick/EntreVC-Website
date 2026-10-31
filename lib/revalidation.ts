@@ -5,8 +5,8 @@ const COLLECTION_PATHS: Readonly<Record<string, readonly string[]>> = {
   startups: ['/', '/startups'],
   resources: ['/', '/resources'],
   'playbook-chapters': ['/resources', '/resources/playbook'],
-  schemes: ['/iima-ventures'],
-  'team-members': ['/team'],
+  schemes: ['/', '/iima-ventures'],
+  'team-members': ['/', '/team'],
   'site-settings': [
     '/',
     '/startups',

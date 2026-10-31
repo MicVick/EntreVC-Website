@@ -11,6 +11,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getResources, getResourceTags, getSiteSettings } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
+import { publicExternalUrl } from '@/lib/public-link'
 
 export const metadata: Metadata = buildMetadata({
   title: 'Resources',
@@ -20,28 +21,29 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function ResourcesPage() {
   const [resources, tags, settings] = await Promise.all([getResources(), getResourceTags(), getSiteSettings()])
+  const youtubeChannelUrl = publicExternalUrl(settings.youtubeChannelUrl)
 
   return (
     <>
       <PageHero
         eyebrow="The EntreVC library"
-        title={<>Find the next useful <span className="text-accent">answer.</span></>}
-        description="Search practical reading, listening, templates and tools by topic or format. Every result opens directly at the source."
+        title="Resources"
+        description="Reading lists, templates, reports and recorded talks we’ve found useful, plus the EntreVC playbook. Everything is free and opens at the source."
         aside={
-          <div className="group relative min-h-60 overflow-hidden rounded-lg border border-brand bg-brand-muted shadow-md sm:min-h-64">
+          <div className="group relative min-h-60 overflow-hidden rounded-lg border border-border bg-surface shadow-md sm:min-h-64">
             <Image
-              src="/images/editorial/field-notes-light.webp"
-              alt="A bright worktable with notebooks, paper prototypes and a red pencil"
+              src="/images/editorial/field-notes.webp"
+              alt="A dark worktable with a notebook, sketches and a red pencil"
               width={1600}
               height={900}
               sizes="(min-width: 1024px) 40vw, 100vw"
-              className="absolute inset-0 h-full w-full object-cover opacity-70 transition duration-1000 group-hover:scale-[1.025] group-hover:opacity-80"
+              className="absolute inset-0 h-full w-full object-cover opacity-60 transition duration-1000 group-hover:scale-[1.025] group-hover:opacity-70"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/75 to-bg/10" />
             <div className="relative flex min-h-60 flex-col justify-end p-6 sm:min-h-64 sm:p-7">
               <BookMarked aria-hidden="true" className="size-6 text-accent" />
-              <h2 className="display-type mt-4 text-3xl font-semibold">Start with the playbook.</h2>
-              <p className="mt-2 max-w-md text-sm leading-6 text-fg-muted">A web-first field guide written here and improved by every team that inherits it.</p>
+              <h2 className="display-type mt-4 text-3xl">New here? Start with the playbook</h2>
+              <p className="mt-2 max-w-md text-sm leading-6 text-fg-muted">A practical guide to starting up, written at IIMA and kept up to date by each year’s team.</p>
               <Link href="/resources/playbook" className={`${buttonVariants({ size: 'sm' })} mt-5 w-fit`}>
                 Read the playbook <ArrowRight aria-hidden="true" className="size-4" />
               </Link>
@@ -53,9 +55,8 @@ export default async function ResourcesPage() {
       <section className="section-shell">
         <div className="site-shell">
           <SectionHeader
-            eyebrow="Curated, not collected"
-            title="Browse by the problem you are solving."
-            description="Filter the library by format or topic. Every result opens directly at the source—no interstitials and no email gates."
+            title="Browse the library"
+            description="Filter by format or topic. Links open at the source, with no sign-up and no email gate."
           />
           <Suspense fallback={<Skeleton className="min-h-[40rem] w-full" />}>
             <ResourceDirectory resources={resources} tags={tags} />
@@ -63,17 +64,17 @@ export default async function ResourcesPage() {
         </div>
       </section>
 
-      <section className="border-t border-border bg-surface">
+      <section className="relative">
         <div className="site-shell grid gap-8 py-14 sm:py-18 md:grid-cols-[1fr_auto] md:items-center">
           <div>
             <p className="eyebrow">Watch and listen</p>
-            <h2 className="display-type mt-5 text-3xl font-semibold sm:text-4xl">Catch up on sessions you could not attend.</h2>
+            <h2 className="display-type mt-3 text-3xl sm:text-4xl">Missed a session?</h2>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-fg-muted">
-              Talks and workshops are published on the EntreVC channel when a recording is available.
+              When a talk or workshop is recorded, it goes up on the EntreVC YouTube channel.
             </p>
           </div>
-          {settings.youtubeChannelUrl ? (
-            <a href={settings.youtubeChannelUrl} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+          {youtubeChannelUrl ? (
+            <a href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
               <Play aria-hidden="true" className="size-4" /> Open the channel <ExternalLink aria-hidden="true" className="size-4" />
             </a>
           ) : (

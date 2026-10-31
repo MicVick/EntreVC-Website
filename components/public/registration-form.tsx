@@ -678,7 +678,7 @@ function SuccessPanel({
             <a
               href={result.icsUrl}
               download={`${event.slug}.ics`}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-border-strong bg-transparent px-5 text-sm font-bold text-fg transition hover:border-brand hover:text-accent"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-border-strong bg-transparent px-5 text-sm font-bold text-fg transition hover:border-brand hover:text-accent"
             >
               <Download aria-hidden="true" className="size-4" /> Download invite
             </a>
@@ -687,7 +687,7 @@ function SuccessPanel({
                 href={result.addToCalendarUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-border-strong bg-transparent px-5 text-sm font-bold text-fg transition hover:border-brand hover:text-accent"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-border-strong bg-transparent px-5 text-sm font-bold text-fg transition hover:border-brand hover:text-accent"
               >
                 <CalendarPlus aria-hidden="true" className="size-4" /> Add to Google Calendar
               </a>

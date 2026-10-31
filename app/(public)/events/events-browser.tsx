@@ -78,8 +78,8 @@ export function EventsBrowser({ upcoming, past, eventTypes }: EventsBrowserProps
     <div>
       <div className="flex flex-col gap-6 border-b border-border pb-7 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">Showing</p>
-          <div className="inline-flex rounded-full border border-border bg-surface p-1">
+          <p className="meta-label mb-3 text-fg-subtle">Showing</p>
+          <div className="inline-flex rounded-md border border-border bg-surface p-1">
             {WHEN_VALUES.map((value) => (
               <button
                 key={value}
@@ -89,7 +89,7 @@ export function EventsBrowser({ upcoming, past, eventTypes }: EventsBrowserProps
                   setWhen(value)
                   writeParam('when', value === 'upcoming' ? [] : [value])
                 }}
-                className="min-h-9 rounded-full px-4 text-sm font-semibold text-fg-muted transition hover:text-fg aria-pressed:bg-fg aria-pressed:text-bg"
+                className="min-h-9 rounded-sm px-4 text-sm font-semibold text-fg-muted transition hover:text-fg aria-pressed:bg-fg aria-pressed:text-bg"
               >
                 {value === 'upcoming' ? 'Upcoming' : 'Past'}
                 <span className="ml-2 text-xs font-bold opacity-70">
@@ -131,17 +131,17 @@ export function EventsBrowser({ upcoming, past, eventTypes }: EventsBrowserProps
           <EmptyState
             title={
               types.length > 0
-                ? 'Nothing matches that filter.'
+                ? 'Nothing matches that filter'
                 : when === 'upcoming'
-                  ? 'Nothing on the calendar just yet.'
-                  : 'No past events to show.'
+                  ? 'Nothing on the calendar right now'
+                  : 'No past events yet'
             }
             description={
               types.length > 0
-                ? 'Try clearing the type filter, or look at what has already happened.'
+                ? 'Try clearing the filter, or have a look at past events.'
                 : when === 'upcoming'
-                  ? 'The next term’s line-up is being put together. Join the mailing list and you will hear about it first.'
-                  : 'Once an event has finished it appears here with photos and a recording.'
+                  ? 'New events usually go up a week or two in advance. Leave your email at the bottom of the page and we’ll tell you when registration opens.'
+                  : 'Once an event is over, it shows up here with photos and, when there is one, a recording.'
             }
             action={
               when === 'upcoming' && types.length === 0

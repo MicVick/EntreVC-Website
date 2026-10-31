@@ -44,7 +44,7 @@ export function StickyRegister({ label, targetId }: StickyRegisterProps) {
     >
       <a
         href={`#${targetId}`}
-        className="flex min-h-12 w-full items-center justify-center rounded-full border border-brand bg-brand px-5 text-sm font-bold text-brand-fg transition hover:border-accent hover:bg-accent hover:text-accent-fg"
+        className="flex min-h-12 w-full items-center justify-center rounded-md border border-brand bg-brand px-5 text-sm font-bold text-brand-fg transition hover:border-accent hover:bg-accent hover:text-accent-fg"
       >
         {label}
       </a>

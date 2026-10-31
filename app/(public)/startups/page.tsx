@@ -20,8 +20,8 @@ export default async function StartupsPage() {
     <>
       <PageHero
         eyebrow="Startup directory"
-        title={<>Discover ventures built by the <span className="text-accent">IIMA community.</span></>}
-        description="Search verified student and alumni ventures by sector, stage or founder batch—whether you want to invest, mentor, collaborate or simply learn what is being built."
+        title="Startups"
+        description="Companies started by IIM Ahmedabad students and alumni. Search by sector, stage or batch, and get in touch with the founders directly."
       />
       <section className="section-shell">
         <div className="site-shell">

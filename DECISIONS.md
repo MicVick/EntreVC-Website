@@ -995,3 +995,104 @@ clean on both.
   - **Any future change to `payload.config.ts` or `collections/**` must re-run
     `npm run generate:importmap` and commit the result.** DECISIONS.md already said this
     at Sprint 0; it is repeated here because the failure mode is silent and total.
+
+---
+
+## Site: dark redesign ("from the ground up") — 31 Oct 2026
+
+Requested by the project owner, who authorised edits across both agents' zones for this
+change. Branch `site/dark-redesign`.
+
+- **Theme.** Dark tokens in `app/globals.css`. Every frozen token name from `CONTRACT.md` §8
+  is kept; values change. New tokens added alongside (`--color-brand-strong`, line-drawing,
+  paper and journey colours, `--font-mono`). `#BD282E` stays the fill colour with white text
+  (6.0:1). Red text on dark uses `--color-accent` `#F0585D` (5.9:1).
+- **`@theme inline` → `@theme`.** Utilities now resolve through `var(--color-*)`, so the new
+  `.paper` class can re-scope the palette for off-white cards (event cards, the homepage
+  contact panel). Anything styled from tokens works inside `.paper` without changes.
+- **Fonts.** Plus Jakarta Sans replaced by Archivo (variable weight and width) and JetBrains
+  Mono, both self-hosted OFL WOFF2 in `brand/fonts/`. No new npm dependency.
+- **Logo.** `brand/logo-full.png` has an opaque white background and cannot sit on dark, so
+  `BrandLogo` now renders a typed stand-in of the wordmark. Its prop changed from
+  `compact` to `size`. Replace it with the club's SVG when supplied
+  (`docs/content-needed.md` §1). The IIMA crest moved from the header to the footer, shown
+  in white with a CSS filter.
+- **Removed.** `components/public/dream-launch.tsx` and the playful tokens (`playful`,
+  `lilac`, `rocket-*`).
+- **New components.** `plaza-launch.tsx`: a line drawing of the Vikram Sarabhai Library
+  where the lines draw themselves and a rocket launches through Kahn's circle. CSS only;
+  shows the finished drawing under reduced motion. `journey-backdrop.tsx`: a fixed sky that
+  rises with scroll through `animation-timeline: scroll()`. It is server-rendered with no
+  client JS, and is a static fade where scroll timelines are unsupported (Firefox) or
+  motion is reduced.
+- **Homepage structure.** Hero, Upcoming events (falls back to recent events), What is
+  EntreVC, Startups, Resources, Support, Team, Get in touch. The newsletter form now
+  appears once per page, in the footer.
+- **Revalidation (Agent A zone).** The homepage now shows schemes and team members, so
+  `lib/revalidation.ts` adds `/` to `schemes` and `team-members`.
+- **Agent A files touched.** `app/(public)/events/page.tsx` (hero now uses `PageHero`),
+  `events-browser.tsx` (copy, squarer controls), `events/[slug]/*` and
+  `registration-form.tsx` (radius classes only, no behaviour change).
+- **Known test failures, not caused by this change.** 9 of 83 unit tests fail on this
+  branch. 7 (`content.test.ts`, `registration.test.ts`) need upcoming events, and every
+  seeded event date is now in the past. 2 (`content-image.test.tsx`) expect the fallback
+  that existed before the uncommitted "illustrative image" change to `content-image.tsx`.
+
+### Second pass: motion, type and a less boxy layout — 31 Oct 2026
+
+- **Motion is opt-in through `data-motion` on `<html>`.** An inline script in the public
+  layout (`lib/motion.ts`) sets it before first paint from the visitor's saved choice or
+  their OS "reduce motion" setting. Every animation in `globals.css` is keyed off
+  `:root[data-motion="on"]`; without JavaScript the site is static. A `MotionToggle`
+  (hero and footer) lets anyone pause or play animation, which also covers WCAG 2.2.2
+  for the looping launch. Found because the owner's Windows has "Animation effects" off,
+  so the first pass showed them no animation at all.
+- **Fonts.** Archivo and JetBrains Mono replaced by Geist, Geist Mono and Instrument Serif
+  (italic accent words only), all OFL, self-hosted in `brand/fonts/`. `.display-caps`
+  (condensed capitals) renamed `.display-xl` and set in mixed case.
+- **Less boxy.** Radius tokens raised (`--radius-md` .875rem, `--radius-lg` 1.25rem, new
+  `--radius-xl`/`--radius-2xl`); buttons, badges and nav links are pills; the header is a
+  floating glass capsule; section rules and bordered "table" grids replaced by spacing and
+  separate rounded cards; team portraits sit in Kahn-style arches (`.arch`).
+- **New elements.** Looping rocket launch with smoke and a glowing sun in Kahn's circle
+  (`plaza-launch.tsx`), headline word reveal, sparkles, `Marquee`, `OrbitBadge`,
+  `LogoOrbit`, count-up stats and a scroll-filled statement (CSS `view()` timelines),
+  glow orbs, film grain, and a pointer-following card light (`PointerGlow`, the only new
+  client JS besides `MotionToggle`).
+- **Gotcha.** A view timeline tracks the nearest scroll container, and `overflow: hidden`
+  makes one. Sections that use scroll-driven effects use `overflow-x: clip` (not a scroll
+  container) instead; `.section-shell` sets it for all sections.
+- **`ContentImage` fix.** Failed URLs are remembered as a set, so a broken editorial
+  fallback can no longer bounce back to the broken upload. Its tests now describe the
+  editorial-photo fallback and cover that case. 7 data-dependent test failures remain
+  until the preview database is re-seeded (`npm run seed:reset` wipes and rebuilds it).
+
+### Third pass: plain colour, no motion switch, real logo — 31 Oct 2026
+
+- **Plain colours.** Gradient text and every orange tint removed. Accent is a plain
+  bright red `#FF3B3F` (5.6:1 on bg, 4.9:1 on surface-2); `--color-flame*` tokens deleted.
+  Raw `rgb()` shadows replaced by `--shadow-card/panel/glow/glow-lg` tokens.
+- **No motion switch; owner's call.** The `data-motion` boot script and `MotionToggle`
+  are gone and the OS "reduce motion" setting is no longer consulted: the owner wants
+  the animation to play for everyone. To stay within WCAG 2.2.2 without a pause button,
+  nothing animates on its own for more than about five seconds: the hero intro plays
+  once, and everything ongoing (marquee, kites, rings, backdrop rocket) is scroll-driven.
+  Where scroll timelines are unsupported those parts are static.
+- **Hero launch reworked.** The rocket now stands on a pad on Louis Kahn Plaza with a
+  launch tower, in front of a solid red sun in Kahn's circle; it lifts off once and
+  leaves a faint trail. A small copy climbs in the scrolling backdrop to the moon.
+- **Logo.** Traced from `brand/logo/EntreVC_Logo.png` (potrace) into
+  `brand/logo/entrevc-*.svg` and an inline sprite (`components/public/entrevc-sprite.tsx`)
+  that `BrandLogo` `<use>`s. New favicons: `app/icon.svg`, `app/favicon.ico`,
+  `app/apple-icon.png` (the red triangle).
+- **Dual graph removed.** Its launcher had replaced `CLAUDE.md` wholesale; restored from
+  git, along with `.gitignore`. Its hooks, MCP registration and local data are deleted.
+- **Bundle.** Unused Sonner `<Toaster />` dropped from the layout (nothing called
+  `toast()`); homepage icons moved off lucide-react (its 1.x icons are client components)
+  to `components/ui/icons`; `ContentImage` and `InstituteMark` no longer use the
+  `<Image>` component. Homepage JS 171 KB → 163 KB compressed; about 130 KB of that is
+  React and Next itself, so the 150 KB target is not reachable without cutting features.
+- **Seed.** Preview DB re-seeded (`seed:reset`, owner approved). Supabase Storage returned
+  HTTP 540 (project paused), so this run stored seed media locally (`S3_BUCKET=`); seed
+  images are "Placeholder:" records the site never shows. Re-run once Supabase is back.
+

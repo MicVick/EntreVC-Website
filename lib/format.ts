@@ -20,6 +20,14 @@ export function formatShortDateInIST(value: string): string {
   return date ? formatInTimeZone(date, IST_TIMEZONE, 'd MMM yyyy') : INVALID_DATE_LABEL
 }
 
+/** Day and short month in IST, for calendar-style date chips ("07", "Nov"). */
+export function formatDayMonthInIST(value: string): { day: string; month: string } | null {
+  const date = validDate(value)
+  return date
+    ? { day: formatInTimeZone(date, IST_TIMEZONE, 'dd'), month: formatInTimeZone(date, IST_TIMEZONE, 'MMM') }
+    : null
+}
+
 export function formatTimeInIST(value: string): string {
   const date = validDate(value)
   return date ? `${formatInTimeZone(date, IST_TIMEZONE, 'h:mm a')} IST` : INVALID_DATE_LABEL

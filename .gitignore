@@ -56,3 +56,7 @@ yarn-error.log*
 
 # retention exports - personal data, never commit these
 /exports/
+
+# logo working files: duplicates and AI drafts of brand/logo/EntreVC_Logo.png, kept locally only
+/brand/logo/Gemini_Generated_Image_*
+/brand/logo/IIM,_Ahmedabad_Logo.svg*

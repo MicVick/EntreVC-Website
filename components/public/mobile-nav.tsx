@@ -24,7 +24,7 @@ export function MobileNav({ items }: MobileNavProps) {
   return (
     <>
       <Button
-        variant="secondary"
+        variant="outline"
         size="icon"
         aria-label="Open navigation"
         aria-expanded={open}
@@ -33,21 +33,18 @@ export function MobileNav({ items }: MobileNavProps) {
       >
         <MenuIcon aria-hidden="true" className="size-5" />
       </Button>
-      <Sheet open={open} onOpenChange={setOpen} title="Navigate" description="Explore the EntreVC ecosystem.">
+      <Sheet open={open} onOpenChange={setOpen} title="Menu">
         <nav aria-label="Mobile navigation" className="flex flex-col">
-          {items.map((item, index) => (
+          {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               prefetch={false}
-              aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined}
+              aria-current={(item.href === '/' ? pathname === '/' : pathname === item.href || pathname.startsWith(`${item.href}/`)) ? 'page' : undefined}
               onClick={() => setOpen(false)}
-              className="group flex min-h-16 items-center justify-between gap-4 border-b border-border py-4 text-lg font-semibold text-fg transition hover:text-accent aria-[current=page]:text-accent"
+              className="group flex min-h-14 items-center justify-between gap-4 border-b border-border py-3 text-lg font-medium text-fg transition hover:text-accent aria-[current=page]:text-accent"
             >
-              <span className="flex items-center gap-4">
-                <span className="text-xs tabular-nums text-fg-subtle">0{index + 1}</span>
-                {item.label}
-              </span>
+              <span>{item.label}</span>
               <ArrowUpRightIcon aria-hidden="true" className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           ))}
@@ -57,9 +54,9 @@ export function MobileNav({ items }: MobileNavProps) {
           prefetch={false}
           aria-current={pathname === '/contact' || pathname.startsWith('/contact/') ? 'page' : undefined}
           onClick={() => setOpen(false)}
-          className="mt-10 inline-flex min-h-12 items-center justify-center rounded-full bg-brand px-5 text-sm font-bold text-brand-fg aria-[current=page]:ring-2 aria-[current=page]:ring-accent aria-[current=page]:ring-offset-2 aria-[current=page]:ring-offset-bg"
+          className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-brand px-5 text-sm font-semibold text-brand-fg transition hover:bg-brand-strong aria-[current=page]:ring-2 aria-[current=page]:ring-accent aria-[current=page]:ring-offset-2 aria-[current=page]:ring-offset-bg"
         >
-          Start a conversation
+          Contact us
         </Link>
       </Sheet>
     </>

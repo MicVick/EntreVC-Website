@@ -21,6 +21,7 @@
     "generate:importmap": "payload generate:importmap",
     "seed": "tsx scripts/seed.ts",
     "seed:reset": "tsx scripts/seed.ts --reset",
+    "demo:refresh": "tsx scripts/refresh-demo-ventures.ts",
     "placeholders": "tsx scripts/generate-placeholders.ts",
     "verify:access": "tsx scripts/verify-access.ts",
     "retention": "tsx scripts/retention.ts",

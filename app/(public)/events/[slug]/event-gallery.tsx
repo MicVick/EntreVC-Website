@@ -108,7 +108,7 @@ export function EventGallery({ images, eventTitle }: EventGalleryProps) {
                 <button
                   type="button"
                   onClick={() => step(-1)}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border-strong px-5 text-sm font-bold transition hover:border-brand hover:text-accent"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border-strong px-5 text-sm font-bold transition hover:border-brand hover:text-accent"
                 >
                   <ChevronLeft aria-hidden="true" className="size-4" /> Previous
                 </button>
@@ -118,7 +118,7 @@ export function EventGallery({ images, eventTitle }: EventGalleryProps) {
                 <button
                   type="button"
                   onClick={() => step(1)}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border-strong px-5 text-sm font-bold transition hover:border-brand hover:text-accent"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border-strong px-5 text-sm font-bold transition hover:border-brand hover:text-accent"
                 >
                   Next <ChevronRight aria-hidden="true" className="size-4" />
                 </button>
