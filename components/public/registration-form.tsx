@@ -59,7 +59,7 @@ type RegistrationFormProps = {
   className?: string
 }
 
-const PANEL = 'rounded-lg border border-border bg-surface p-5 shadow-sm sm:p-7'
+const PANEL = 'surface-card rounded-lg p-5 sm:p-7'
 
 /** Field names the server is allowed to attach an error to. Anything else is shown form-level. */
 function toFormPath(event: Event, key: string): Path<RegistrationFormValues> | null {

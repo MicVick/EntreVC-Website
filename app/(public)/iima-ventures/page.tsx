@@ -31,7 +31,7 @@ export default async function IimaVenturesPage() {
         <div className="site-shell grid gap-9 py-10 sm:py-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end lg:py-16">
           <div>
             <p className="eyebrow">IIMA Ventures</p>
-            <h1 className="display-xl mt-5 max-w-5xl text-[clamp(3rem,8vw,6.75rem)]">Support for founders</h1>
+            <h1 className="display-xl mt-5 max-w-5xl text-[clamp(2.5rem,6vw,4.75rem)]">Support for founders</h1>
             <div className="rich-text mt-6 max-w-3xl" dangerouslySetInnerHTML={{ __html: content.overview.html }} />
             <div className="mt-7 flex flex-wrap gap-3">
               {website ? (
@@ -73,8 +73,8 @@ export default async function IimaVenturesPage() {
                 return <article
                   key={scheme.id}
                   className={cn(
-                    'group flex min-w-0 flex-col rounded-lg border bg-surface p-6 transition sm:p-8',
-                    scheme.isExpired ? 'border-border opacity-60' : 'border-border hover:border-border-strong',
+                    'surface-card group flex min-w-0 flex-col rounded-lg p-6 transition sm:p-8',
+                    scheme.isExpired ? 'opacity-60' : 'hover:border-border-strong',
                   )}
                 >
                   <div className="flex items-start justify-between gap-5">
@@ -124,7 +124,7 @@ export default async function IimaVenturesPage() {
               })}
             </div>
           ) : (
-            <div className="rounded-lg border border-dashed border-border-strong bg-surface p-8">
+            <div className="rounded-lg surface-card border-dashed border-border-strong p-8">
               <h2 className="display-type text-2xl font-semibold">No schemes are listed yet.</h2>
               <p className="mt-3 text-fg-muted">Contact the IIMA Ventures office for the latest opportunities.</p>
             </div>

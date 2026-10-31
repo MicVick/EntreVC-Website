@@ -4,8 +4,15 @@ import { cache } from 'react'
 
 import type {
   CategoryRoutingEntry,
+  ClubStory,
+  FigureStat,
+  Flagship,
+  FounderCompany,
   IimaVenturesBlock,
   KeyNumbers,
+  Pillar,
+  RoadmapItem,
+  RoadmapPhase,
   RoleContact,
   SiteSettings,
   SocialLink,
@@ -200,6 +207,68 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
     takedownEmail: str(settings.takedownEmail),
     youtubeChannelUrl: str(settings.youtubeChannelUrl),
     youtubeChannelId: str(settings.youtubeChannelId),
+    structureNote: str(settings.structureNote),
+  }
+})
+
+/**
+ * The homepage sections about the club (Site settings → Club story). Rows missing a
+ * required value are dropped rather than rendered half-empty; a section whose rows are
+ * all empty is hidden by the page.
+ */
+export const getClubStory = cache(async (): Promise<ClubStory> => {
+  const settings = await settingsGlobal()
+  const highlights = settings.highlights ?? {}
+  const wall = settings.founderWall ?? {}
+  const roadmap = settings.roadmap ?? {}
+
+  const figures = (rows: { figure?: string | null; label?: string | null }[] | null | undefined): FigureStat[] =>
+    (rows ?? []).flatMap((row) => {
+      const figure = str(row.figure)
+      const label = str(row.label)
+      return figure && label ? [{ figure, label }] : []
+    })
+
+  return {
+    pillars: (settings.pillars ?? []).flatMap((row): Pillar[] => {
+      const title = str(row.title)
+      return title ? [{ figure: str(row.figure), title, description: str(row.description) }] : []
+    }),
+    highlights: {
+      yearLabel: str(highlights.yearLabel),
+      stats: figures(highlights.stats),
+      flagships: (highlights.flagships ?? []).flatMap((row): Flagship[] => {
+        const name = str(row.name)
+        return name ? [{ name, figure: str(row.figure), unit: str(row.unit), description: str(row.description) }] : []
+      }),
+      otherEvents: (highlights.otherEvents ?? []).flatMap((row) => {
+        const name = str(row.name)
+        return name ? [name] : []
+      }),
+    },
+    founderWall: {
+      stats: figures(wall.stats),
+      companies: (wall.companies ?? []).flatMap((row): FounderCompany[] => {
+        const name = str(row.name)
+        const founders = str(row.founders)
+        return name && founders
+          ? [{ name, founders, description: str(row.description), foundedYear: num(row.foundedYear) }]
+          : []
+      }),
+      source: str(wall.source),
+    },
+    roadmap: {
+      yearLabel: str(roadmap.yearLabel),
+      phases: (roadmap.phases ?? []).flatMap((phase): RoadmapPhase[] => {
+        const name = str(phase.name)
+        if (!name) return []
+        const items = (phase.items ?? []).flatMap((item): RoadmapItem[] => {
+          const title = str(item.title)
+          return title ? [{ title, description: str(item.description), isNew: item.isNew === true }] : []
+        })
+        return [{ name, items }]
+      }),
+    },
   }
 })
 

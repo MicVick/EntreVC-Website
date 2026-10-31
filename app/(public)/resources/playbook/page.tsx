@@ -30,10 +30,10 @@ export default async function PlaybookPage() {
           <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(17rem,0.8fr)] lg:items-end">
             <div>
               <p className="eyebrow">The EntreVC playbook</p>
-              <h1 className="display-xl mt-5 max-w-5xl text-[clamp(3rem,8vw,6.75rem)]">{meta.title}</h1>
+              <h1 className="display-xl mt-5 max-w-5xl text-[clamp(2.5rem,6vw,4.75rem)]">{meta.title}</h1>
               <div className="rich-text mt-8 max-w-3xl" dangerouslySetInnerHTML={{ __html: meta.intro.html }} />
             </div>
-            <div className="rounded-lg border border-border bg-surface p-6 sm:p-8">
+            <div className="rounded-lg surface-card p-6 sm:p-8">
               <BookOpen aria-hidden="true" className="size-7 text-accent" />
               <p className="display-type mt-6 text-3xl font-semibold">{chapters.length} chapters. One honest starting point.</p>
               {meta.updatedAt ? <p className="mt-4 text-sm text-fg-muted">Last revised {formatDateInIST(meta.updatedAt)}</p> : null}
@@ -97,7 +97,7 @@ export default async function PlaybookPage() {
                 </article>
               ))
             ) : (
-              <div className="rounded-lg border border-dashed border-border-strong bg-surface p-8">
+              <div className="rounded-lg surface-card border-dashed border-border-strong p-8">
                 <h2 className="display-type text-2xl">The online version is on its way</h2>
                 <p className="mt-3 text-fg-muted">Check back soon, or use the PDF edition if it is available.</p>
               </div>

@@ -1096,3 +1096,46 @@ change. Branch `site/dark-redesign`.
   HTTP 540 (project paused), so this run stored seed media locally (`S3_BUCKET=`); seed
   images are "Placeholder:" records the site never shows. Re-run once Supabase is back.
 
+
+### Fourth pass: real LKP, looping launch, club run content, white cards — 1 Nov 2026
+
+- **Hero drawing redrawn from photographs of Louis Kahn Plaza** (Commons photos, see
+  `public/images/campus/README.md`): the classroom block receding on the left with its
+  hooded windows (a small perspective helper in `plaza-launch.tsx` foreshortens them),
+  the Vikram Sarabhai Library (arched window, the tall slot with its round opening, the
+  terrace openings and steps) and the faculty block with a great cut circle. The red sun
+  now sets behind the library roof and shows through the arch at the top of the slot.
+- **The launch loops; owner's call.** Every 10 s: lift-off, the trail lingers and fades,
+  a new rocket settles on the pad. The owner asked for a delayed loop and, earlier, for no
+  pause button. This departs from WCAG 2.2.2 (Pause, Stop, Hide: Level A, so inside the
+  2.1 AA target), which asks for a way to stop motion that runs longer than five seconds
+  next to other content. Logged so a later team can revisit it. A pause control or a
+  `prefers-reduced-motion` rule would restore conformance.
+- **Club run content in the CMS.** New Site settings tab "Club story" (`pillars`,
+  `highlights`, `founderWall`, `roadmap`) and a `structureNote` on Structure. Read through
+  `getClubStory()` into `ClubStory` (`lib/schemas/site-settings.ts`) and rendered by
+  `components/public/club-story.tsx`. Each section hides when empty. Figures are free
+  text; `splitFigure()` pulls out a whole number so "15+" still counts up. Seeded from
+  the deck by `npm run seed:settings`, a new non-destructive mode of the seed script.
+- **One email.** `entre@iima.ac.in` for the club, every routing category, named contacts,
+  takedowns and the IIMA Ventures contact; also the fallback sender for mail and calendar
+  invites when `SMTP_FROM` is unset (was a domain the club does not own).
+- **White cards.** `.surface-card` now re-scopes the palette like `.paper`, so every card
+  is an off-white sheet on the dark page; content and form panels on inner pages moved
+  onto it. Surfaces live in `@layer components`, so utilities on the same element win.
+- **CSS layer bug fixed.** Element resets (`img, svg { display: block }`, `font: inherit`
+  on form controls) were unlayered and so beat every Tailwind utility; `hidden` on the
+  hero sparkles did nothing on phones. They are in `@layer base` now.
+- **Type scale down.** Hero 5.25 rem max (was 6.4), section titles 3 rem (was 4), page
+  heroes 4.75 rem (was 7.5), marquee 3.5 rem (was 5), mission statement 2.5 rem. Eyebrows
+  are larger and brighter, and the scroll-filled statement starts at 46% instead of 24%
+  and fills sooner, so headings never read as faded.
+- **Images.** Six CC-licensed campus photographs as a mosaic (swipeable strip on phones),
+  credited on each photo. Static files, so they do not depend on the media store.
+- **Mobile.** The hero drawing comes first on phones so the launch is in view; founder
+  wall in two compact columns; no page overflows horizontally at 360 px.
+- **Backdrop rocket** larger (4.5–6.75 rem), 90% opacity, with a soft red glow.
+- **Seed.** `seed:settings` applied to the preview database: Site settings rewritten, team
+  members moved from Ventures/Outreach to Startups/Partnerships, and EntreFair 2025
+  corrected to the deck's figures (15+ startups, 10 live projects, 1 internship), with the
+  placeholder recording link removed.

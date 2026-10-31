@@ -59,7 +59,7 @@ export function ResourceDirectory({ resources, tags }: ResourceDirectoryProps) {
 
   return (
     <div>
-      <div className="rounded-lg border border-border bg-surface p-5 shadow-sm sm:p-7">
+      <div className="surface-card rounded-lg p-5 sm:p-7">
         <div className="grid gap-7 lg:grid-cols-[1fr_1fr_20rem]">
           <FilterChips
             label="Format"

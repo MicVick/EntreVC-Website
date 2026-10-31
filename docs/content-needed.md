@@ -24,24 +24,32 @@ Tick each item off as it is done.
 
 ## 2. Site Settings (admin → Site Settings)
 
-- [ ] **Positioning statement.** It shows in the footer and in search results. The current
-  text uses an em dash and reads a little stiff. Suggested:
-  > The entrepreneurship and venture capital club of IIM Ahmedabad. Events, startups and
-  > resources for students who want to build companies or back them.
-- [ ] **Homepage intro ("What is EntreVC?").** Suggested:
-  > EntreVC is the Entrepreneurship and Venture Capital Club of IIM Ahmedabad, run by
-  > students. We bring founders, investors and alumni to campus, run workshops and
-  > competitions through the year, and help students who want to build something find the
-  > right people.
-  >
-  > Some of us want to start companies, some want to work in venture capital, and some just
-  > want to understand how good companies get built. All three are welcome.
-- [ ] **Key numbers.** The homepage shows events held, startups listed and alumni network.
-  The current values (6, 4, 1600) are demo figures. Enter real ones. If a number is still
-  small, leave it out until it isn't.
-- [ ] **Social links** (LinkedIn, Instagram, YouTube) and the **YouTube channel URL**.
-- [ ] **Confirm** the club email (`entrevc@iima.ac.in`), campus address and the email for
-  listing corrections.
+Filled from the 2026–27 club run deck (`EntreVC_ClubRun_2026-27.pdf`) on 1 Nov 2026 with
+`npm run seed:settings`, which rewrites Site settings without touching other content.
+
+- [x] **Positioning statement**: the club's mission from the deck ("IIMA’s launchpad for
+  entrepreneurship, connecting every founder to mentorship, capital and community"). It is
+  the "Our mission" line on the homepage, the footer blurb and the search description.
+- [x] **Homepage intro** rewritten from the deck's "Who we are" slide.
+- [x] **Club story tab**: who we are (250+ members, Overall Excellence Award, IIMA
+  Ventures), 2025–26 in numbers and flagships, the IIMA founder wall, and the 2026–27 road
+  ahead. Refresh these at each handover.
+- [x] **Club email**: `entre@iima.ac.in` everywhere, including every contact-form category,
+  named contacts, listing corrections and the IIMA Ventures contact.
+- [x] **Verticals** now match the deck's six cells (Partnerships, Events, Marketing &
+  Design, Startups, Career, Finance & Ops) plus Leadership.
+- [ ] **Check the founder-wall numbers** before launch (1,300+ companies, 16 unicorns,
+  $24 Bn+ raised; source Tracxn, 2026) and what **HTSAS** stands for, if it should be spelt
+  out.
+- [ ] **Named contacts** on the contact page still use demo names (Zoya Khan, Dev
+  Agarwal…). Replace with this year's cell heads, or delete the rows.
+- [ ] **Key numbers** (events held, ventures listed, alumni network) no longer show on the
+  homepage while the "Who we are" facts are filled in. They come back automatically if
+  those are emptied.
+- [ ] **Social links** (LinkedIn, Instagram, YouTube) and the **YouTube channel URL** are
+  still placeholders.
+- [ ] **IIMA Ventures website** link is still a placeholder.
+- [ ] **Confirm** the campus address.
 
 ## 3. Events (admin → Events)
 

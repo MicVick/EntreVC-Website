@@ -4,6 +4,8 @@ import { cn } from '@/components/ui/cn'
 
 type MarqueeProps = {
   words: readonly string[]
+  /** `lg` between sections, `md` as a lead-in inside one. */
+  size?: 'md' | 'lg'
   className?: string
 }
 
@@ -32,9 +34,15 @@ function Track({ words, hidden = false }: { words: readonly string[]; hidden?: b
  * A slow, endless strip of words between sections. Decorative: the list is read once
  * by screen readers and the duplicate track is hidden. Static when motion is off.
  */
-export function Marquee({ words, className }: MarqueeProps) {
+export function Marquee({ words, size = 'lg', className }: MarqueeProps) {
   return (
-    <div className={cn('marquee display-type py-2 text-[clamp(2.4rem,6vw,5rem)] leading-none', className)}>
+    <div
+      className={cn(
+        'marquee display-type py-2 leading-none',
+        size === 'lg' ? 'text-[clamp(1.9rem,4.4vw,3.5rem)]' : 'text-[clamp(1.5rem,3.2vw,2.5rem)]',
+        className,
+      )}
+    >
       <Track words={words} />
       <Track words={words} hidden />
     </div>

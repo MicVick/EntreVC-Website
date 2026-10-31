@@ -53,6 +53,7 @@ export {
 } from './resources'
 
 export {
+  getClubStory,
   getIimaVenturesContent,
   getKeyNumbers,
   getRoleContacts,

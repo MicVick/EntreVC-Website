@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 import { PageHero } from '@/components/public/page-hero'
 import { TeamRoster } from '@/components/public/team-roster'
-import { getTeam, getTeamYears, getVerticals } from '@/lib/content'
+import { getSiteSettings, getTeam, getTeamYears, getVerticals } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -13,7 +13,7 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default async function TeamPage() {
-  const [members, years, verticals] = await Promise.all([getTeam(), getTeamYears(), getVerticals()])
+  const [members, years, verticals, settings] = await Promise.all([getTeam(), getTeamYears(), getVerticals(), getSiteSettings()])
   const currentYear = years[0] ?? members[0]?.academicYear ?? 'Current'
 
   return (
@@ -38,7 +38,7 @@ export default async function TeamPage() {
           </figure>
         }
       />
-      <TeamRoster members={members} verticals={verticals} years={years} activeYear={currentYear} currentYear={currentYear} />
+      <TeamRoster members={members} verticals={verticals} years={years} activeYear={currentYear} currentYear={currentYear} structureNote={settings.structureNote} />
     </>
   )
 }

@@ -1351,6 +1351,120 @@ export interface SiteSetting {
     alumniNetworkLabel?: string | null;
   };
   /**
+   * Three short facts under "What is EntreVC?". Example: figure "250+", heading "Every cohort", one sentence about it.
+   */
+  pillars?:
+    | {
+        /**
+         * Optional. A number such as "250+".
+         */
+        figure?: string | null;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  highlights?: {
+    /**
+     * The year these numbers are for, e.g. "2025–26".
+     */
+    yearLabel?: string | null;
+    /**
+     * Up to four. Write the figure as it should appear: "15+", "2K+", "4".
+     */
+    stats?:
+      | {
+          figure: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Each flagship with one number that sums it up, e.g. "170+" "attendees".
+     */
+    flagships?:
+      | {
+          name: string;
+          figure?: string | null;
+          /**
+           * e.g. "teams"
+           */
+          unit?: string | null;
+          /**
+           * One line.
+           */
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Names only, shown as a row of tags.
+     */
+    otherEvents?:
+      | {
+          name: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Well-known companies founded by IIMA alumni, and a few numbers about them.
+   */
+  founderWall?: {
+    /**
+     * e.g. "1,300+" "companies founded by IIMA alumni".
+     */
+    stats?:
+      | {
+          figure: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    companies?:
+      | {
+          name: string;
+          founders: string;
+          foundedYear?: number | null;
+          /**
+           * What it is, in a few words, e.g. "Online travel (Nasdaq-listed)".
+           */
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Where the numbers come from, e.g. "Tracxn, 2026".
+     */
+    source?: string | null;
+  };
+  roadmap?: {
+    /**
+     * The year this plan is for, e.g. "2026–27".
+     */
+    yearLabel?: string | null;
+    /**
+     * Usually three: when in the year, and what happens then.
+     */
+    phases?:
+      | {
+          /**
+           * e.g. "Term 1"
+           */
+          name: string;
+          items?:
+            | {
+                title: string;
+                isNew?: boolean | null;
+                description?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
    * The club's main address.
    */
   clubEmail: string;
@@ -1404,6 +1518,10 @@ export interface SiteSetting {
         id?: string | null;
       }[]
     | null;
+  /**
+   * One line under the verticals on the team page, e.g. "Each cell has a Cell Head and five Core Members. Open to PGP1 and PGPX."
+   */
+  structureNote?: string | null;
   iimaVentures?: {
     overview?: {
       root: {
@@ -1476,6 +1594,81 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         alumniNetwork?: T;
         alumniNetworkLabel?: T;
       };
+  pillars?:
+    | T
+    | {
+        figure?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  highlights?:
+    | T
+    | {
+        yearLabel?: T;
+        stats?:
+          | T
+          | {
+              figure?: T;
+              label?: T;
+              id?: T;
+            };
+        flagships?:
+          | T
+          | {
+              name?: T;
+              figure?: T;
+              unit?: T;
+              description?: T;
+              id?: T;
+            };
+        otherEvents?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+      };
+  founderWall?:
+    | T
+    | {
+        stats?:
+          | T
+          | {
+              figure?: T;
+              label?: T;
+              id?: T;
+            };
+        companies?:
+          | T
+          | {
+              name?: T;
+              founders?: T;
+              foundedYear?: T;
+              description?: T;
+              id?: T;
+            };
+        source?: T;
+      };
+  roadmap?:
+    | T
+    | {
+        yearLabel?: T;
+        phases?:
+          | T
+          | {
+              name?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    isNew?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
   clubEmail?: T;
   campusAddress?: T;
   takedownEmail?: T;
@@ -1512,6 +1705,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         description?: T;
         id?: T;
       };
+  structureNote?: T;
   iimaVentures?:
     | T
     | {

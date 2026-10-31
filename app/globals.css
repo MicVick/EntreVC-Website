@@ -150,33 +150,35 @@ summary {
   outline-offset: 3px;
 }
 
+/* Element resets live in the base layer so Tailwind utilities can override them
+   (`hidden` on an svg, `text-sm` on a button). Unlayered rules beat every layer. */
 @layer base {
   a {
     color: inherit;
   }
-}
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
 
-button,
-[role="button"] {
-  cursor: pointer;
-}
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
 
-button:disabled,
-[aria-disabled="true"] {
-  cursor: not-allowed;
-}
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 
-img,
-svg {
-  display: block;
-  max-width: 100%;
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
 }
 
 /* ── Layout ──────────────────────────────────────────────────────────────── */
@@ -227,9 +229,9 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  color: var(--color-fg-subtle);
+  color: var(--color-fg-muted);
   font-family: var(--font-mono), monospace;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.12em;
   line-height: 1.6;
@@ -336,104 +338,106 @@ svg {
 
 /* ── Surfaces ────────────────────────────────────────────────────────────── */
 
-/* Frosted glass. Falls back to a near-opaque fill where blur is unsupported. */
-.glass,
-.glass-bar {
-  border: 1px solid color-mix(in srgb, var(--color-line) 11%, transparent);
-  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--color-line) 9%, transparent),
-    0 12px 40px -12px #000000b3;
-}
-
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+/* In the components layer so utilities on the same element (a dashed border, a
+   hover colour) still win over these defaults. */
+@layer components {
+  /* Frosted glass. Falls back to a near-opaque fill where blur is unsupported. */
   .glass,
   .glass-bar {
-    background: color-mix(in srgb, var(--color-surface) 52%, transparent);
-    -webkit-backdrop-filter: blur(20px) saturate(170%);
-    backdrop-filter: blur(20px) saturate(170%);
+    border: 1px solid color-mix(in srgb, var(--color-line) 11%, transparent);
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-line) 9%, transparent),
+      0 12px 40px -12px #000000b3;
   }
 
-  /* More opaque than other glass: the nav has to stay legible over light paper cards. */
-  .glass-bar {
-    background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .glass,
+    .glass-bar {
+      background: color-mix(in srgb, var(--color-surface) 52%, transparent);
+      -webkit-backdrop-filter: blur(20px) saturate(170%);
+      backdrop-filter: blur(20px) saturate(170%);
+    }
+
+    /* More opaque than other glass: the nav has to stay legible over light paper cards. */
+    .glass-bar {
+      background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+    }
   }
-}
 
-/* A dark card with a faint top-lit gradient instead of a flat box. */
-.surface-card {
-  border: 1px solid color-mix(in srgb, var(--color-line) 9%, transparent);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-line) 5%, transparent), transparent 55%),
-    color-mix(in srgb, var(--color-surface) 82%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-line) 7%, transparent);
-}
+  /* Off-white sheets. Re-scopes the palette so every token-styled child (badges,
+     buttons, muted text) renders correctly on light paper. `.surface-card` is the card
+     version, used for every card on the dark page, so cards stand out against it. */
+  .paper,
+  .surface-card {
+    --color-bg: var(--color-paper);
+    --color-surface: var(--color-paper);
+    --color-surface-2: var(--color-paper-2);
+    --color-border: var(--color-paper-border);
+    --color-border-strong: var(--color-paper-border-strong);
+    --color-fg: var(--color-ink);
+    --color-fg-muted: var(--color-ink-muted);
+    --color-fg-subtle: var(--color-ink-subtle);
+    --color-accent: var(--color-paper-accent);
+    --color-accent-fg: var(--color-paper);
+    --color-brand-muted: var(--color-paper-brand-muted);
+    --color-success: var(--color-paper-success);
+    --color-success-muted: var(--color-paper-success-muted);
+    --color-danger: var(--color-paper-danger);
+    --color-danger-muted: var(--color-paper-danger-muted);
+    --color-warning: var(--color-paper-warning);
+    --color-warning-muted: var(--color-paper-warning-muted);
+    --color-line: var(--color-ink);
+    background-color: var(--color-surface);
+    color: var(--color-fg);
+  }
 
-/* An off-white sheet. Re-scopes the palette so every token-styled child (badges,
-   buttons, muted text) renders correctly on light paper. */
-.paper {
-  --color-bg: var(--color-paper);
-  --color-surface: var(--color-paper);
-  --color-surface-2: var(--color-paper-2);
-  --color-border: var(--color-paper-border);
-  --color-border-strong: var(--color-paper-border-strong);
-  --color-fg: var(--color-ink);
-  --color-fg-muted: var(--color-ink-muted);
-  --color-fg-subtle: var(--color-ink-subtle);
-  --color-accent: var(--color-paper-accent);
-  --color-accent-fg: var(--color-paper);
-  --color-brand-muted: var(--color-paper-brand-muted);
-  --color-success: var(--color-paper-success);
-  --color-success-muted: var(--color-paper-success-muted);
-  --color-danger: var(--color-paper-danger);
-  --color-danger-muted: var(--color-paper-danger-muted);
-  --color-warning: var(--color-paper-warning);
-  --color-warning-muted: var(--color-paper-warning-muted);
-  --color-line: var(--color-ink);
-  background-color: var(--color-surface);
-  color: var(--color-fg);
-}
+  .surface-card {
+    border: 1px solid var(--color-paper-border);
+    box-shadow: var(--shadow-card);
+  }
 
-/* A soft light that follows the pointer across a card (position set by PointerGlow). */
-.spotlight {
-  position: relative;
-  isolation: isolate;
-}
+  /* A soft light that follows the pointer across a card (position set by PointerGlow). */
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
 
-.spotlight::before {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
-  background: radial-gradient(
-    26rem circle at var(--spot-x, 50%) var(--spot-y, -20%),
-    color-mix(in srgb, var(--color-accent) 13%, transparent),
-    transparent 45%
-  );
-  content: "";
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 300ms ease;
-}
+  .spotlight::before {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    background: radial-gradient(
+      26rem circle at var(--spot-x, 50%) var(--spot-y, -20%),
+      color-mix(in srgb, var(--color-accent) 13%, transparent),
+      transparent 45%
+    );
+    content: "";
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
 
-.spotlight:hover::before {
-  opacity: 1;
-}
+  .spotlight:hover::before {
+    opacity: 1;
+  }
 
-/* Kahn's arches: a portrait frame with a semicircular top. */
-.arch {
-  border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
-}
+  /* Kahn's arches: a portrait frame with a semicircular top. */
+  .arch {
+    border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
+  }
 
-/* Soft coloured light behind a section. Decorative only. */
-.glow-orb {
-  position: absolute;
-  z-index: -1;
-  border-radius: 999px;
-  background: radial-gradient(circle, color-mix(in srgb, var(--color-brand) 50%, transparent), transparent 68%);
-  filter: blur(40px);
-  opacity: 0.28;
-  pointer-events: none;
+  /* Soft coloured light behind a section. Decorative only. */
+  .glow-orb {
+    position: absolute;
+    z-index: -1;
+    border-radius: 999px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-brand) 50%, transparent), transparent 68%);
+    filter: blur(40px);
+    opacity: 0.28;
+    pointer-events: none;
+  }
 }
 
 .dialog-panel::backdrop {
@@ -457,12 +461,21 @@ svg {
   stroke-width: 0.8;
 }
 
+/* Labels inside the hero drawing. Too small to read once the drawing shrinks on a
+   phone, so they only appear from tablet width (the drawing has an aria-label). */
 .line-note {
+  display: none;
   fill: var(--color-fg-subtle);
   font-family: var(--font-mono), monospace;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+@media (min-width: 40rem) {
+  .line-note {
+    display: inline;
+  }
 }
 
 .line-leader {
@@ -473,7 +486,7 @@ svg {
 }
 
 /* The hero drawing. These base styles are the resting poster: the rocket on its pad
-   in front of the red sun, no smoke, no trail. The launch further down plays once. */
+   in front of the red sun, no smoke, no trail. The launch further down loops. */
 
 .plaza-sun {
   fill: var(--color-brand);
@@ -502,17 +515,20 @@ svg {
 }
 
 .launch-trail {
+  --trail-peak: 1;
+  --trail-rest: 0.35;
   stroke-width: 1.8;
 }
 
 .launch-trail-glow {
+  --trail-peak: 0.18;
   --trail-rest: 0.06;
   opacity: 0.18;
   stroke-width: 7;
 }
 
 .launch-rocket {
-  transform: translate(600px, 590px);
+  transform: translate(671px, 590px);
 }
 
 .rocket-body {
@@ -575,14 +591,21 @@ svg {
 }
 
 /* ── Motion ──────────────────────────────────────────────────────────────────
- * Two kinds, so nothing on the site moves on its own for more than about five
- * seconds (WCAG 2.2.2, without needing a pause button):
- *   1. A short intro on page load: the drawing sketches itself, the sun rises and the
- *      rocket launches once. Everything settles within five seconds.
- *   2. Everything ongoing is tied to scrolling, so it moves only while the visitor
+ * Three kinds:
+ *   1. A short intro on page load: the drawing sketches itself and the sun rises.
+ *   2. The hero launch, on a loop: the rocket lifts off, the trail lingers and fades,
+ *      a new rocket settles on the pad and the next launch follows ten seconds after
+ *      the last. This is the club's call (see DECISIONS.md, fourth pass): it runs with
+ *      no pause button, which WCAG 2.2.2 would otherwise ask for.
+ *   3. Everything else is tied to scrolling, so it moves only while the visitor
  *      scrolls. Where scroll-driven animation is unsupported (Firefox, for now) those
  *      parts simply stay still.
  */
+
+.plaza-launch {
+  --launch-cycle: 10s;
+  --launch-delay: 2.1s;
+}
 
 .plaza-launch .draw {
   animation: line-draw 0.9s cubic-bezier(0.6, 0.05, 0.3, 1) both;
@@ -603,32 +626,33 @@ svg {
   animation: sun-rise 1.3s 0.5s var(--ease-out) both;
 }
 
+/* One launch per cycle, all on the same clock. Percentages below are of the cycle:
+   arms swing back (0–3%), lift-off at 3.5%, out of frame by 29.5%, the trail hangs in
+   the sky until 70% and is gone by 80%, a fresh rocket drops onto the pad at 84–90%. */
 .plaza-launch .tower-arm {
-  animation: arm-retract 0.45s 1.75s var(--ease-out) both;
+  animation: arm-cycle var(--launch-cycle) var(--launch-delay) infinite both;
 }
 
 .plaza-launch .smoke-puff {
-  animation: smoke-billow 1.6s ease-out both;
-  animation-delay: calc(2.05s + var(--i, 0) * 50ms);
+  animation: smoke-cycle var(--launch-cycle) infinite both;
+  animation-delay: calc(var(--launch-delay) + var(--i, 0) * 50ms);
 }
 
 .plaza-launch .launch-rocket {
-  animation: rocket-launch 2.6s 2.1s linear both;
+  animation: rocket-launch var(--launch-cycle) var(--launch-delay) linear infinite both;
 }
 
 .plaza-launch .rocket-flames {
-  animation: flame-ignite 0.3s 2.1s ease-out both;
+  animation: flames-cycle var(--launch-cycle) var(--launch-delay) infinite both;
 }
 
 .plaza-launch .rocket-flame {
-  animation: flame-flicker 90ms 2.3s 26 alternate;
+  animation: flame-flicker 90ms infinite alternate;
 }
 
 .plaza-launch .launch-trail,
 .plaza-launch .launch-trail-glow {
-  animation:
-    trail-launch 2.6s 2.1s linear both,
-    trail-settle 0.8s 4.7s ease forwards;
+  animation: trail-launch var(--launch-cycle) var(--launch-delay) linear infinite both;
 }
 
 .sparkle {
@@ -651,14 +675,22 @@ svg {
   to { transform: none; }
 }
 
-@keyframes arm-retract {
-  to { transform: rotate(-72deg); }
+@keyframes arm-cycle {
+  0% { transform: none; animation-timing-function: var(--ease-out); }
+  3%, 84% { transform: rotate(-72deg); animation-timing-function: ease-in-out; }
+  90%, 100% { transform: none; }
 }
 
-@keyframes smoke-billow {
-  0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
-  12% { opacity: 0.9; }
-  100% { opacity: 0; transform: translate(var(--dx, 0px), -8px) scale(2.6); }
+@keyframes smoke-cycle {
+  0%, 3% { opacity: 0; transform: translate(0, 0) scale(0.3); animation-timing-function: ease-out; }
+  5% { opacity: 0.9; }
+  22%, 100% { opacity: 0; transform: translate(var(--dx, 0px), -8px) scale(2.6); }
+}
+
+@keyframes flames-cycle {
+  0%, 3.4% { opacity: 0; }
+  4.5%, 27% { opacity: 1; }
+  29.5%, 100% { opacity: 0; }
 }
 
 @keyframes flame-ignite {
@@ -673,52 +705,56 @@ svg {
 
 /* A short shudder on the pad, then the climb. Positions are sampled along the trail
    path (accelerating, s = u^2.1): straight up off the pad, then a gentle turn to the
-   right, shrinking a little with distance, fading as it leaves the frame. */
+   right, shrinking a little with distance, fading as it leaves the frame. Then, out of
+   sight, back to just above the pad, and a new rocket settles onto it. */
 @keyframes rocket-launch {
-  0% { transform: translate(600px, 590px) rotate(0deg) scale(1); }
-  3% { transform: translate(601.2px, 590px) rotate(0deg) scale(1); }
-  6% { transform: translate(598.8px, 590px) rotate(0deg) scale(1); }
-  9% { transform: translate(601px, 590px) rotate(0deg) scale(1); }
-  12% { transform: translate(599px, 590px) rotate(0deg) scale(1); }
-  15% { transform: translate(600px, 589.5px) rotate(0deg) scale(1); }
-  21.07% { transform: translate(600px, 585px) rotate(0deg) scale(1); }
-  27.14% { transform: translate(600px, 569.5px) rotate(0deg) scale(1); }
-  33.21% { transform: translate(600px, 542.5px) rotate(0deg) scale(1); }
-  39.29% { transform: translate(600px, 503px) rotate(0deg) scale(1); }
-  45.36% { transform: translate(600px, 451.5px) rotate(0deg) scale(1); }
-  51.43% { transform: translate(602.6px, 387px) rotate(5.6deg) scale(1); }
-  57.5% { transform: translate(615.2px, 310.5px) rotate(12.7deg) scale(0.97); }
-  63.57% { transform: translate(640.1px, 223.1px) rotate(18.6deg) scale(0.92); }
-  69.64% { transform: translate(677.1px, 126px) rotate(22.7deg) scale(0.88); }
-  75.71% { transform: translate(725.5px, 18.3px) rotate(25.4deg) scale(0.83); }
-  81.79% { opacity: 1; transform: translate(783.6px, -99.3px) rotate(27deg) scale(0.79); }
-  87.86% { transform: translate(850.9px, -228.1px) rotate(28deg) scale(0.74); }
-  93.93% { transform: translate(926.7px, -368.6px) rotate(28.6deg) scale(0.7); }
-  100% { opacity: 0; transform: translate(1010px, -520px) rotate(29deg) scale(0.65); }
+  0% { opacity: 1; transform: translate(671px, 590px) rotate(0deg) scale(1); }
+  3.5% { transform: translate(671px, 590px) rotate(0deg) scale(1); }
+  4.28% { transform: translate(672.2px, 590px) rotate(0deg) scale(1); }
+  5.06% { transform: translate(669.8px, 590px) rotate(0deg) scale(1); }
+  5.84% { transform: translate(672px, 590px) rotate(0deg) scale(1); }
+  6.62% { transform: translate(670px, 590px) rotate(0deg) scale(1); }
+  7.4% { transform: translate(671px, 589.5px) rotate(0deg) scale(1); }
+  8.98% { transform: translate(671px, 585px) rotate(0deg) scale(1); }
+  10.56% { transform: translate(671px, 569.5px) rotate(0deg) scale(1); }
+  12.13% { transform: translate(671px, 542.5px) rotate(0deg) scale(1); }
+  13.72% { transform: translate(671px, 503px) rotate(0deg) scale(1); }
+  15.29% { transform: translate(671px, 451.5px) rotate(0deg) scale(1); }
+  16.87% { transform: translate(673.6px, 387px) rotate(5.6deg) scale(1); }
+  18.45% { transform: translate(686.2px, 310.5px) rotate(12.7deg) scale(0.97); }
+  20.03% { transform: translate(711.1px, 223.1px) rotate(18.6deg) scale(0.92); }
+  21.61% { transform: translate(748.1px, 126px) rotate(22.7deg) scale(0.88); }
+  23.18% { transform: translate(796.5px, 18.3px) rotate(25.4deg) scale(0.83); }
+  24.77% { opacity: 1; transform: translate(854.6px, -99.3px) rotate(27deg) scale(0.79); }
+  26.34% { transform: translate(921.9px, -228.1px) rotate(28deg) scale(0.74); }
+  27.92% { transform: translate(997.7px, -368.6px) rotate(28.6deg) scale(0.7); }
+  29.5% { opacity: 0; transform: translate(1081px, -520px) rotate(29deg) scale(0.65); }
+  29.6% { opacity: 0; transform: translate(671px, 560px) rotate(0deg) scale(1); }
+  84% { opacity: 0; transform: translate(671px, 560px) rotate(0deg) scale(1); animation-timing-function: var(--ease-out); }
+  90%, 100% { opacity: 1; transform: translate(671px, 590px) rotate(0deg) scale(1); }
 }
 
-/* Arc-length share of the trail behind the rocket at each keyframe above. */
+/* Arc-length share of the trail behind the rocket at each keyframe above. The trail
+   then stays in the sky as a faint line, like a contrail, before it fades away. */
 @keyframes trail-launch {
-  0%, 15% { stroke-dashoffset: 1; }
-  21.07% { stroke-dashoffset: 0.996; }
-  27.14% { stroke-dashoffset: 0.983; }
-  33.21% { stroke-dashoffset: 0.961; }
-  39.29% { stroke-dashoffset: 0.928; }
-  45.36% { stroke-dashoffset: 0.885; }
-  51.43% { stroke-dashoffset: 0.831; }
-  57.5% { stroke-dashoffset: 0.767; }
-  63.57% { stroke-dashoffset: 0.691; }
-  69.64% { stroke-dashoffset: 0.605; }
-  75.71% { stroke-dashoffset: 0.507; }
-  81.79% { stroke-dashoffset: 0.397; }
-  87.86% { stroke-dashoffset: 0.277; }
-  93.93% { stroke-dashoffset: 0.144; }
-  100% { stroke-dashoffset: 0; }
-}
-
-/* The trail stays in the sky as a faint line, like a contrail. */
-@keyframes trail-settle {
-  to { opacity: var(--trail-rest, 0.35); }
+  0%, 7.4% { opacity: var(--trail-peak); stroke-dashoffset: 1; }
+  8.98% { stroke-dashoffset: 0.996; }
+  10.56% { stroke-dashoffset: 0.983; }
+  12.13% { stroke-dashoffset: 0.961; }
+  13.72% { stroke-dashoffset: 0.928; }
+  15.29% { stroke-dashoffset: 0.885; }
+  16.87% { stroke-dashoffset: 0.831; }
+  18.45% { stroke-dashoffset: 0.767; }
+  20.03% { stroke-dashoffset: 0.691; }
+  21.61% { stroke-dashoffset: 0.605; }
+  23.18% { stroke-dashoffset: 0.507; }
+  24.77% { stroke-dashoffset: 0.397; }
+  26.34% { stroke-dashoffset: 0.277; }
+  27.92% { stroke-dashoffset: 0.144; }
+  29.5% { opacity: var(--trail-peak); stroke-dashoffset: 0; }
+  36%, 70% { opacity: var(--trail-rest); stroke-dashoffset: 0; }
+  80% { opacity: 0; stroke-dashoffset: 0; }
+  80.1%, 100% { opacity: 0; stroke-dashoffset: 1; }
 }
 
 @keyframes twinkle {
@@ -832,7 +868,7 @@ svg {
   background-image: linear-gradient(
     90deg,
     var(--color-fg) 0 50%,
-    color-mix(in srgb, var(--color-fg) 24%, transparent) 50% 100%
+    color-mix(in srgb, var(--color-fg) 46%, transparent) 50% 100%
   );
   background-position: 0 0;
   background-size: 200.5% 100%;
@@ -852,7 +888,7 @@ svg {
 
   .scroll-fill {
     animation: text-fill linear both;
-    animation-range: entry 40% cover 65%;
+    animation-range: entry 15% cover 48%;
     animation-timeline: --scroll-fill;
   }
 
@@ -1024,8 +1060,16 @@ svg {
   stroke: var(--color-accent);
   stroke-dasharray: 2 7;
   stroke-linecap: round;
-  stroke-width: 1.2;
+  stroke-width: 1.6;
   vector-effect: non-scaling-stroke;
+}
+
+.journey-rocket .rocket-body {
+  stroke-width: 1.6;
+}
+
+.journey-rocket .rocket-detail {
+  opacity: 0.85;
 }
 
 @supports (animation-timeline: scroll()) {
@@ -1058,9 +1102,10 @@ svg {
       top: 0;
       left: 77%;
       display: block;
-      width: clamp(2.75rem, 3.6vw, 4rem);
+      width: clamp(4.5rem, 6vw, 6.75rem);
       color: var(--color-line);
-      opacity: 0.5;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 18px color-mix(in srgb, var(--color-accent) 40%, transparent));
       animation: journey-rocket-climb linear both;
       animation-timeline: scroll(root block);
     }

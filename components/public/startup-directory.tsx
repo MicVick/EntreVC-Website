@@ -104,7 +104,7 @@ export function StartupDirectory({ startups, facets }: StartupDirectoryProps) {
 
   return (
     <div>
-      <div className="rounded-lg border border-border bg-surface p-5 shadow-sm sm:p-7">
+      <div className="surface-card rounded-lg p-5 sm:p-7">
         <div className="flex flex-col gap-6 border-b border-border pb-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">Venture type</p>

@@ -67,7 +67,7 @@ export default async function StartupDetailPage({ params }: PageProps<'/startups
                 {startup.stage ? <Badge>{startupStageLabels[startup.stage]}</Badge> : null}
                 {startup.foundedYear ? <Badge variant="outline">Founded {startup.foundedYear}</Badge> : null}
               </div>
-              <h1 className="display-type mt-6 break-words text-[clamp(3rem,7vw,6rem)]">{startup.name}</h1>
+              <h1 className="display-type mt-6 break-words text-[clamp(2.4rem,5.4vw,4.25rem)]">{startup.name}</h1>
               <p className="mt-7 max-w-3xl text-xl leading-8 text-fg-muted sm:text-2xl">{startup.tagline}</p>
             </div>
             <div className="flex aspect-square w-full max-w-72 items-center justify-center overflow-hidden rounded-lg border border-border bg-bg shadow-lg lg:ml-auto">
@@ -87,7 +87,7 @@ export default async function StartupDetailPage({ params }: PageProps<'/startups
               <p className="mt-7 max-w-3xl text-lg leading-8 text-fg-muted">{startup.tagline}</p>
             )}
 
-            <div className="mt-8 rounded-lg border border-border bg-surface p-5 sm:p-6">
+            <div className="mt-8 rounded-lg surface-card p-5 sm:p-6">
               <h2 className="text-sm font-bold uppercase tracking-[0.13em] text-fg-subtle">At a glance</h2>
               <dl className="mt-5 grid gap-5 text-sm sm:grid-cols-2">
                 <div><dt className="text-fg-subtle">Focus</dt><dd className="mt-1 font-semibold leading-6 text-fg">{startup.tagline}</dd></div>
@@ -99,13 +99,13 @@ export default async function StartupDetailPage({ params }: PageProps<'/startups
 
             {startup.story?.html ? (
               <div className="mt-16 border-t border-border pt-12">
-                <h2 className="display-type text-[clamp(2rem,4.2vw,3rem)]">How it started</h2>
+                <h2 className="display-type text-[clamp(1.75rem,3.4vw,2.5rem)]">How it started</h2>
                 <div className="rich-text mt-7 max-w-3xl" dangerouslySetInnerHTML={{ __html: startup.story.html }} />
               </div>
             ) : null}
           </div>
 
-          <aside className="h-fit rounded-lg border border-border bg-surface p-6 lg:sticky lg:top-28">
+          <aside className="h-fit rounded-lg surface-card p-6 lg:sticky lg:top-28">
             <p className="text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">Company profile</p>
             {startup.sectors.length ? (
               <div className="mt-5 flex flex-wrap gap-2">
@@ -138,12 +138,12 @@ export default async function StartupDetailPage({ params }: PageProps<'/startups
       <section className="section-shell">
         <div className="site-shell">
           <p className="eyebrow">Founding team</p>
-          <h2 className="display-type mt-3 text-[clamp(2rem,4.2vw,3rem)]">Founders</h2>
+          <h2 className="display-type mt-3 text-[clamp(1.75rem,3.4vw,2.5rem)]">Founders</h2>
           {startup.founders.length ? (
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {startup.founders.map((founder) => {
                 const founderLink = publicExternalUrl(founder.linkedin)
-                return <article key={`${startup.id}-${founder.name}`} className="flex items-center gap-5 rounded-lg border border-border bg-bg p-5">
+                return <article key={`${startup.id}-${founder.name}`} className="surface-card flex items-center gap-5 rounded-lg p-5">
                   <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-surface-2">
                     <ContentImage image={founder.photo} kind="person" label={founder.name} sizes="64px" />
                   </div>

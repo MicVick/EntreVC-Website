@@ -9,7 +9,7 @@ export default function NotFound() {
       <div className="site-shell py-20">
         <Compass aria-hidden="true" className="size-9 text-brand" />
         <p className="eyebrow mt-8">Page not found</p>
-        <h1 className="display-type mt-6 max-w-4xl text-[clamp(2.6rem,6vw,4.75rem)]">We couldn’t find that page.</h1>
+        <h1 className="display-type mt-6 max-w-4xl text-[clamp(2.2rem,5vw,3.75rem)]">We couldn’t find that page.</h1>
         <p className="mt-7 max-w-xl text-lg leading-8 text-fg-muted">The event, venture or resource may no longer be published. The main site still has plenty to explore.</p>
         <Link href="/" className={`${buttonVariants({ size: 'lg' })} mt-9`}>
           <ArrowLeft aria-hidden="true" className="size-4" /> Return home

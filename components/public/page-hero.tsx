@@ -34,7 +34,7 @@ export function PageHero({ eyebrow, title, description, aside, className }: Page
       >
         <div className="animate-enter">
           <p className="eyebrow">{eyebrow}</p>
-          <h1 className="display-xl mt-6 max-w-5xl text-[clamp(3.2rem,9vw,7.5rem)]">{title}</h1>
+          <h1 className="display-xl mt-6 max-w-5xl text-[clamp(2.5rem,6vw,4.75rem)]">{title}</h1>
           {description ? (
             <div className="mt-7 max-w-2xl text-base leading-7 text-fg-muted sm:text-lg sm:leading-8">{description}</div>
           ) : null}

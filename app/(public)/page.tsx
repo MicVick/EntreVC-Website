@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRightIcon as ArrowRight, ArrowUpRightIcon as ArrowUpRight, CalendarClockIcon as CalendarClock, MailIcon as Mail } from '@/components/ui/icons'
 
+import { CampusGallery } from '@/components/public/campus-gallery'
+import { FounderWall, Pillars, RoadAhead, YearHighlights } from '@/components/public/club-story'
 import { EmptyState } from '@/components/public/empty-state'
 import { EventCard } from '@/components/public/event-card'
 import { LogoOrbit } from '@/components/public/logo-orbit'
@@ -16,6 +18,7 @@ import { StartupCard } from '@/components/public/startup-card'
 import { StatBlock } from '@/components/public/stat-block'
 import { buttonVariants } from '@/components/ui/button'
 import {
+  getClubStory,
   getFeaturedStartups,
   getKeyNumbers,
   getPastEvents,
@@ -82,8 +85,9 @@ function SeeAll({ href, label }: { href: string; label: string }) {
  * with a few cards and a link to the full page.
  */
 export default async function HomePage() {
-  const [settings, upcoming, recent, startups, resources, schemes, team, numbers] = await Promise.all([
+  const [settings, story, upcoming, recent, startups, resources, schemes, team, numbers] = await Promise.all([
     getSiteSettings(),
+    getClubStory(),
     getUpcomingEvents({ limit: 3 }),
     getPastEvents({ limit: 3 }),
     getFeaturedStartups({ limit: 3 }),
@@ -132,10 +136,10 @@ export default async function HomePage() {
           </svg>
         ))}
 
-        <div className="site-shell grid grid-cols-[minmax(0,1fr)] items-center gap-6 pb-14 pt-12 sm:pt-16 lg:min-h-[calc(100svh-var(--header-height))] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-6 lg:pb-28 lg:pt-8">
+        <div className="site-shell grid grid-cols-[minmax(0,1fr)] items-center gap-4 pb-14 pt-6 sm:gap-6 sm:pt-12 lg:min-h-[calc(100svh-var(--header-height))] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-6 lg:pb-28 lg:pt-8">
           <div className="relative z-10 min-w-0">
             <p className="eyebrow animate-enter">Entrepreneurship &amp; Venture Capital Club · IIM Ahmedabad</p>
-            <h1 id="home-title" className="display-xl mt-6 text-[clamp(3.1rem,6.6vw,6.4rem)]">
+            <h1 id="home-title" className="display-xl mt-6 text-[clamp(2.6rem,5.4vw,5.25rem)]">
               {HEADLINE.map((word, index) => (
                 <span key={word}>
                   <span className="hero-word">
@@ -154,9 +158,10 @@ export default async function HomePage() {
                 </span>
               ))}
             </h1>
-            <p className="animate-enter mt-7 max-w-xl text-lg leading-8 text-fg-muted" style={delay(450)}>
-              EntreVC is the student club at IIM Ahmedabad for people who want to start companies, or invest in them.
-              Come to a talk, find a co-founder, or meet the founders who sat in the same classrooms.
+            <p className="animate-enter mt-6 max-w-xl text-base leading-7 text-fg-muted sm:text-lg sm:leading-8" style={delay(450)}>
+              EntreVC is IIM Ahmedabad’s Entrepreneurship &amp; Venture Capital Club: the E-cell, as many campuses
+              call it. Come to a talk, find a co-founder, pitch an idea, or meet the founders who sat in the same
+              classrooms.
             </p>
             <div className="animate-enter mt-9 flex flex-col gap-3 sm:flex-row" style={delay(600)}>
               <Link href="#upcoming-events" className={buttonVariants({ size: 'lg' })}>
@@ -185,7 +190,8 @@ export default async function HomePage() {
             ) : null}
           </div>
 
-          <div className="relative -mx-3 sm:mx-0">
+          {/* First on phones, so the launch is the first thing in view; beside the text on desktop. */}
+          <div className="relative -mx-3 order-first sm:mx-0 lg:order-none">
             <PlazaLaunch />
           </div>
         </div>
@@ -246,27 +252,29 @@ export default async function HomePage() {
         <div aria-hidden="true" className="glow-orb -right-48 top-1/3 size-[32rem]" />
         <div className="site-shell">
           <p className="eyebrow">About the club</p>
-          <h2 id="about-title" className="display-type mt-4 text-[clamp(2.3rem,5vw,4rem)]">
+          <h2 id="about-title" className="display-type mt-4 text-[clamp(1.9rem,3.6vw,3rem)]">
             What is <span className="accent-serif text-accent">EntreVC?</span>
           </h2>
-          <p className="scroll-fill-block display-type mt-10 max-w-6xl text-[clamp(1.9rem,4.4vw,3.75rem)] leading-[1.1]">
-            <span className="scroll-fill">
-              Some of us want to start companies. Some want to back them. Some just want to see how it’s done. There’s room
-              for all three.
-            </span>
+          <p className="meta-label mt-10 text-accent">Our mission</p>
+          <p className="scroll-fill-block display-type mt-3 max-w-5xl text-[clamp(1.45rem,2.9vw,2.5rem)] leading-[1.15]">
+            <span className="scroll-fill">{settings.positioningStatement}</span>
           </p>
 
-          <div className="mt-16 grid items-center gap-14 lg:mt-24 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-20">
+          <div className="mt-14 grid items-center gap-12 lg:mt-20 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-16">
             <LogoOrbit />
             <div>
               <div className="rich-text max-w-2xl" dangerouslySetInnerHTML={{ __html: settings.intro.html }} />
-              <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
-                <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} />
-                <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} />
-                {numbers.alumniNetwork === null ? null : (
-                  <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} />
-                )}
-              </div>
+              {story.pillars.length ? (
+                <Pillars pillars={story.pillars} className="mt-10" />
+              ) : (
+                <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
+                  <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} />
+                  <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} />
+                  {numbers.alumniNetwork === null ? null : (
+                    <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} />
+                  )}
+                </div>
+              )}
               <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Link href="/team" prefetch={false} className={buttonVariants({ variant: 'outline', size: 'md' })}>
                   Meet the people behind it <ArrowRight aria-hidden="true" className="size-4" />
@@ -277,6 +285,12 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── The club in numbers, the founder wall, the plan, the campus ──────── */}
+      <FounderWall wall={story.founderWall} />
+      <YearHighlights highlights={story.highlights} />
+      <RoadAhead roadmap={story.roadmap} />
+      <CampusGallery />
 
       {/* ── Startups ────────────────────────────────────────────────────────── */}
       <section aria-labelledby="startups-title" className="section-shell isolate">
@@ -352,7 +366,7 @@ export default async function HomePage() {
                     <CalendarClock aria-hidden="true" className="size-3.5" />
                     {scheme.deadline ? `Apply by ${formatDateInIST(scheme.deadline)}` : 'Open all year'}
                   </p>
-                  <h3 className="display-type mt-6 text-[1.9rem]">{scheme.name}</h3>
+                  <h3 className="display-type mt-6 text-[1.6rem]">{scheme.name}</h3>
                   <p className="mt-3 line-clamp-3 max-w-md text-[0.95rem] leading-7 text-fg-muted">{scheme.summary}</p>
                   <span className="relative mt-auto inline-flex items-center gap-2 pt-8 text-sm font-semibold text-fg">
                     Who it’s for and how to apply
@@ -406,7 +420,7 @@ export default async function HomePage() {
             <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
               <div>
                 <p className="eyebrow">Work with us</p>
-                <h2 id="contact-title" className="display-type mt-4 text-[clamp(2.5rem,5.4vw,4.4rem)]">
+                <h2 id="contact-title" className="display-type mt-4 text-[clamp(2.1rem,4.2vw,3.4rem)]">
                   Get in <span className="accent-serif text-accent">touch</span>
                 </h2>
                 <p className="mt-5 max-w-xl text-base leading-7 text-fg-muted sm:text-lg sm:leading-8">

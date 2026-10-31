@@ -82,7 +82,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={submit} noValidate className="rounded-lg border border-border bg-surface p-5 shadow-md sm:p-8">
+    <form onSubmit={submit} noValidate className="rounded-lg surface-card p-5 sm:p-8">
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <Label htmlFor="contact-category">What is this about?</Label>

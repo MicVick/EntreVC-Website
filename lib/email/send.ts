@@ -60,7 +60,7 @@ function transport(): Transporter | null {
 
 function fromAddress(): string {
   const name = process.env.SMTP_FROM_NAME || 'EntreVC, IIM Ahmedabad'
-  const address = process.env.SMTP_FROM || 'no-reply@entrevc.in'
+  const address = process.env.SMTP_FROM || 'entre@iima.ac.in'
   return `"${name}" <${address}>`
 }
 

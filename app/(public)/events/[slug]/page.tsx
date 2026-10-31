@@ -304,7 +304,7 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
                     const speakerLink = publicExternalUrl(speaker.linkedin)
                     return <li
                       key={`${event.id}-${speaker.name}`}
-                      className="rounded-lg border border-border bg-surface p-5 sm:p-6"
+                      className="rounded-lg surface-card p-5 sm:p-6"
                     >
                       <div className="flex items-start gap-4">
                         <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-surface-2">
@@ -384,7 +384,7 @@ export default async function EventDetailPage({ params }: PageProps<'/events/[sl
               <RegistrationForm event={event} />
             </div>
 
-            <div className="mt-5 rounded-lg border border-border bg-surface p-5 sm:p-6">
+            <div className="mt-5 rounded-lg surface-card p-5 sm:p-6">
               <p className="text-xs font-bold uppercase tracking-[0.13em] text-fg-subtle">
                 Event details
               </p>

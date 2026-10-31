@@ -58,7 +58,7 @@ export function buildIcs(event: Event): string | null {
     location,
     description,
     url: `${siteUrl()}/events/${event.slug}`,
-    organizer: { name: 'EntreVC, IIM Ahmedabad', email: process.env.SMTP_FROM || 'no-reply@entrevc.in' },
+    organizer: { name: 'EntreVC, IIM Ahmedabad', email: process.env.SMTP_FROM || 'entre@iima.ac.in' },
     productId: 'entrevc/ics',
     uid: `${event.slug}@entrevc`,
     status: 'CONFIRMED',

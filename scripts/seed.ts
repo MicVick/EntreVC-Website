@@ -20,8 +20,9 @@
  */
 import path from 'path'
 import dotenv from 'dotenv'
-import { getPayload } from 'payload'
+import { getPayload, type Payload } from 'payload'
 
+import type { SiteSetting } from '../payload-types'
 import { daysFromNow, hoursAfter } from '../lib/fixtures/helpers'
 import { lexical } from './lexical'
 
@@ -35,6 +36,8 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), quiet: true })
 dotenv.config({ path: path.resolve(process.cwd(), '.env'), quiet: true })
 
 const RESET = process.argv.includes('--reset')
+/** Rewrite Site settings (and what depends on it) without touching other content. */
+const SETTINGS_ONLY = process.argv.includes('--settings')
 const PLACEHOLDER_DIR = path.resolve(process.cwd(), 'public/media/placeholder')
 
 const SEEDED_COLLECTIONS = [
@@ -50,9 +53,217 @@ const SEEDED_COLLECTIONS = [
   'media',
 ] as const
 
+/** Every enquiry goes to the one club mailbox. */
+const CLUB_EMAIL = 'entre@iima.ac.in'
+
+/** EntreFair 2025 as reported in the 2026–27 club run deck. */
+const ENTREFAIR_2025 = {
+  subtitle: 'Fifteen-plus startups, ten live projects and an internship for IIMA students',
+  description:
+    'The annual fair where startups meet IIMA students for live projects, internships and roles in the startup and VC world.',
+  recap: 'More than fifteen startups took part. Students went on to deliver ten live projects, and one internship came out of the fair.',
+}
+
+/** The club's cells, from the club run deck, with the leads first. */
+const VERTICALS = [
+  { name: 'Leadership', order: 1, description: 'The club heads. They set the year’s direction and run the handover.' },
+  { name: 'Partnerships', order: 2, description: 'Sponsorships, the alumni founder and VC network, and tie-ups with other institutions.' },
+  { name: 'Events', order: 3, description: 'Flagship events, speaker and founder sessions, and the E-Summit.' },
+  { name: 'Marketing & Design', order: 4, description: 'Social media, PR, campaigns, creative, content and campus presence.' },
+  { name: 'Startups', order: 5, description: 'Founder support, incubation and the link with IIMA Ventures.' },
+  { name: 'Career', order: 6, description: 'EntreFair, live projects, internships, and startup and VC roles.' },
+  { name: 'Finance & Ops', order: 7, description: 'Budgets, reimbursements, documentation and continuity.' },
+]
+
+/** Team rows seeded before the club moved to cells: [old vertical, new vertical, old role, new role]. */
+const VERTICAL_RENAMES = [
+  ['Ventures', 'Startups', 'Head of Ventures', 'Startups Cell Head'],
+  ['Outreach', 'Partnerships', 'Head of Outreach', 'Partnerships Cell Head'],
+  ['Events', 'Events', 'Head of Events', 'Events Cell Head'],
+] as const
+
+/**
+ * Site settings, including the Club story tab filled from the 2026–27 club run deck
+ * (EntreVC_ClubRun_2026-27.pdf). Social links and the IIMA Ventures website are still
+ * placeholders — see docs/content-needed.md.
+ */
+function siteSettingsData(): Omit<SiteSetting, 'id'> {
+  return {
+    positioningStatement:
+      'IIMA’s launchpad for entrepreneurship, connecting every founder to mentorship, capital and community.',
+    intro: lexical(
+      'EntreVC is the Entrepreneurship & Venture Capital Club of IIM Ahmedabad, what many campuses call the E-cell. Through the year we run talks with founders and VCs, pitch competitions, a startup fair and co-founder matchmaking, and we work closely with IIMA Ventures, the institute’s incubator, to take student ideas towards incubation.',
+    ),
+    clubEmail: CLUB_EMAIL,
+    campusAddress: 'Indian Institute of Management Ahmedabad, Vastrapur, Ahmedabad 380015, Gujarat',
+    takedownEmail: CLUB_EMAIL,
+    keyNumbers: {
+      alumniNetwork: 1600,
+      eventsHeldLabel: 'Events held',
+      startupsListedLabel: 'Ventures listed',
+      alumniNetworkLabel: 'Alumni network',
+    },
+    pillars: [
+      { figure: '250+', title: 'Every cohort', description: 'One of the largest clubs on campus, with more than 250 members last year.' },
+      { figure: null, title: 'Built to win', description: 'Winner of the Overall Excellence Award among interest clubs last year.' },
+      { figure: null, title: 'Powered by IIMA Ventures', description: 'A strong partnership with IIMA Ventures, the institute’s incubator, and with other institutes.' },
+    ],
+    highlights: {
+      yearLabel: '2025–26',
+      stats: [
+        { figure: '15+', label: 'Events run' },
+        { figure: '6+', label: 'Founders and VCs hosted' },
+        { figure: '2K+', label: 'Podcast views' },
+        { figure: '4', label: 'Newsletter issues' },
+      ],
+      flagships: [
+        { name: 'HTSAS', figure: '170+', unit: 'attendees', description: 'Speaker editions with global founders and VCs.' },
+        { name: 'Young CEO', figure: '30+', unit: 'teams', description: 'Our marquee startup-pitching competition.' },
+        { name: 'TRBS × Masterplan', figure: '500+', unit: 'teams', description: 'National social-entrepreneurship contest with a ₹1L+ prize pool.' },
+        { name: 'EntreFair 2025', figure: '15+', unit: 'startups', description: 'Delivered 10 live projects and 1 internship.' },
+        { name: 'Catalyst', figure: '80+', unit: 'founders and builders', description: 'Co-founder networking and matchmaking.' },
+      ],
+      otherEvents: [
+        { name: 'Reverse Shark Tank' },
+        { name: 'Deal or No Deal' },
+        { name: 'Podcasts' },
+        { name: 'Foundry' },
+        { name: 'EntreVC Quiz' },
+      ],
+    },
+    founderWall: {
+      stats: [
+        { figure: '1,300+', label: 'Companies founded by IIMA alumni' },
+        { figure: '16', label: 'Unicorns on the wall' },
+        { figure: '$24 Bn+', label: 'Raised by them' },
+      ],
+      companies: [
+        { name: 'Nykaa', founders: 'Falguni Nayar', description: 'Beauty and lifestyle retail (listed)', foundedYear: 2012 },
+        { name: 'Naukri / Info Edge', founders: 'Sanjeev Bikhchandani', description: 'Internet classifieds and jobs (listed)', foundedYear: 1995 },
+        { name: 'MakeMyTrip', founders: 'Deep Kalra', description: 'Online travel (Nasdaq-listed)', foundedYear: 2000 },
+        { name: 'FirstCry', founders: 'Supam Maheshwari', description: 'Baby and kids retail (listed)', foundedYear: 2010 },
+        { name: 'Fractal Analytics', founders: 'S. Velamakanni & P. Agrawal', description: 'AI and analytics (listed)', foundedYear: 2000 },
+        { name: 'Mastek', founders: 'Ashank Desai', description: 'IT services (listed)', foundedYear: 1982 },
+        { name: 'TaxiForSure', founders: 'A. Radhakrishna & Raghunandan G', description: 'Cab aggregator (acquired by Ola)', foundedYear: 2011 },
+        { name: 'Koo', founders: 'A. Radhakrishna & M. Bidawatka', description: 'Vernacular microblogging', foundedYear: 2020 },
+      ],
+      source: 'Tracxn, 2026',
+    },
+    roadmap: {
+      yearLabel: '2026–27',
+      phases: [
+        {
+          name: 'Term 1',
+          items: [
+            { title: 'EntreVC portal & website', description: 'A permanent home base, built with IIMA Ventures.', isNew: true },
+            { title: 'VC/PE and founder seminars', description: 'Informative sessions, all year.', isNew: false },
+            { title: 'Mavericks Challenge', description: 'The pathway to the Mavericks Program.', isNew: false },
+          ],
+        },
+        {
+          name: 'Mid-year',
+          items: [
+            { title: 'Mavericks | Young CEO', description: 'Student to IIMA Ventures: idea to incubation.', isNew: true },
+            { title: 'EntreFair', description: 'More startups, more offers.', isNew: false },
+            { title: 'TRBS × Masterplan', description: 'A national-level case competition.', isNew: false },
+          ],
+        },
+        {
+          name: 'Flagship',
+          items: [
+            { title: 'National E-Summit', description: 'With IIM A, B, C and L, and incubators.', isNew: true },
+            { title: 'Catalyst', description: 'More founders, more builders.', isNew: false },
+            { title: 'IIMA Ventures Summit', description: 'A bigger cohort and better events.', isNew: false },
+          ],
+        },
+      ],
+    },
+    categoryRouting: [
+      { category: 'general', email: CLUB_EMAIL, vertical: null },
+      { category: 'event', email: CLUB_EMAIL, vertical: 'Events' },
+      { category: 'startup_listing', email: CLUB_EMAIL, vertical: 'Startups' },
+      { category: 'sponsorship', email: CLUB_EMAIL, vertical: 'Partnerships' },
+      { category: 'speaking', email: CLUB_EMAIL, vertical: 'Events' },
+      { category: 'mentorship', email: CLUB_EMAIL, vertical: 'Startups' },
+    ],
+    roleContacts: [
+      { role: 'Sponsorship', name: 'Zoya Khan', email: CLUB_EMAIL, description: 'Partnering with us on an event or the annual fair.' },
+      { role: 'Speaker invitations', name: 'Dev Agarwal', email: CLUB_EMAIL, description: 'Inviting a speaker, or offering to speak.' },
+      { role: 'Media', name: 'Omkar Joshi', email: CLUB_EMAIL, description: 'Press enquiries and coverage.' },
+      { role: 'Startup listings', name: 'Rehan Siddiqui', email: CLUB_EMAIL, description: 'Adding, correcting or removing a venture.' },
+    ],
+    socialLinks: [
+      { platform: 'linkedin', url: 'https://linkedin.com/company/example-entrevc', label: null },
+      { platform: 'instagram', url: 'https://instagram.com/example_entrevc', label: null },
+    ],
+    verticals: VERTICALS,
+    structureNote: 'Each cell has a Cell Head and five Core Members. Open to PGP1 and PGPX students, as members and as core team.',
+    iimaVentures: {
+      overview: lexical(
+        'IIMA Ventures is the incubation and entrepreneurship centre at IIM Ahmedabad. It runs incubation programmes, grants and lab facilities that any IIMA student can apply to.',
+      ),
+      highlight: 'Over 1,600 ventures supported since 2002.',
+      contactName: 'EntreVC (we will connect you with IIMA Ventures)',
+      contactEmail: CLUB_EMAIL,
+      website: 'https://example.com/iimaventures',
+    },
+    playbook: {
+      title: 'The EntreVC Startup Playbook',
+      intro: lexical(
+        'Written by the club, revised every year by the team that inherits it. Read it here, or take the PDF with you.',
+      ),
+    },
+    youtubeChannelUrl: 'https://youtube.com/@example-entrevc',
+  }
+}
+
+/**
+ * `npm run seed:settings`: bring an already-seeded database up to date with the
+ * settings above, without wiping events, registrations or anything else people
+ * have added. Also moves team members off the old vertical names and corrects the
+ * EntreFair 2025 write-up.
+ */
+async function refreshSettings(payload: Payload) {
+  console.log('Writing site settings…')
+  await payload.updateGlobal({ slug: 'site-settings', data: siteSettingsData() })
+
+  for (const [from, to, oldRole, newRole] of VERTICAL_RENAMES) {
+    const members = await payload.find({ collection: 'team-members', where: { vertical: { equals: from } }, limit: 200, depth: 0 })
+    for (const member of members.docs) {
+      await payload.update({
+        collection: 'team-members',
+        id: member.id,
+        data: { vertical: to, ...(member.role === oldRole ? { role: newRole } : {}) },
+      })
+    }
+    if (members.docs.length) console.log(`  updated ${members.docs.length} team member(s) in ${from === to ? from : `${from} → ${to}`}`)
+  }
+
+  const entrefair = await payload.find({ collection: 'events', where: { slug: { equals: 'entrefair-2025' } }, limit: 1, depth: 0 })
+  const event = entrefair.docs[0]
+  if (event) {
+    await payload.update({
+      collection: 'events',
+      id: event.id,
+      data: {
+        subtitle: ENTREFAIR_2025.subtitle,
+        description: lexical(ENTREFAIR_2025.description),
+        recap: { ...event.recap, text: lexical(ENTREFAIR_2025.recap), recordingUrl: null },
+      },
+    })
+    console.log('  updated EntreFair 2025')
+  }
+  console.log('Settings refreshed.')
+}
+
 async function main() {
   const { default: config } = await import('../payload.config')
   const payload = await getPayload({ config })
+
+  if (SETTINGS_ONLY) {
+    await refreshSettings(payload)
+    return
+  }
 
   if (RESET) {
     console.log('Resetting seeded content…')
@@ -115,65 +326,7 @@ async function main() {
 
   // ── Site settings ─────────────────────────────────────────────────────────
   console.log('Writing site settings…')
-  await payload.updateGlobal({
-    slug: 'site-settings',
-    data: {
-      positioningStatement:
-        'The entrepreneurship and venture capital community at IIM Ahmedabad — events, ventures and everything the club has learned, in one place.',
-      intro: lexical(
-        'EntreVC brings together students, alumni founders and investors around the work of building companies. We run speaker sessions and workshops through the year, maintain a directory of ventures started on this campus, and publish what we learn.',
-      ),
-      clubEmail: 'entrevc@iima.ac.in',
-      campusAddress: 'Indian Institute of Management Ahmedabad, Vastrapur, Ahmedabad 380015, Gujarat',
-      takedownEmail: 'ventures.entrevc@iima.ac.in',
-      keyNumbers: {
-        alumniNetwork: 1600,
-        eventsHeldLabel: 'Events held',
-        startupsListedLabel: 'Ventures listed',
-        alumniNetworkLabel: 'Alumni network',
-      },
-      categoryRouting: [
-        { category: 'general', email: 'entrevc@iima.ac.in', vertical: null },
-        { category: 'event', email: 'events.entrevc@iima.ac.in', vertical: 'Events' },
-        { category: 'startup_listing', email: 'ventures.entrevc@iima.ac.in', vertical: 'Ventures' },
-        { category: 'sponsorship', email: 'sponsorship.entrevc@iima.ac.in', vertical: 'Outreach' },
-        { category: 'speaking', email: 'events.entrevc@iima.ac.in', vertical: 'Events' },
-        { category: 'mentorship', email: 'ventures.entrevc@iima.ac.in', vertical: 'Ventures' },
-      ],
-      roleContacts: [
-        { role: 'Sponsorship', name: 'Zoya Khan', email: 'sponsorship.entrevc@iima.ac.in', description: 'Partnering with us on an event or the annual fair.' },
-        { role: 'Speaker invitations', name: 'Dev Agarwal', email: 'events.entrevc@iima.ac.in', description: 'Inviting a speaker, or offering to speak.' },
-        { role: 'Media', name: 'Omkar Joshi', email: 'media.entrevc@iima.ac.in', description: 'Press enquiries and coverage.' },
-        { role: 'Startup listings', name: 'Rehan Siddiqui', email: 'ventures.entrevc@iima.ac.in', description: 'Adding, correcting or removing a venture.' },
-      ],
-      socialLinks: [
-        { platform: 'linkedin', url: 'https://linkedin.com/company/example-entrevc', label: null },
-        { platform: 'instagram', url: 'https://instagram.com/example_entrevc', label: null },
-      ],
-      verticals: [
-        { name: 'Leadership', order: 1, description: 'Sets direction and carries the handover.' },
-        { name: 'Events', order: 2, description: 'Speaker sessions, workshops and the annual fair.' },
-        { name: 'Ventures', order: 3, description: 'The directory, mentor connections and IIMA Ventures liaison.' },
-        { name: 'Outreach', order: 4, description: 'Sponsorship, media and the alumni network.' },
-      ],
-      iimaVentures: {
-        overview: lexical(
-          'IIMA Ventures is the incubation and entrepreneurship centre at IIM Ahmedabad. It runs incubation programmes, grants and lab facilities that any IIMA student can apply to.',
-        ),
-        highlight: 'Over 1,600 ventures supported since 2002.',
-        contactName: 'IIMA Ventures Office',
-        contactEmail: 'ventures@example.iima.ac.in',
-        website: 'https://example.com/iimaventures',
-      },
-      playbook: {
-        title: 'The EntreVC Startup Playbook',
-        intro: lexical(
-          'Written by the club, revised every year by the team that inherits it. Read it here, or take the PDF with you.',
-        ),
-      },
-      youtubeChannelUrl: 'https://youtube.com/@example-entrevc',
-    },
-  })
+  await payload.updateGlobal({ slug: 'site-settings', data: siteSettingsData() })
 
   // ── Events ────────────────────────────────────────────────────────────────
   console.log('Creating events…')
@@ -319,8 +472,8 @@ async function main() {
       title: 'EntreFair 2025',
       slug: 'entrefair-2025',
       _status: 'published',
-      subtitle: 'Forty student ventures, one afternoon, the whole campus walking through',
-      description: lexical('The annual showcase of ventures built on campus.'),
+      subtitle: ENTREFAIR_2025.subtitle,
+      description: lexical(ENTREFAIR_2025.description),
       startDateTime: e5,
       endDateTime: hoursAfter(e5, 7),
       format: 'in_person',
@@ -332,10 +485,7 @@ async function main() {
       registrationDeadline: daysFromNow(-36, 23, 59),
       // PAST WITH RECAP — the page switches to recap mode by itself.
       recap: {
-        text: lexical(
-          'Forty ventures, just under nine hundred visitors, and four teams that walked away with their first cheque.',
-        ),
-        recordingUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        text: lexical(ENTREFAIR_2025.recap),
         gallery: [mediaIds.entrefair1, mediaIds.entrefair2],
       },
     },
@@ -607,14 +757,14 @@ async function main() {
   const team = [
     ['Aarav Shetty', 'Club Lead', 'Leadership', '2026-27', 1, mediaIds.aarav],
     ['Ishita Bose', 'Co-Lead', 'Leadership', '2026-27', 2, mediaIds.ishita],
-    ['Dev Agarwal', 'Head of Events', 'Events', '2026-27', 1, null],
-    ['Maya Pillai', 'Events Coordinator', 'Events', '2026-27', 2, null], // no photo
-    ['Rehan Siddiqui', 'Head of Ventures', 'Ventures', '2026-27', 1, null],
-    ['Zoya Khan', 'Head of Outreach', 'Outreach', '2026-27', 1, null],
+    ['Dev Agarwal', 'Events Cell Head', 'Events', '2026-27', 1, null],
+    ['Maya Pillai', 'Events Core Member', 'Events', '2026-27', 2, null], // no photo
+    ['Rehan Siddiqui', 'Startups Cell Head', 'Startups', '2026-27', 1, null],
+    ['Zoya Khan', 'Partnerships Cell Head', 'Partnerships', '2026-27', 1, null],
     ['Siddharth Rane', 'Club Lead', 'Leadership', '2025-26', 1, null],
     ['Nidhi Chandra', 'Co-Lead', 'Leadership', '2025-26', 2, null],
-    ['Harsh Vardhan', 'Head of Events', 'Events', '2025-26', 1, null],
-    ['Ritika Sen', 'Head of Ventures', 'Ventures', '2025-26', 1, null],
+    ['Harsh Vardhan', 'Events Cell Head', 'Events', '2025-26', 1, null],
+    ['Ritika Sen', 'Startups Cell Head', 'Startups', '2025-26', 1, null],
   ] as const
 
   for (const [name, role, vertical, academicYear, displayOrder, photo] of team) {

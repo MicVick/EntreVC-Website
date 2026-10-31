@@ -12,9 +12,11 @@ type TeamRosterProps = {
   years: string[]
   activeYear: string
   currentYear: string
+  /** One line about how cells are staffed, from Site settings → Structure. */
+  structureNote?: string | null
 }
 
-export function TeamRoster({ members, verticals, years, activeYear, currentYear }: TeamRosterProps) {
+export function TeamRoster({ members, verticals, years, activeYear, currentYear, structureNote }: TeamRosterProps) {
   const ungrouped = members.filter((member) => !member.vertical || !verticals.some((vertical) => vertical.name === member.vertical))
 
   return (
@@ -49,7 +51,7 @@ export function TeamRoster({ members, verticals, years, activeYear, currentYear 
         <div className="site-shell">
           <div className="mb-12">
             <p className="eyebrow">How the club is organised</p>
-            <h2 className="display-type mt-3 max-w-4xl text-[clamp(2rem,4.2vw,3rem)]">Who does what</h2>
+            <h2 className="display-type mt-3 max-w-4xl text-[clamp(1.75rem,3.4vw,2.5rem)]">Who does what</h2>
             {verticals.length ? (
               <div className="reveal-grid relative mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {verticals.map((vertical, index) => (
@@ -61,6 +63,7 @@ export function TeamRoster({ members, verticals, years, activeYear, currentYear 
                 ))}
               </div>
             ) : null}
+            {structureNote ? <p className="mt-6 max-w-3xl text-sm leading-6 text-fg-muted">{structureNote}</p> : null}
           </div>
 
           {members.length ? (
