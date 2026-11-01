@@ -1139,3 +1139,36 @@ change. Branch `site/dark-redesign`.
   members moved from Ventures/Outreach to Startups/Partnerships, and EntreFair 2025
   corrected to the deck's figures (15+ startups, 10 live projects, 1 internship), with the
   placeholder recording link removed.
+
+### Fifth pass: shorter homepage, partners, an About page — 1 Nov 2026
+
+Feedback from the launch with club members: the homepage felt very long, especially on a
+phone; add a partners section; tighten the structure.
+
+- **Homepage cut from 13 sections to 9.** 17,459 px → 8,084 px tall on a 390 px phone,
+  12,711 px → 7,497 px on desktop. Order: hero; a band of companies started by IIMA alumni
+  (replaces the generic community marquee); upcoming events; what EntreVC is (mission,
+  pillars, last year's four numbers); the founder wall; startups; partners; one "More from
+  EntreVC" row linking to Resources, Founder support, Team and Our story; contact.
+- **Removed from the homepage, not from the site:** the team preview, resources, IIMA
+  Ventures schemes, the flagships, the road ahead and the campus gallery. Each still has
+  its page; the last three moved to the new About page.
+- **New `/about` page** with the longer club story: mission, intro and pillars, last year
+  in numbers, the road ahead, partners with their one-line blurbs, and the campus photos.
+  "About" replaces "Home" in the navigation; the logo already links home. Added to the
+  sitemap and to the revalidation paths for site settings and partners.
+- **Swipeable rows on phones.** Below 48 rem, `.snap-strip` turns a card grid into one
+  horizontal scroll-snap row with the next card peeking in (events, founder wall,
+  startups). The grid utilities take over from 48 rem. Scroll-reveal is switched off
+  inside the strip so cards never fade while swiping sideways.
+- **Partners collection** (Content → Partners): name, kind (institutional, sponsor,
+  ecosystem, knowledge, community, media), optional logo, website and a one-line blurb,
+  display order, drafts. Logos sit on off-white tiles so any brand colour reads on the
+  dark page; a partner without a logo shows its name as a wordmark. The last tile is
+  always "Your logo? Partner with us", linking to the sponsorship contact form, so the
+  wall looks deliberate with one partner. Read through `getPartners()`, validated with
+  `partnerSchema`; invalid rows are skipped.
+- **Only real partners are seeded.** IIMA Ventures is named in the club run deck, so the
+  seed adds it (idempotently, also from `seed:settings`). No demo partners: a logo on
+  this wall implies an endorsement.
+- `StatBlock` gained a `sm` size that never wraps, for three figures across a phone.

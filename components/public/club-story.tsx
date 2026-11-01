@@ -1,7 +1,6 @@
 import type { ComponentType, SVGProps } from 'react'
 import Link from 'next/link'
 
-import { Marquee } from '@/components/public/marquee'
 import { SectionHeader } from '@/components/public/section-header'
 import { StatBlock } from '@/components/public/stat-block'
 import { Badge } from '@/components/ui/badge'
@@ -32,9 +31,32 @@ function iconAt(icons: readonly IconComponent[], index: number): IconComponent {
   return icons[index % icons.length] ?? UsersIcon
 }
 
-/** "Who we are": three facts about the club, as cards. */
-export function Pillars({ pillars, className }: { pillars: Pillar[]; className?: string }) {
+/** "Who we are": three facts about the club, as cards, or as a compact stacked list. */
+export function Pillars({ pillars, layout = 'cards', className }: { pillars: Pillar[]; layout?: 'cards' | 'list'; className?: string }) {
   if (!pillars.length) return null
+  if (layout === 'list') {
+    return (
+      <ul className={cn('reveal-grid grid gap-3', className)}>
+        {pillars.map((pillar, index) => {
+          const Icon = iconAt(PILLAR_ICONS, index)
+          return (
+            <li key={pillar.title} className="surface-card flex min-w-0 items-start gap-4 rounded-xl p-4 sm:p-5">
+              <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-muted text-accent">
+                <Icon className="size-5" />
+              </span>
+              <div className="min-w-0">
+                <h3 className="display-type flex flex-wrap items-baseline gap-x-2 text-lg">
+                  {pillar.figure ? <span className="tabular-nums text-accent">{pillar.figure}</span> : null}
+                  {pillar.title}
+                </h3>
+                {pillar.description ? <p className="mt-1 text-sm leading-6 text-fg-muted">{pillar.description}</p> : null}
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    )
+  }
   return (
     <ul className={cn('reveal-grid grid gap-4 sm:grid-cols-3', className)}>
       {pillars.map((pillar, index) => {
@@ -62,10 +84,6 @@ export function FounderWall({ wall }: { wall: ClubStory['founderWall'] }) {
   return (
     <section aria-labelledby="founder-wall-title" className="section-shell isolate">
       <div aria-hidden="true" className="glow-orb -left-48 top-1/3 size-[32rem]" />
-      <div className="mb-14 border-y border-fg/[0.06] py-5 sm:mb-20">
-        <p className="site-shell meta-label mb-3 text-fg-subtle">Some names you already know</p>
-        <Marquee words={wall.companies.map((company) => company.name)} size="md" />
-      </div>
       <div className="site-shell">
         <SectionHeader
           id="founder-wall-title"
@@ -73,9 +91,10 @@ export function FounderWall({ wall }: { wall: ClubStory['founderWall'] }) {
           title="What do they have in common? All were founded by"
           accent="IIMA alumni."
           description="Some of India’s best-known companies began with someone who studied on this campus. Our job is to add the next names to this wall."
+          className="mb-8 sm:mb-12"
         />
 
-        <ol className="reveal-grid grid gap-3 min-[22rem]:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        <ol aria-label="Companies founded by IIMA alumni" className="snap-strip snap-strip-narrow reveal-grid grid gap-4 md:grid-cols-3 lg:grid-cols-5">
           {wall.companies.map((company) => (
             <li key={company.name} className="surface-card flex min-w-0 flex-col rounded-xl p-4 sm:p-6">
               {company.foundedYear ? <p className="meta-label text-fg-subtle">Founded {company.foundedYear}</p> : null}
@@ -98,17 +117,38 @@ export function FounderWall({ wall }: { wall: ClubStory['founderWall'] }) {
         </ol>
 
         {wall.stats.length ? (
-          <div className="mt-14">
-            <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
+          <div className="mt-8 sm:mt-12">
+            <div className="grid grid-cols-3 gap-x-4 sm:gap-x-8">
               {wall.stats.map((stat) => (
-                <StatBlock key={stat.label} value={stat.figure} label={stat.label} />
+                <StatBlock key={stat.label} value={stat.figure} label={stat.label} size="sm" />
               ))}
             </div>
-            {wall.source ? <p className="mt-6 text-xs text-fg-subtle">Source: {wall.source}</p> : null}
+            {wall.source ? <p className="mt-5 text-xs text-fg-subtle">Source: {wall.source}</p> : null}
           </div>
         ) : null}
       </div>
     </section>
+  )
+}
+
+/** Last year's headline figures as one band: the short homepage version of YearHighlights. */
+export function YearStats({ highlights, className }: { highlights: ClubStory['highlights']; className?: string }) {
+  if (!highlights.stats.length) return null
+  return (
+    <div className={className}>
+      <p className="meta-label text-fg-subtle">{highlights.yearLabel ? `EntreVC in ${highlights.yearLabel}` : 'Last year'}</p>
+      <div className="mt-4 grid grid-cols-2 gap-y-8 border-y border-border py-7 sm:py-9 lg:grid-cols-4">
+        {highlights.stats.map((stat, index) => (
+          <StatBlock
+            key={stat.label}
+            value={stat.figure}
+            label={stat.label}
+            size="md"
+            className={cn('px-1 sm:px-6', index % 2 === 1 && 'border-l border-border pl-5', index > 0 && 'lg:border-l lg:border-border lg:pl-6')}
+          />
+        ))}
+      </div>
+    </div>
   )
 }
 

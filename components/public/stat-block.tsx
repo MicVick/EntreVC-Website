@@ -8,8 +8,8 @@ type StatBlockProps = {
   value: number | string
   label: string
   suffix?: string
-  /** `lg` for a headline row, `md` inside cards. */
-  size?: 'md' | 'lg'
+  /** `lg` for a headline row, `md` inside cards, `sm` for three across on a phone (never wraps). */
+  size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
@@ -35,7 +35,9 @@ export function StatBlock({ value, label, suffix = '', size = 'lg', className }:
       <p
         className={cn(
           'display-xl tabular-nums',
-          size === 'lg' ? 'text-[clamp(2.5rem,4.6vw,3.6rem)]' : 'text-[clamp(2rem,3.4vw,2.6rem)]',
+          size === 'lg' && 'text-[clamp(2.5rem,4.6vw,3.6rem)]',
+          size === 'md' && 'text-[clamp(2rem,3.4vw,2.6rem)]',
+          size === 'sm' && 'whitespace-nowrap text-[clamp(1.5rem,3.4vw,2.6rem)]',
         )}
       >
         <span className="sr-only">

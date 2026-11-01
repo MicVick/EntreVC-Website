@@ -52,6 +52,8 @@ export {
   getResourceTags,
 } from './resources'
 
+export { getPartners } from './partners'
+
 export {
   getClubStory,
   getIimaVenturesContent,

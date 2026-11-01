@@ -218,6 +218,31 @@ function siteSettingsData(): Omit<SiteSetting, 'id'> {
 }
 
 /**
+ * Real partners only: the club run deck names IIMA Ventures, so it goes in. Other
+ * partners are added by the team in the admin under Content → Partners, with their
+ * logos. Never invent partners for demo purposes: a logo implies an endorsement.
+ */
+const PARTNERS = [
+  {
+    name: 'IIMA Ventures',
+    kind: 'institutional',
+    website: 'https://iimaventures.com/',
+    blurb: 'The institute’s incubator. We take student founders from idea to incubation together.',
+    displayOrder: 1,
+  },
+] as const
+
+/** Creates any partner above that is not in the database yet, by name. Safe to re-run. */
+async function seedPartners(payload: Payload) {
+  for (const partner of PARTNERS) {
+    const found = await payload.find({ collection: 'partners', where: { name: { equals: partner.name } }, limit: 1, depth: 0 })
+    if (found.docs.length) continue
+    await payload.create({ collection: 'partners', data: { ...partner, _status: 'published' } })
+    console.log(`  added partner ${partner.name}`)
+  }
+}
+
+/**
  * `npm run seed:settings`: bring an already-seeded database up to date with the
  * settings above, without wiping events, registrations or anything else people
  * have added. Also moves team members off the old vertical names and corrects the
@@ -253,6 +278,7 @@ async function refreshSettings(payload: Payload) {
     })
     console.log('  updated EntreFair 2025')
   }
+  await seedPartners(payload)
   console.log('Settings refreshed.')
 }
 
@@ -751,6 +777,9 @@ async function main() {
       },
     })
   }
+
+  console.log('Creating partners…')
+  await seedPartners(payload)
 
   // ── Team ──────────────────────────────────────────────────────────────────
   console.log('Creating team…')

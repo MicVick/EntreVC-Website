@@ -3,7 +3,7 @@ import { MobileNav, type NavigationItem } from '@/components/public/mobile-nav'
 import { NavigationLink } from '@/components/public/navigation-link'
 
 export const navigationItems: readonly NavigationItem[] = [
-  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
   { href: '/events', label: 'Events' },
   { href: '/startups', label: 'Startups' },
   { href: '/resources', label: 'Resources' },

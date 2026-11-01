@@ -92,10 +92,18 @@ Filled from the 2026–27 club run deck (`EntreVC_ClubRun_2026-27.pdf`) on 1 Nov
   **portrait photo** (4:5, at least 800 px tall, similar lighting for everyone if
   possible). The current names (Aarav Shetty, Ishita Bose, Dev Agarwal, Maya Pillai, …) are
   demo data.
-- [ ] The first four people by display order appear on the homepage, so put the leads first.
+- [ ] Put the leads first in display order; the team page lists people in that order.
 - [ ] **Role contacts** for the Contact page (one email per vertical).
 
-## 8. Photography
+## 8. Partners (admin → Partners)
+
+- [ ] **Every current partner and sponsor**: name, kind, website and a **logo** (PNG or
+  SVG with a transparent background; it sits on a white tile). IIMA Ventures is already
+  in, without a logo, so it shows as a wordmark until one is uploaded.
+- [ ] Optional one-line blurb for each ("Co-hosts EntreFair"), shown on the About page.
+- [ ] Biggest partners first: lower display order numbers come first.
+
+## 9. Photography
 
 - [ ] **A real team photo** for the Team page header. The current image is a placeholder
   render, not the club.

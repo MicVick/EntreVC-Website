@@ -397,6 +397,38 @@ summary {
     box-shadow: var(--shadow-card);
   }
 
+  /* Below tablet width a card grid becomes one swipeable row, edge to edge, with the
+     next card peeking in so it reads as scrollable. From 48rem the element's own grid
+     utilities take over. Keeps the phone homepage short without hiding anything. */
+  @media (max-width: 47.99rem) {
+    .snap-strip {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: min(82%, 21rem);
+      grid-template-columns: none;
+      gap: 0.875rem;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--page-gutter);
+      margin-inline: calc(var(--page-gutter) * -1);
+      padding: 0.375rem var(--page-gutter) 1.25rem;
+      scrollbar-width: none;
+    }
+
+    .snap-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    .snap-strip > * {
+      scroll-snap-align: start;
+    }
+
+    .snap-strip-narrow {
+      grid-auto-columns: min(62%, 15rem);
+    }
+  }
+
   /* A soft light that follows the pointer across a card (position set by PointerGlow). */
   .spotlight {
     position: relative;
@@ -925,6 +957,13 @@ summary {
 
   .reveal-grid > :nth-child(4) {
     animation-range: entry 20% cover 34%;
+  }
+
+  /* In a swipeable row the cards are already in view; scrolling sideways must not fade them. */
+  @media (max-width: 47.99rem) {
+    .snap-strip.reveal-grid > * {
+      animation: none;
+    }
   }
 }
 

@@ -7,6 +7,7 @@ import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Events } from './collections/Events'
 import { Media } from './collections/Media'
+import { Partners } from './collections/Partners'
 import { PlaybookChapters } from './collections/PlaybookChapters'
 import { Registrations } from './collections/Registrations'
 import { Resources } from './collections/Resources'
@@ -51,6 +52,7 @@ export default buildConfig({
     PlaybookChapters,
     Schemes,
     TeamMembers,
+    Partners,
     Media,
     Registrations,
     Submissions,

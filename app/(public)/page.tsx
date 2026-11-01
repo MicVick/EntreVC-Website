@@ -1,18 +1,23 @@
 import type { CSSProperties } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRightIcon as ArrowRight, ArrowUpRightIcon as ArrowUpRight, CalendarClockIcon as CalendarClock, MailIcon as Mail } from '@/components/ui/icons'
+import {
+  ArrowRightIcon as ArrowRight,
+  ArrowUpRightIcon as ArrowUpRight,
+  BookOpenIcon as BookOpen,
+  FlagIcon as Flag,
+  MailIcon as Mail,
+  RocketIcon as Rocket,
+  UsersIcon as Users,
+} from '@/components/ui/icons'
 
-import { CampusGallery } from '@/components/public/campus-gallery'
-import { FounderWall, Pillars, RoadAhead, YearHighlights } from '@/components/public/club-story'
+import { FounderWall, Pillars, YearStats } from '@/components/public/club-story'
 import { EmptyState } from '@/components/public/empty-state'
 import { EventCard } from '@/components/public/event-card'
-import { LogoOrbit } from '@/components/public/logo-orbit'
 import { Marquee } from '@/components/public/marquee'
 import { OrbitBadge } from '@/components/public/orbit-badge'
-import { PersonCard } from '@/components/public/person-card'
+import { PartnerWall } from '@/components/public/partner-wall'
 import { PlazaLaunch } from '@/components/public/plaza-launch'
-import { ResourceCard } from '@/components/public/resource-card'
 import { SectionHeader } from '@/components/public/section-header'
 import { StartupCard } from '@/components/public/startup-card'
 import { StatBlock } from '@/components/public/stat-block'
@@ -21,6 +26,7 @@ import {
   getClubStory,
   getFeaturedStartups,
   getKeyNumbers,
+  getPartners,
   getPastEvents,
   getResources,
   getSiteSettings,
@@ -28,7 +34,7 @@ import {
   getUpcomingEvents,
   getVentureSchemes,
 } from '@/lib/content'
-import { formatDateInIST, formatShortDateInIST } from '@/lib/format'
+import { formatShortDateInIST } from '@/lib/format'
 import { publicExternalUrl } from '@/lib/public-link'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 
@@ -80,12 +86,13 @@ function SeeAll({ href, label }: { href: string; label: string }) {
 }
 
 /**
- * The homepage is a short tour of the site: a landing hero, then one plain, clearly
- * named section per page (events first, because that is why most people come), each
- * with a few cards and a link to the full page.
+ * The homepage is a short tour, kept short on purpose (members open it on a phone):
+ * the hero, what's on, what the club is, the founder wall, startups, partners, then
+ * one row of links to everything else. Card rows swipe sideways on phones. The longer
+ * club story lives on /about.
  */
 export default async function HomePage() {
-  const [settings, story, upcoming, recent, startups, resources, schemes, team, numbers] = await Promise.all([
+  const [settings, story, upcoming, recent, startups, resources, schemes, team, numbers, partners] = await Promise.all([
     getSiteSettings(),
     getClubStory(),
     getUpcomingEvents({ limit: 3 }),
@@ -95,12 +102,42 @@ export default async function HomePage() {
     getVentureSchemes(),
     getTeam(),
     getKeyNumbers(),
+    getPartners(),
   ])
 
   const nextEvent = upcoming[0] ?? null
-  const latestResources = resources.slice(0, 3)
-  const openSchemes = schemes.filter((scheme) => !scheme.isExpired).slice(0, 2)
-  const teamPreview = team.slice(0, 4)
+  const founderNames = story.founderWall.companies.map((company) => company.name)
+  const openSchemes = schemes.filter((scheme) => !scheme.isExpired).length
+  const explore = [
+    {
+      href: '/resources',
+      icon: BookOpen,
+      title: 'Resources',
+      description: resources.length
+        ? `${resources.length} free reads, templates and talks, plus the startup playbook.`
+        : 'Reading lists, templates and the startup playbook.',
+    },
+    {
+      href: '/iima-ventures',
+      icon: Rocket,
+      title: 'Founder support',
+      description: openSchemes
+        ? `${openSchemes} open ${openSchemes === 1 ? 'call' : 'calls'} for grants and incubation at IIMA Ventures.`
+        : 'Grants, incubation and funding routes through IIMA Ventures.',
+    },
+    {
+      href: '/team',
+      icon: Users,
+      title: 'The team',
+      description: team.length ? `${team.length} students run the club this year. Meet them.` : 'Run by students. A new team takes over every year.',
+    },
+    {
+      href: '/about',
+      icon: Flag,
+      title: 'Our story',
+      description: 'Last year’s flagships, this year’s plan and the campus we run it from.',
+    },
+  ] as const
 
   const organizationJsonLd = JSON.stringify({
     '@context': 'https://schema.org',
@@ -206,9 +243,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Who it's for ────────────────────────────────────────────────────── */}
-      <div className="border-y border-fg/[0.06] bg-bg/40 py-6 backdrop-blur-sm sm:py-8">
-        <Marquee words={COMMUNITY} />
+      {/* ── Founded by IIMA alumni ──────────────────────────────────────────── */}
+      <div className="border-y border-fg/[0.06] bg-bg/40 py-5 backdrop-blur-sm sm:py-7">
+        <p className="site-shell meta-label mb-3 text-fg-subtle">{founderNames.length ? 'Started by IIMA alumni' : 'Who it’s for'}</p>
+        <Marquee words={founderNames.length ? founderNames : COMMUNITY} />
       </div>
 
       {/* ── Upcoming events ─────────────────────────────────────────────────── */}
@@ -224,7 +262,7 @@ export default async function HomePage() {
             action={<SeeAll href="/events" label="All events" />}
           />
           {upcoming.length ? (
-            <div className="reveal-grid grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <div className="snap-strip reveal-grid grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {upcoming.map((event) => <EventCard key={event.id} event={event} />)}
             </div>
           ) : (
@@ -237,7 +275,7 @@ export default async function HomePage() {
               {recent.length ? (
                 <div>
                   <h3 className="meta-label mb-5 text-fg-subtle">Recent events</h3>
-                  <div className="reveal-grid grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                  <div className="snap-strip reveal-grid grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                     {recent.map((event) => <EventCard key={event.id} event={event} />)}
                   </div>
                 </div>
@@ -251,46 +289,42 @@ export default async function HomePage() {
       <section aria-labelledby="about-title" className="section-shell isolate">
         <div aria-hidden="true" className="glow-orb -right-48 top-1/3 size-[32rem]" />
         <div className="site-shell">
-          <p className="eyebrow">About the club</p>
-          <h2 id="about-title" className="display-type mt-4 text-[clamp(1.9rem,3.6vw,3rem)]">
-            What is <span className="accent-serif text-accent">EntreVC?</span>
-          </h2>
-          <p className="meta-label mt-10 text-accent">Our mission</p>
-          <p className="scroll-fill-block display-type mt-3 max-w-5xl text-[clamp(1.45rem,2.9vw,2.5rem)] leading-[1.15]">
-            <span className="scroll-fill">{settings.positioningStatement}</span>
-          </p>
-
-          <div className="mt-14 grid items-center gap-12 lg:mt-20 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-16">
-            <LogoOrbit />
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16">
             <div>
-              <div className="rich-text max-w-2xl" dangerouslySetInnerHTML={{ __html: settings.intro.html }} />
-              {story.pillars.length ? (
-                <Pillars pillars={story.pillars} className="mt-10" />
-              ) : (
-                <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
-                  <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} />
-                  <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} />
-                  {numbers.alumniNetwork === null ? null : (
-                    <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} />
-                  )}
-                </div>
-              )}
-              <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <Link href="/team" prefetch={false} className={buttonVariants({ variant: 'outline', size: 'md' })}>
-                  Meet the people behind it <ArrowRight aria-hidden="true" className="size-4" />
+              <p className="eyebrow">About the club</p>
+              <h2 id="about-title" className="display-type mt-4 text-[clamp(1.9rem,3.6vw,3rem)]">
+                What is <span className="accent-serif text-accent">EntreVC?</span>
+              </h2>
+              <p className="scroll-fill-block display-type mt-6 max-w-3xl text-[clamp(1.3rem,2.4vw,2.05rem)] leading-[1.2]">
+                <span className="scroll-fill">{settings.positioningStatement}</span>
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/about" prefetch={false} className={buttonVariants({ variant: 'outline', size: 'md' })}>
+                  Our story <ArrowRight aria-hidden="true" className="size-4" />
                 </Link>
-                <p className="text-sm text-fg-subtle">Run by students. A new team takes over every year.</p>
+                <Link href="/team" prefetch={false} className={buttonVariants({ variant: 'ghost', size: 'md' })}>
+                  Meet the team
+                </Link>
               </div>
             </div>
+            {story.pillars.length ? (
+              <Pillars pillars={story.pillars} layout="list" className="lg:self-end" />
+            ) : (
+              <div className="grid grid-cols-2 gap-x-8 gap-y-10 self-end sm:grid-cols-3">
+                <StatBlock value={numbers.eventsHeld} suffix="+" label={numbers.labels.eventsHeld} size="md" />
+                <StatBlock value={numbers.startupsListed} suffix="+" label={numbers.labels.startupsListed} size="md" />
+                {numbers.alumniNetwork === null ? null : (
+                  <StatBlock value={numbers.alumniNetwork} suffix="+" label={numbers.labels.alumniNetwork} size="md" />
+                )}
+              </div>
+            )}
           </div>
+          <YearStats highlights={story.highlights} className="mt-12 sm:mt-16" />
         </div>
       </section>
 
-      {/* ── The club in numbers, the founder wall, the plan, the campus ──────── */}
+      {/* ── The founder wall ────────────────────────────────────────────────── */}
       <FounderWall wall={story.founderWall} />
-      <YearHighlights highlights={story.highlights} />
-      <RoadAhead roadmap={story.roadmap} />
-      <CampusGallery />
 
       {/* ── Startups ────────────────────────────────────────────────────────── */}
       <section aria-labelledby="startups-title" className="section-shell isolate">
@@ -301,11 +335,11 @@ export default async function HomePage() {
             eyebrow="Startup directory"
             title="What IIMA students and alumni are"
             accent="building"
-            description="A few of the companies in our startup directory. Each profile lists the founders, the stage they’re at and how to reach them."
+            description="A few of the companies in our startup directory, with the founders, their stage and how to reach them."
             action={<SeeAll href="/startups" label="All startups" />}
           />
           {startups.length ? (
-            <div className="reveal-grid grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))]">
+            <div className="snap-strip reveal-grid grid gap-6 md:[grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))]">
               {startups.map((startup, index) => <StartupCard key={startup.id} startup={startup} priority={index === 0} />)}
             </div>
           ) : (
@@ -318,106 +352,49 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Resources ───────────────────────────────────────────────────────── */}
-      <section aria-labelledby="resources-title" className="section-shell isolate">
-        <div className="site-shell">
-          <SectionHeader
-            id="resources-title"
-            eyebrow="Library"
-            title="Resources for"
-            accent="founders"
-            description="Reading lists, templates, reports and recorded talks we’ve found useful. All free, and every link opens at the source."
-            action={<SeeAll href="/resources" label="All resources" />}
-          />
-          {latestResources.length ? (
-            <div className="reveal-grid grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {latestResources.map((resource) => <ResourceCard key={resource.id} resource={resource} />)}
-            </div>
-          ) : (
-            <EmptyState compact title="The library is being put together" description="The first set of resources will be up soon." />
-          )}
-        </div>
-      </section>
+      {/* ── Partners ────────────────────────────────────────────────────────── */}
+      <PartnerWall partners={partners} />
 
-      {/* ── Support ─────────────────────────────────────────────────────────── */}
-      <section aria-labelledby="support-title" className="section-shell isolate">
-        <div aria-hidden="true" className="glow-orb -right-40 top-0 size-[28rem]" />
+      {/* ── Everything else, one tap away ───────────────────────────────────── */}
+      <section aria-labelledby="explore-title" className="section-shell isolate">
         <div className="site-shell">
-          <SectionHeader
-            id="support-title"
-            eyebrow="IIMA Ventures"
-            title="Support for founders at"
-            accent="IIMA"
-            description="Grants, incubation and funding routes open to IIMA students and alumni through IIMA Ventures, the institute’s incubator."
-            action={<SeeAll href="/iima-ventures" label="All support options" />}
-          />
-          {openSchemes.length ? (
-            <div className="reveal-grid grid gap-6 md:grid-cols-2">
-              {openSchemes.map((scheme) => (
+          <SectionHeader id="explore-title" eyebrow="Keep exploring" title="More from" accent="EntreVC" className="mb-8 sm:mb-10" />
+          <ul className="reveal-grid grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+            {explore.map((item) => (
+              <li key={item.href} className="min-w-0">
                 <Link
-                  key={scheme.id}
-                  href="/iima-ventures"
+                  href={item.href}
                   prefetch={false}
-                  className="surface-card spotlight group relative flex min-w-0 flex-col overflow-hidden rounded-xl p-7 transition duration-500 hover:-translate-y-1 hover:border-fg/20 sm:p-9"
+                  className="surface-card spotlight group flex h-full items-center gap-4 rounded-xl p-4 transition duration-500 hover:-translate-y-1 sm:flex-col sm:items-start sm:p-6"
                 >
-                  <span aria-hidden="true" className="absolute -bottom-24 -right-24 size-56 rounded-full border border-fg/[0.08] transition duration-700 group-hover:scale-110" />
-                  <span aria-hidden="true" className="absolute -bottom-12 -right-12 size-32 rounded-full border border-dashed border-fg/[0.12]" />
-                  <p className="meta-label inline-flex w-fit items-center gap-2 rounded-full bg-brand-muted px-3 py-1.5 text-accent">
-                    <CalendarClock aria-hidden="true" className="size-3.5" />
-                    {scheme.deadline ? `Apply by ${formatDateInIST(scheme.deadline)}` : 'Open all year'}
-                  </p>
-                  <h3 className="display-type mt-6 text-[1.6rem]">{scheme.name}</h3>
-                  <p className="mt-3 line-clamp-3 max-w-md text-[0.95rem] leading-7 text-fg-muted">{scheme.summary}</p>
-                  <span className="relative mt-auto inline-flex items-center gap-2 pt-8 text-sm font-semibold text-fg">
-                    Who it’s for and how to apply
-                    <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-full border border-fg/15 transition duration-300 group-hover:translate-x-1 group-hover:border-brand group-hover:bg-brand group-hover:text-brand-fg">
-                      <ArrowRight className="size-4" />
-                    </span>
+                  <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-muted text-accent">
+                    <item.icon className="size-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="display-type block text-lg sm:text-xl">{item.title}</span>
+                    <span className="mt-1 block text-sm leading-6 text-fg-muted">{item.description}</span>
+                  </span>
+                  <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full border border-fg/15 transition duration-300 group-hover:translate-x-1 group-hover:border-brand group-hover:bg-brand group-hover:text-brand-fg sm:mt-auto">
+                    <ArrowRight className="size-4" />
                   </span>
                 </Link>
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              compact
-              title="No open calls right now"
-              description="IIMA Ventures runs programmes through the year. See what’s usually on offer, or ask the office directly."
-              action={{ href: '/iima-ventures', label: 'See support options' }}
-            />
-          )}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
-
-      {/* ── Team ────────────────────────────────────────────────────────────── */}
-      {teamPreview.length ? (
-        <section aria-labelledby="team-title" className="section-shell isolate">
-          <div className="site-shell">
-            <SectionHeader
-              id="team-title"
-              eyebrow="The people"
-              title="Meet the"
-              accent="team"
-              description="EntreVC is run by students, and a new team takes over every year. These are the people running it now."
-              action={<SeeAll href="/team" label="Meet the full team" />}
-            />
-            <div className="reveal-grid grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-7">
-              {teamPreview.map((person) => <PersonCard key={person.id} person={person} />)}
-            </div>
-          </div>
-        </section>
-      ) : null}
 
       {/* ── Get in touch ────────────────────────────────────────────────────── */}
       <section aria-labelledby="contact-title" className="section-shell isolate">
         <div className="site-shell">
-          <div className="paper relative isolate overflow-hidden rounded-2xl p-8 shadow-panel sm:p-12 lg:p-16">
+          <div className="paper relative isolate overflow-hidden rounded-2xl p-6 shadow-panel sm:p-12 lg:p-16">
             <div aria-hidden="true" className="absolute -right-24 -top-24 -z-10 size-[22rem] rounded-full bg-paper-brand-muted" />
             <svg aria-hidden="true" focusable="false" viewBox="0 0 400 400" className="spin-slow absolute -right-24 -top-24 -z-10 hidden size-[26rem] md:block">
               <circle className="line-art" cx="200" cy="200" r="190" opacity="0.16" />
               <circle className="line-art" cx="200" cy="200" r="150" opacity="0.22" strokeDasharray="2 7" />
               <circle className="line-art" cx="200" cy="200" r="110" opacity="0.1" />
             </svg>
-            <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+            <div className="grid gap-8 sm:gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
               <div>
                 <p className="eyebrow">Work with us</p>
                 <h2 id="contact-title" className="display-type mt-4 text-[clamp(2.1rem,4.2vw,3.4rem)]">

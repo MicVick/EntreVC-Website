@@ -73,6 +73,7 @@ export interface Config {
     'playbook-chapters': PlaybookChapter;
     schemes: Scheme;
     'team-members': TeamMember;
+    partners: Partner;
     media: Media;
     registrations: Registration;
     submissions: Submission;
@@ -91,6 +92,7 @@ export interface Config {
     'playbook-chapters': PlaybookChaptersSelect<false> | PlaybookChaptersSelect<true>;
     schemes: SchemesSelect<false> | SchemesSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     registrations: RegistrationsSelect<false> | RegistrationsSelect<true>;
     submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
@@ -668,6 +670,42 @@ export interface TeamMember {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Sponsors and organisations EntreVC works with. Published partners appear on the homepage. When a partnership ends, unpublish it rather than deleting it, so it can come back next year.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: number;
+  /**
+   * The organisation’s name as they write it, e.g. “IIMA Ventures”.
+   */
+  name: string;
+  /**
+   * Shown as a small label under the logo.
+   */
+  kind: 'institutional' | 'sponsor' | 'ecosystem' | 'knowledge' | 'community' | 'media';
+  /**
+   * A PNG or SVG with a transparent background works best: logos sit on a white tile. Leave empty and the name is shown in type instead.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Optional. The full address, starting with https://. The logo links here.
+   */
+  website?: string | null;
+  /**
+   * Optional, one short line, e.g. “Co-hosts EntreFair”. Shown on the About page.
+   */
+  blurb?: string | null;
+  /**
+   * Lower numbers appear first. Put your biggest partners first.
+   */
+  displayOrder: number;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Everyone who has signed up for an event. Filter by event, then export to CSV — the export includes the answers to any extra questions you asked.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -876,6 +914,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'team-members';
         value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'partners';
+        value: number | Partner;
       } | null)
     | ({
         relationTo: 'media';
@@ -1113,6 +1155,21 @@ export interface TeamMembersSelect<T extends boolean = true> {
   batch?: T;
   linkedin?: T;
   photo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  name?: T;
+  kind?: T;
+  logo?: T;
+  website?: T;
+  blurb?: T;
+  displayOrder?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

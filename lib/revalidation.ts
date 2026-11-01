@@ -7,8 +7,10 @@ const COLLECTION_PATHS: Readonly<Record<string, readonly string[]>> = {
   'playbook-chapters': ['/resources', '/resources/playbook'],
   schemes: ['/', '/iima-ventures'],
   'team-members': ['/', '/team'],
+  partners: ['/', '/about'],
   'site-settings': [
     '/',
+    '/about',
     '/startups',
     '/iima-ventures',
     '/resources',
