@@ -8,7 +8,7 @@ import { Header } from '@/components/public/header'
 import { JourneyBackdrop } from '@/components/public/journey-backdrop'
 import { PointerGlow } from '@/components/public/pointer-glow'
 import { getSiteSettings } from '@/lib/content'
-import { getSiteUrl } from '@/lib/seo'
+import { getSiteUrl, shareImage } from '@/lib/seo'
 
 import '../globals.css'
 
@@ -56,11 +56,14 @@ export async function generateMetadata(): Promise<Metadata> {
       title: 'EntreVC · IIM Ahmedabad',
       description: settings.positioningStatement,
       url: '/',
+      locale: 'en_IN',
+      images: [shareImage()],
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title: 'EntreVC · IIM Ahmedabad',
       description: settings.positioningStatement,
+      images: [{ url: shareImage().url, alt: shareImage().alt }],
     },
   }
 }
