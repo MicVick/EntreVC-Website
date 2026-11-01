@@ -1115,17 +1115,30 @@ summary {
     display: block;
     width: 2.6rem;
     color: var(--color-line);
-    opacity: 0.7;
-    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--color-accent) 40%, transparent));
-    animation: journey-rocket-climb linear both;
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 3px color-mix(in srgb, var(--color-line) 45%, transparent))
+      drop-shadow(0 0 14px color-mix(in srgb, var(--color-accent) 60%, transparent));
+    animation: journey-rocket-climb-phone linear both;
     animation-timeline: scroll(root block);
+  }
+
+  @media (max-width: 39.99rem) {
+    .journey-rocket .rocket-body {
+      stroke-width: 1.9;
+    }
+
+    .journey-rocket-trail {
+      stroke-width: 2;
+    }
   }
 
   @media (min-width: 40rem) {
     .journey-rocket {
       right: 1rem;
       width: 3.5rem;
-      opacity: 0.8;
+      opacity: 0.85;
+      animation-name: journey-rocket-climb;
     }
   }
 
@@ -1202,6 +1215,18 @@ summary {
   35% { transform: translate(-1.5vw, 58lvh) rotate(-3deg); }
   60% { transform: translate(-3vw, 52lvh) rotate(-8deg); }
   88%, 100% { transform: translate(-4.5vw, 46lvh) rotate(-24deg); }
+}
+
+/* Phones: the moon is a fixed 9rem circle at 58% across, and the world finishes rising
+   at 88%, which puts the moon's centre at (58vw + 72px, 16lvh + 72px). The rocket
+   (2.6rem wide, against the right edge, tilted -24deg) ends with its nose on the
+   moon's lower-right rim. The offsets below are that geometry worked through. */
+@keyframes journey-rocket-climb-phone {
+  0%, 4% { transform: translate(0, 112lvh) rotate(0deg); }
+  12% { transform: translate(0, 72lvh) rotate(1deg); }
+  35% { transform: translate(-2vw, 58lvh) rotate(-4deg); }
+  65% { transform: translate(calc(100px - 22vw), calc(36lvh + 50px)) rotate(-14deg); }
+  88%, 100% { transform: translate(calc(203px - 42vw), calc(16lvh + 98px)) rotate(-24deg); }
 }
 
 @keyframes rail-fill {
