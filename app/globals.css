@@ -1105,20 +1105,37 @@ summary {
     animation-direction: reverse;
   }
 
-  @media (min-width: 64rem) {
-    /* The rocket from the hero, climbing beside the content as you scroll and
-       arriving under the moon at the end. Hidden while the hero is on screen. */
+  /* The rocket from the hero, climbing beside the content as you scroll and arriving
+     under the moon at the end. Hidden while the hero is on screen. On a phone it is
+     smaller and hugs the right edge, behind the content, so it stays clear of the text. */
+  .journey-rocket {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 2.6rem;
+    color: var(--color-line);
+    opacity: 0.7;
+    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--color-accent) 40%, transparent));
+    animation: journey-rocket-climb linear both;
+    animation-timeline: scroll(root block);
+  }
+
+  @media (min-width: 40rem) {
     .journey-rocket {
-      position: absolute;
-      top: 0;
+      right: 1rem;
+      width: 3.5rem;
+      opacity: 0.8;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .journey-rocket {
+      right: auto;
       left: 77%;
-      display: block;
       width: clamp(4.5rem, 6vw, 6.75rem);
-      color: var(--color-line);
       opacity: 0.9;
       filter: drop-shadow(0 0 18px color-mix(in srgb, var(--color-accent) 40%, transparent));
-      animation: journey-rocket-climb linear both;
-      animation-timeline: scroll(root block);
     }
   }
 
