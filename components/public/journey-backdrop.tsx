@@ -121,7 +121,7 @@ export function JourneyBackdrop() {
             <div
               key={`${kite.left}-${kite.top}`}
               className="journey-item journey-kite"
-              style={{ left: kite.left, top: kite.top, width: kite.size, rotate: `${kite.tilt}deg`, opacity: 0.6 }}
+              style={{ left: kite.left, top: kite.top, width: kite.size, rotate: `${kite.tilt}deg` }}
             >
               <KiteShape tail={kite.tail} />
             </div>

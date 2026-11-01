@@ -92,7 +92,7 @@
 :root {
   color-scheme: dark;
   --page-gutter: clamp(1.25rem, 4vw, 4.5rem);
-  --section-space: clamp(5rem, 9vw, 8.5rem);
+  --section-space: clamp(3.75rem, 9vw, 8.5rem);
   --header-height: 4.75rem;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -1015,6 +1015,17 @@ summary {
 .journey-item {
   position: absolute;
   color: var(--color-line);
+}
+
+/* Kites sit behind text, so they fade further on a phone where they cross it. */
+.journey-kite {
+  opacity: 0.6;
+}
+
+@media (max-width: 40rem) {
+  .journey-kite {
+    opacity: 0.25;
+  }
 }
 
 .journey-item svg {

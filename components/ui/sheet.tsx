@@ -49,7 +49,7 @@ export function Sheet({
         if (event.target === event.currentTarget) onOpenChange(false)
       }}
       className={cn(
-        'dialog-panel fixed inset-y-0 m-0 h-dvh w-[min(92vw,28rem)] max-w-none border-border bg-surface p-0 text-fg shadow-lg',
+        'dialog-panel fixed inset-y-0 m-0 h-dvh max-h-none w-[min(92vw,28rem)] max-w-none border-border bg-surface p-0 text-fg shadow-lg',
         side === 'right' ? 'ml-auto border-l' : 'mr-auto border-r',
       )}
     >

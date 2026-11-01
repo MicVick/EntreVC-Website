@@ -8,7 +8,7 @@ import { cn } from '@/components/ui/cn'
  */
 export function LogoOrbit({ className }: { className?: string }) {
   return (
-    <div className={cn('relative mx-auto aspect-square w-full max-w-[28rem]', className)}>
+    <div className={cn('relative mx-auto aspect-square w-full max-w-[17rem] sm:max-w-[28rem]', className)}>
       <span aria-hidden="true" className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--color-brand)_38%,transparent)_0%,transparent_68%)] blur-xl" />
       <svg viewBox="0 0 400 400" aria-hidden="true" focusable="false" className="absolute inset-0 size-full overflow-visible">
         <circle className="line-art" cx="200" cy="200" r="196" opacity="0.35" />
