@@ -11,15 +11,15 @@ import {
   UsersIcon as Users,
 } from '@/components/ui/icons'
 
-import { FounderWall, Pillars, YearStats } from '@/components/public/club-story'
+import { Pillars, YearStats } from '@/components/public/club-story'
 import { EmptyState } from '@/components/public/empty-state'
 import { EventCard } from '@/components/public/event-card'
+import { FoundersSection } from '@/components/public/founders-section'
 import { Marquee } from '@/components/public/marquee'
 import { OrbitBadge } from '@/components/public/orbit-badge'
 import { PartnerWall } from '@/components/public/partner-wall'
 import { PlazaLaunch } from '@/components/public/plaza-launch'
 import { SectionHeader } from '@/components/public/section-header'
-import { StartupCard } from '@/components/public/startup-card'
 import { StatBlock } from '@/components/public/stat-block'
 import { buttonVariants } from '@/components/ui/button'
 import {
@@ -106,7 +106,6 @@ export default async function HomePage() {
   ])
 
   const nextEvent = upcoming[0] ?? null
-  const founderNames = story.founderWall.companies.map((company) => company.name)
   const openSchemes = schemes.filter((scheme) => !scheme.isExpired).length
   const explore = [
     {
@@ -243,10 +242,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Founded by IIMA alumni ──────────────────────────────────────────── */}
-      <div className="border-y border-fg/[0.06] bg-bg/40 py-5 backdrop-blur-sm sm:py-7">
-        <p className="site-shell meta-label mb-3 text-fg-subtle">{founderNames.length ? 'Started by IIMA alumni' : 'Who it’s for'}</p>
-        <Marquee words={founderNames.length ? founderNames : COMMUNITY} />
+      {/* ── Who it’s for ────────────────────────────────────────────────────── */}
+      <div className="border-y border-fg/[0.06] bg-bg/40 py-5 backdrop-blur-sm sm:py-7" aria-label="Who EntreVC is for">
+        <Marquee words={COMMUNITY} />
       </div>
 
       {/* ── Upcoming events ─────────────────────────────────────────────────── */}
@@ -323,34 +321,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── The founder wall ────────────────────────────────────────────────── */}
-      <FounderWall wall={story.founderWall} />
-
-      {/* ── Startups ────────────────────────────────────────────────────────── */}
-      <section aria-labelledby="startups-title" className="section-shell isolate">
-        <div aria-hidden="true" className="glow-orb -left-40 bottom-0 size-[30rem]" />
-        <div className="site-shell">
-          <SectionHeader
-            id="startups-title"
-            eyebrow="Startup directory"
-            title="What IIMA students and alumni are"
-            accent="building"
-            description="A few of the companies in our startup directory, with the founders, their stage and how to reach them."
-            action={<SeeAll href="/startups" label="All startups" />}
-          />
-          {startups.length ? (
-            <div className="snap-strip reveal-grid grid gap-6 md:[grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))]">
-              {startups.map((startup, index) => <StartupCard key={startup.id} startup={startup} priority={index === 0} />)}
-            </div>
-          ) : (
-            <EmptyState
-              title="The directory is on its way"
-              description="We’re checking details with founders before the first profiles go live. Started something at IIMA? We’d love to list it."
-              action={{ href: '/contact?category=startup_listing', label: 'List your startup' }}
-            />
-          )}
-        </div>
-      </section>
+      {/* ── Founders, then and now ─────────────────────────────────────────── */}
+      <FoundersSection wall={story.founderWall} startups={startups} />
 
       {/* ── Partners ────────────────────────────────────────────────────────── */}
       <PartnerWall partners={partners} />
@@ -359,22 +331,22 @@ export default async function HomePage() {
       <section aria-labelledby="explore-title" className="section-shell isolate">
         <div className="site-shell">
           <SectionHeader id="explore-title" eyebrow="Keep exploring" title="More from" accent="EntreVC" className="mb-8 sm:mb-10" />
-          <ul className="reveal-grid grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+          <ul className="reveal-grid grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             {explore.map((item) => (
               <li key={item.href} className="min-w-0">
                 <Link
                   href={item.href}
                   prefetch={false}
-                  className="surface-card spotlight group flex h-full items-center gap-4 rounded-xl p-4 transition duration-500 hover:-translate-y-1 sm:flex-col sm:items-start sm:p-6"
+                  className="surface-card spotlight group flex h-full flex-col items-start gap-3 rounded-xl p-4 transition duration-500 hover:-translate-y-1 sm:gap-4 sm:p-6"
                 >
-                  <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-muted text-accent">
+                  <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-muted text-accent sm:size-11">
                     <item.icon className="size-5" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="display-type block text-lg sm:text-xl">{item.title}</span>
-                    <span className="mt-1 block text-sm leading-6 text-fg-muted">{item.description}</span>
+                    <span className="display-type block text-base sm:text-xl">{item.title}</span>
+                    <span className="mt-1 block text-[0.8rem] leading-5 text-fg-muted sm:text-sm sm:leading-6">{item.description}</span>
                   </span>
-                  <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full border border-fg/15 transition duration-300 group-hover:translate-x-1 group-hover:border-brand group-hover:bg-brand group-hover:text-brand-fg sm:mt-auto">
+                  <span aria-hidden="true" className="mt-auto hidden size-9 shrink-0 items-center justify-center rounded-full border border-fg/15 transition duration-300 group-hover:translate-x-1 group-hover:border-brand group-hover:bg-brand group-hover:text-brand-fg sm:flex">
                     <ArrowRight className="size-4" />
                   </span>
                 </Link>

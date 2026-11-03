@@ -11,9 +11,11 @@ type StartupCardProps = {
   startup: Startup
   className?: string
   priority?: boolean
+  /** Tighter padding and type, for four across on the homepage. */
+  compact?: boolean
 }
 
-export function StartupCard({ startup, className, priority = false }: StartupCardProps) {
+export function StartupCard({ startup, className, priority = false, compact = false }: StartupCardProps) {
   const website = publicExternalUrl(startup.website)
   const linkedin = publicExternalUrl(startup.linkedin)
   const founders = startup.founders.map((founder) => founder.name).join(', ')
@@ -21,13 +23,19 @@ export function StartupCard({ startup, className, priority = false }: StartupCar
   return (
     <article
       className={cn(
-        'surface-card spotlight group relative flex min-w-0 flex-col rounded-xl p-6 transition duration-500 hover:-translate-y-1 hover:border-fg/20 focus-within:border-accent sm:p-7',
+        'surface-card spotlight group relative flex min-w-0 flex-col rounded-xl transition duration-500 hover:-translate-y-1 hover:border-fg/20 focus-within:border-accent',
+        compact ? 'p-5' : 'p-6 sm:p-7',
         className,
       )}
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-bg ring-1 ring-fg/15 ring-offset-4 ring-offset-surface transition duration-500 group-hover:ring-accent/60">
-          <ContentImage image={startup.logo} kind="startup" label={startup.name} sizes="64px" priority={priority} className="object-contain" />
+        <div
+          className={cn(
+            'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-bg ring-1 ring-fg/15 ring-offset-4 ring-offset-surface transition duration-500 group-hover:ring-accent/60',
+            compact ? 'size-12' : 'size-16',
+          )}
+        >
+          <ContentImage image={startup.logo} kind="startup" label={startup.name} sizes={compact ? '48px' : '64px'} priority={priority} className="object-contain" />
         </div>
         <div className="flex flex-wrap justify-end gap-1.5">
           <Badge>{startupTypeLabels[startup.type]}</Badge>
@@ -35,15 +43,15 @@ export function StartupCard({ startup, className, priority = false }: StartupCar
         </div>
       </div>
 
-      <h3 className="display-type mt-7 break-words text-[1.75rem]">
+      <h3 className={cn('display-type break-words', compact ? 'mt-5 text-[1.4rem]' : 'mt-7 text-[1.75rem]')}>
         <Link href={`/startups/${startup.slug}`} className="after:absolute after:inset-0 after:z-[2] focus-visible:outline-none">
           {startup.name}
         </Link>
       </h3>
-      <p className="mt-2 line-clamp-3 text-[0.95rem] leading-7 text-fg-muted">{startup.tagline}</p>
+      <p className={cn('mt-2 text-fg-muted', compact ? 'line-clamp-2 text-sm leading-6' : 'line-clamp-3 text-[0.95rem] leading-7')}>{startup.tagline}</p>
 
       {startup.sectors.length ? (
-        <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Sectors">
+        <ul className={cn('flex flex-wrap gap-1.5', compact ? 'mt-4' : 'mt-5')} aria-label="Sectors">
           {startup.sectors.map((sector) => (
             <li key={sector} className="rounded-full bg-fg/[0.06] px-3 py-1 text-xs text-fg-muted">
               {sector}
@@ -52,7 +60,7 @@ export function StartupCard({ startup, className, priority = false }: StartupCar
         </ul>
       ) : null}
 
-      <div className="mt-auto pt-7">
+      <div className={cn('mt-auto', compact ? 'pt-5' : 'pt-7')}>
         <p className="text-sm leading-6 text-fg-muted">
           {founders || 'Founder details coming soon'}
           {startup.batches.length ? <span className="text-fg-subtle"> · {startup.batches.join(', ')}</span> : null}

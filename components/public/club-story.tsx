@@ -1,12 +1,10 @@
 import type { ComponentType, SVGProps } from 'react'
-import Link from 'next/link'
 
 import { SectionHeader } from '@/components/public/section-header'
 import { StatBlock } from '@/components/public/stat-block'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/components/ui/cn'
 import {
-  ArrowRightIcon as ArrowRight,
   FlagIcon,
   GlobeIcon,
   HandshakeIcon,
@@ -17,7 +15,7 @@ import {
 import type { ClubStory, Pillar } from '@/lib/schemas'
 
 /**
- * The homepage sections about the club, all edited under Site settings → Club story.
+ * The sections about the club (homepage and /about), all edited under Site settings → Club story.
  * Each one renders nothing when its content is empty, so a new team can fill them in
  * one at a time.
  */
@@ -75,59 +73,6 @@ export function Pillars({ pillars, layout = 'cards', className }: { pillars: Pil
         )
       })}
     </ul>
-  )
-}
-
-/** The IIMA founder wall: well-known companies started by alumni, then an empty slot. */
-export function FounderWall({ wall }: { wall: ClubStory['founderWall'] }) {
-  if (!wall.companies.length) return null
-  return (
-    <section aria-labelledby="founder-wall-title" className="section-shell isolate">
-      <div aria-hidden="true" className="glow-orb -left-48 top-1/3 size-[32rem]" />
-      <div className="site-shell">
-        <SectionHeader
-          id="founder-wall-title"
-          eyebrow="The IIMA founder wall"
-          title="What do they have in common? All were founded by"
-          accent="IIMA alumni."
-          description="Some of India’s best-known companies began with someone who studied on this campus. Our job is to add the next names to this wall."
-          className="mb-8 sm:mb-12"
-        />
-
-        <ol aria-label="Companies founded by IIMA alumni" className="snap-strip snap-strip-narrow reveal-grid grid gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {wall.companies.map((company) => (
-            <li key={company.name} className="surface-card flex min-w-0 flex-col rounded-xl p-4 sm:p-6">
-              {company.foundedYear ? <p className="meta-label text-fg-subtle">Founded {company.foundedYear}</p> : null}
-              <h3 className="display-type mt-2 break-words text-[1.15rem] sm:text-[1.45rem]">{company.name}</h3>
-              <p className="mt-1 text-[0.8rem] font-semibold leading-5 text-fg sm:text-sm">{company.founders}</p>
-              {company.description ? (
-                <p className="mt-auto pt-3 text-[0.8rem] leading-5 text-fg-muted sm:pt-4 sm:text-sm sm:leading-6">{company.description}</p>
-              ) : null}
-            </li>
-          ))}
-          <li className="flex min-w-0 flex-col rounded-xl border border-dashed border-accent/70 bg-brand-muted/40 p-4 sm:p-6">
-            <p className="meta-label text-accent">Founded 20XX</p>
-            <p className="accent-serif mt-2 text-[1.6rem] leading-none text-accent sm:text-[1.9rem]">You?</p>
-            <p className="mt-2 text-[0.8rem] font-semibold text-fg sm:text-sm">Your name here</p>
-            <p className="mt-1 text-[0.8rem] leading-5 text-fg-muted sm:text-sm sm:leading-6">The next consequential venture.</p>
-            <Link href="/iima-ventures" prefetch={false} className="mt-auto inline-flex items-center gap-2 pt-4 text-sm font-semibold text-accent underline-offset-4 hover:underline">
-              Where to start <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
-          </li>
-        </ol>
-
-        {wall.stats.length ? (
-          <div className="mt-8 sm:mt-12">
-            <div className="grid grid-cols-3 gap-x-4 sm:gap-x-8">
-              {wall.stats.map((stat) => (
-                <StatBlock key={stat.label} value={stat.figure} label={stat.label} size="sm" />
-              ))}
-            </div>
-            {wall.source ? <p className="mt-5 text-xs text-fg-subtle">Source: {wall.source}</p> : null}
-          </div>
-        ) : null}
-      </div>
-    </section>
   )
 }
 

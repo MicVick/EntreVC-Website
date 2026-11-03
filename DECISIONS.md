@@ -1172,3 +1172,19 @@ phone; add a partners section; tighten the structure.
   seed adds it (idempotently, also from `seed:settings`). No demo partners: a logo on
   this wall implies an endorsement.
 - `StatBlock` gained a `sm` size that never wraps, for three figures across a phone.
+
+### Sixth pass: founders, then and now — 4 Nov 2026
+
+The founder wall and the startup directory told one story in two long sections. They are
+one homepage section now, `components/public/founders-section.tsx`: heading and "All
+startups"; the three alumni figures; "Then", the founder wall as compact name tiles
+(two columns up to desktop, four from 64 rem); "Now", the featured startups in a compact
+`StartupCard` variant plus a standing "Your startup?" card (list your startup, or where to
+start). `FounderWall` is gone from `club-story.tsx`.
+
+- Homepage: 8,084 → 7,683 px on a 390 px phone, 7,497 → 6,486 px on desktop.
+- The band under the hero is back to who the club is for; the alumni names it carried
+  are in the founders section, so they were on the page twice.
+- "More from EntreVC" is a 2 × 2 grid of small tiles on phones instead of four rows.
+- `--section-space` is `clamp(3.5rem, 7vw, 6.5rem)` (was up to 8.5 rem): the desktop
+  gaps between sections were wider than the content needed.
